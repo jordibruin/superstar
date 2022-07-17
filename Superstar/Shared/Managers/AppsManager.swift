@@ -12,6 +12,9 @@ import SwiftUI
 
 class AppsManager: ObservableObject {
     
+    
+    @Published var loadingIcons = false
+    
     @Published var foundApps: [Bagbutik.App] = []
     
     @Published var appsAndImages: [AppIdAndImage] = []
@@ -48,8 +51,18 @@ class AppsManager: ObservableObject {
             
 //            appsMatchedWithIcons = []
             
-            print("apps matched with icons count \(appsMatchedWithIcons.count))")
             
+//            print("apps matched with icons count \(appsMatchedWithIcons.count))")
+            
+            if appsMatchedWithIcons.isEmpty {
+                // Never got icons yet
+                // get the icons
+                
+                await getIcons()
+                
+            }
+            
+            // Add apps to the list for retrieving icons
             for app in response.data {
                 if !appsMatchedWithIcons.contains(where: { $0.appId == app.id } ) {
                     appsMatchedWithIcons.append(AppIdAndImage(appId: app.id))
@@ -61,26 +74,16 @@ class AppsManager: ObservableObject {
         
     }
     
+    @MainActor
     func getIcons() async {
-        
+        loadingIcons = true
         
         do {
-            let service = try BagbutikService(jwt: .init(
-                keyId: "5RV9L7HM7W",
-                issuerId: "69a6de8a-5b4e-47e3-e053-5b8c7c11a4d1",
-                privateKey: """
-        -----BEGIN PRIVATE KEY-----
-        MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg41hQQir9NtMHfUq8
-        zuUdNqMF93khEMirjynoLCeL7i2gCgYIKoZIzj0DAQehRANCAASBxdmD6ALMVKd0
-        6/gzSl6q9Z4/5AsD0GdQGK/Fk+RryOjjvS0ibtwP4XZu4xRa/OwFkjWs85WQKux/
-        +wwQpe21
-        -----END PRIVATE KEY-----
-        """
-            ))
+            guard let jwt = CredentialsManager.shared.getJWT(), let service = try? BagbutikService(jwt: jwt) else { return }
             
             for app in appsMatchedWithIcons {
                 if app.iconURL == nil {
-                    print("we don't have the icon for this boy yet, let's get it")
+//                    print("we don't have the icon for this boy yet, let's get it")
                     let response = try await service.request(
                         .listBuildsForAppV1(id: app.appId)
                     )
@@ -110,6 +113,7 @@ class AppsManager: ObservableObject {
         
         print("we're done with stuff")
         print("apps matched with icons count \(appsMatchedWithIcons.count))")
+        loadingIcons = false
     }
     
     func imageURL(for app: Bagbutik.App) -> URL {

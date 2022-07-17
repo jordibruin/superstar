@@ -57,6 +57,23 @@ struct FullAppView: View {
                                 }
                             }
                         }
+                        .overlay(
+                            VStack {
+                                Spacer()
+                                
+                                VStack {
+                                    ProgressView()
+                                    Text("Loading Icons")
+                                        .font(.system(.title2, design: .rounded))
+                                        .bold()
+                                }
+                                .padding(12)
+                                .frame(width: 120)
+                                .background(.thinMaterial)
+                                .cornerRadius(12)
+                            }
+                            .opacity(appsManager.loadingIcons ? 1 : 0)
+                        )
                         .listStyle(.sidebar)
                     }
                 } else {

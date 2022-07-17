@@ -41,6 +41,7 @@ struct SuggestionsConfigView: View {
                             if let firstIndex = suggestions.firstIndex(where: { suggestion.id == $0.id }) {
                                 suggestions.remove(at: firstIndex)
                             }
+                            selection = nil
                         } label: {
                             Image(systemName: "trash.fill")
                                 .padding(.vertical, 4)
@@ -66,6 +67,7 @@ struct SuggestionsConfigView: View {
                 } else {
                     HStack {
                         TextField("Title", text: $title)
+                            .frame(width: 150)
                         TextField("Text", text: $text)
     //                    Text("\(appId)")
                         Button {
@@ -75,7 +77,6 @@ struct SuggestionsConfigView: View {
                         } label: {
                             Text("Add")
                         }
-
                     }
                 }
                 
