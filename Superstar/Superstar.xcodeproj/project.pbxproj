@@ -7,35 +7,46 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C245B4702884ACF700ABE387 /* SuperstarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4602884ACF600ABE387 /* SuperstarApp.swift */; };
 		C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4602884ACF600ABE387 /* SuperstarApp.swift */; };
-		C245B4722884ACF700ABE387 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4612884ACF600ABE387 /* ContentView.swift */; };
 		C245B4732884ACF700ABE387 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4612884ACF600ABE387 /* ContentView.swift */; };
-		C245B4742884ACF700ABE387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C245B4622884ACF700ABE387 /* Assets.xcassets */; };
 		C245B4752884ACF700ABE387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C245B4622884ACF700ABE387 /* Assets.xcassets */; };
+		C245B4812884AD7100ABE387 /* Menubar.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B47F2884AD3000ABE387 /* Menubar.swift */; };
+		C245B4882884AE0B00ABE387 /* CredentialsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4852884AE0B00ABE387 /* CredentialsManager.swift */; };
+		C245B4892884AE0B00ABE387 /* AppsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4862884AE0B00ABE387 /* AppsManager.swift */; };
+		C245B48A2884AE0B00ABE387 /* ReviewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4872884AE0B00ABE387 /* ReviewManager.swift */; };
+		C245B48D2884AE3700ABE387 /* Bagbutik in Frameworks */ = {isa = PBXBuildFile; productRef = C245B48C2884AE3700ABE387 /* Bagbutik */; };
+		C245B4932884AE8700ABE387 /* AddCredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B48E2884AE8700ABE387 /* AddCredentialsView.swift */; };
+		C245B4942884AE8700ABE387 /* FullAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B48F2884AE8700ABE387 /* FullAppView.swift */; };
+		C245B4952884AE8700ABE387 /* AppDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4902884AE8700ABE387 /* AppDetailView.swift */; };
+		C245B4962884AE8700ABE387 /* SuggestionsConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4912884AE8700ABE387 /* SuggestionsConfigView.swift */; };
+		C245B4972884AE8700ABE387 /* DetailReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4922884AE8700ABE387 /* DetailReviewView.swift */; };
+		C245B49A2884B02100ABE387 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4992884B02100ABE387 /* SettingsSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		C245B4602884ACF600ABE387 /* SuperstarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperstarApp.swift; sourceTree = "<group>"; };
 		C245B4612884ACF600ABE387 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C245B4622884ACF700ABE387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		C245B4672884ACF700ABE387 /* Superstar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Superstar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C245B46D2884ACF700ABE387 /* Superstar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Superstar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C245B46F2884ACF700ABE387 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		C245B47F2884AD3000ABE387 /* Menubar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menubar.swift; sourceTree = "<group>"; };
+		C245B4852884AE0B00ABE387 /* CredentialsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsManager.swift; sourceTree = "<group>"; };
+		C245B4862884AE0B00ABE387 /* AppsManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppsManager.swift; sourceTree = "<group>"; };
+		C245B4872884AE0B00ABE387 /* ReviewManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewManager.swift; sourceTree = "<group>"; };
+		C245B48E2884AE8700ABE387 /* AddCredentialsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCredentialsView.swift; sourceTree = "<group>"; };
+		C245B48F2884AE8700ABE387 /* FullAppView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullAppView.swift; sourceTree = "<group>"; };
+		C245B4902884AE8700ABE387 /* AppDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDetailView.swift; sourceTree = "<group>"; };
+		C245B4912884AE8700ABE387 /* SuggestionsConfigView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionsConfigView.swift; sourceTree = "<group>"; };
+		C245B4922884AE8700ABE387 /* DetailReviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailReviewView.swift; sourceTree = "<group>"; };
+		C245B4992884B02100ABE387 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		C245B4642884ACF700ABE387 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C245B46A2884ACF700ABE387 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C245B48D2884AE3700ABE387 /* Bagbutik in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +56,7 @@
 		C245B45A2884ACF600ABE387 = {
 			isa = PBXGroup;
 			children = (
+				C245B4822884AD7D00ABE387 /* macOS */,
 				C245B45F2884ACF600ABE387 /* Shared */,
 				C245B46E2884ACF700ABE387 /* macOS */,
 				C245B4682884ACF700ABE387 /* Products */,
@@ -56,6 +68,7 @@
 			children = (
 				C245B4602884ACF600ABE387 /* SuperstarApp.swift */,
 				C245B4612884ACF600ABE387 /* ContentView.swift */,
+				C245B4842884AE0000ABE387 /* Managers */,
 				C245B4622884ACF700ABE387 /* Assets.xcassets */,
 			);
 			path = Shared;
@@ -64,7 +77,6 @@
 		C245B4682884ACF700ABE387 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C245B4672884ACF700ABE387 /* Superstar.app */,
 				C245B46D2884ACF700ABE387 /* Superstar.app */,
 			);
 			name = Products;
@@ -78,26 +90,58 @@
 			path = macOS;
 			sourceTree = "<group>";
 		};
+		C245B47E2884AD2B00ABE387 /* Menubar */ = {
+			isa = PBXGroup;
+			children = (
+				C245B47F2884AD3000ABE387 /* Menubar.swift */,
+			);
+			path = Menubar;
+			sourceTree = "<group>";
+		};
+		C245B4822884AD7D00ABE387 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				C245B47E2884AD2B00ABE387 /* Menubar */,
+				C245B4832884AD8400ABE387 /* main */,
+			);
+			name = macOS;
+			path = Shared/macOS;
+			sourceTree = "<group>";
+		};
+		C245B4832884AD8400ABE387 /* main */ = {
+			isa = PBXGroup;
+			children = (
+				C245B4902884AE8700ABE387 /* AppDetailView.swift */,
+				C245B4922884AE8700ABE387 /* DetailReviewView.swift */,
+				C245B48F2884AE8700ABE387 /* FullAppView.swift */,
+				C245B4982884B01500ABE387 /* Sheets */,
+			);
+			path = main;
+			sourceTree = "<group>";
+		};
+		C245B4842884AE0000ABE387 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				C245B4862884AE0B00ABE387 /* AppsManager.swift */,
+				C245B4852884AE0B00ABE387 /* CredentialsManager.swift */,
+				C245B4872884AE0B00ABE387 /* ReviewManager.swift */,
+			);
+			path = Managers;
+			sourceTree = "<group>";
+		};
+		C245B4982884B01500ABE387 /* Sheets */ = {
+			isa = PBXGroup;
+			children = (
+				C245B48E2884AE8700ABE387 /* AddCredentialsView.swift */,
+				C245B4992884B02100ABE387 /* SettingsSheet.swift */,
+				C245B4912884AE8700ABE387 /* SuggestionsConfigView.swift */,
+			);
+			path = Sheets;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C245B4662884ACF700ABE387 /* Superstar (iOS) */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C245B4782884ACF700ABE387 /* Build configuration list for PBXNativeTarget "Superstar (iOS)" */;
-			buildPhases = (
-				C245B4632884ACF700ABE387 /* Sources */,
-				C245B4642884ACF700ABE387 /* Frameworks */,
-				C245B4652884ACF700ABE387 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = "Superstar (iOS)";
-			productName = "Superstar (iOS)";
-			productReference = C245B4672884ACF700ABE387 /* Superstar.app */;
-			productType = "com.apple.product-type.application";
-		};
 		C245B46C2884ACF700ABE387 /* Superstar (macOS) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C245B47B2884ACF700ABE387 /* Build configuration list for PBXNativeTarget "Superstar (macOS)" */;
@@ -111,6 +155,9 @@
 			dependencies = (
 			);
 			name = "Superstar (macOS)";
+			packageProductDependencies = (
+				C245B48C2884AE3700ABE387 /* Bagbutik */,
+			);
 			productName = "Superstar (macOS)";
 			productReference = C245B46D2884ACF700ABE387 /* Superstar.app */;
 			productType = "com.apple.product-type.application";
@@ -125,9 +172,6 @@
 				LastSwiftUpdateCheck = 1330;
 				LastUpgradeCheck = 1330;
 				TargetAttributes = {
-					C245B4662884ACF700ABE387 = {
-						CreatedOnToolsVersion = 13.3;
-					};
 					C245B46C2884ACF700ABE387 = {
 						CreatedOnToolsVersion = 13.3;
 					};
@@ -142,25 +186,19 @@
 				Base,
 			);
 			mainGroup = C245B45A2884ACF600ABE387;
+			packageReferences = (
+				C245B48B2884AE3600ABE387 /* XCRemoteSwiftPackageReference "Bagbutik" */,
+			);
 			productRefGroup = C245B4682884ACF700ABE387 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C245B4662884ACF700ABE387 /* Superstar (iOS) */,
 				C245B46C2884ACF700ABE387 /* Superstar (macOS) */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		C245B4652884ACF700ABE387 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C245B4742884ACF700ABE387 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C245B46B2884ACF700ABE387 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -172,21 +210,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		C245B4632884ACF700ABE387 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				C245B4722884ACF700ABE387 /* ContentView.swift in Sources */,
-				C245B4702884ACF700ABE387 /* SuperstarApp.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		C245B4692884ACF700ABE387 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C245B49A2884B02100ABE387 /* SettingsSheet.swift in Sources */,
+				C245B4972884AE8700ABE387 /* DetailReviewView.swift in Sources */,
+				C245B4882884AE0B00ABE387 /* CredentialsManager.swift in Sources */,
 				C245B4732884ACF700ABE387 /* ContentView.swift in Sources */,
+				C245B4892884AE0B00ABE387 /* AppsManager.swift in Sources */,
+				C245B4942884AE8700ABE387 /* FullAppView.swift in Sources */,
+				C245B4952884AE8700ABE387 /* AppDetailView.swift in Sources */,
+				C245B48A2884AE0B00ABE387 /* ReviewManager.swift in Sources */,
+				C245B4962884AE8700ABE387 /* SuggestionsConfigView.swift in Sources */,
 				C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */,
+				C245B4932884AE8700ABE387 /* AddCredentialsView.swift in Sources */,
+				C245B4812884AD7100ABE387 /* Menubar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,67 +341,6 @@
 			};
 			name = Release;
 		};
-		C245B4792884ACF700ABE387 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8Q7TMPA46J;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.goodsnooze.Superstar;
-				PRODUCT_NAME = Superstar;
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C245B47A2884ACF700ABE387 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 8Q7TMPA46J;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.goodsnooze.Superstar;
-				PRODUCT_NAME = Superstar;
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		C245B47C2884ACF700ABE387 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -431,15 +409,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C245B4782884ACF700ABE387 /* Build configuration list for PBXNativeTarget "Superstar (iOS)" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C245B4792884ACF700ABE387 /* Debug */,
-				C245B47A2884ACF700ABE387 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		C245B47B2884ACF700ABE387 /* Build configuration list for PBXNativeTarget "Superstar (macOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -450,6 +419,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C245B48B2884AE3600ABE387 /* XCRemoteSwiftPackageReference "Bagbutik" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MortenGregersen/Bagbutik";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C245B48C2884AE3700ABE387 /* Bagbutik */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C245B48B2884AE3600ABE387 /* XCRemoteSwiftPackageReference "Bagbutik" */;
+			productName = Bagbutik;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C245B45B2884ACF600ABE387 /* Project object */;
 }

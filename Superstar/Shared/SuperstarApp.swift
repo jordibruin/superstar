@@ -9,9 +9,15 @@ import SwiftUI
 
 @main
 struct SuperstarApp: App {
+    
+    @NSApplicationDelegateAdaptor(StatusBarDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            FullAppView()
+                .frame(minWidth: 700, minHeight: 500)
         }
+        .windowToolbarStyle(.automatic)
+        .windowStyle(.titleBar)
     }
 }
