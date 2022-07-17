@@ -49,17 +49,10 @@ class AppsManager: ObservableObject {
             )
             self.foundApps = response.data
             
-//            appsMatchedWithIcons = []
-            
-            
-//            print("apps matched with icons count \(appsMatchedWithIcons.count))")
-            
             if appsMatchedWithIcons.isEmpty {
                 // Never got icons yet
                 // get the icons
-                
                 await getIcons()
-                
             }
             
             // Add apps to the list for retrieving icons

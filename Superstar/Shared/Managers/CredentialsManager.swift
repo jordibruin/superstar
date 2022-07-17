@@ -59,7 +59,6 @@ class CredentialsManager: ObservableObject {
             
             formattedKey = begin + middle + end
         } else {
-            print("ready to go")
             formattedKey = privateKey
         }
         

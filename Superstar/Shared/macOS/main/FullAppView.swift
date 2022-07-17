@@ -55,6 +55,14 @@ struct FullAppView: View {
                                         Text(app.attributes?.name ?? "No Name")
                                     }
                                 }
+//                                .contextMenu {
+//                                    Button {
+//                                        
+//                                    } label: {
+//                                        Text("Hide")
+//                                    }
+//
+//                                }
                             }
                         }
                         .overlay(
