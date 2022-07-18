@@ -13,6 +13,7 @@ struct AppDetailView: View {
     @ObservedObject var appsManager: AppsManager
     @ObservedObject var reviewManager: ReviewManager
     let app: Bagbutik.App
+    @Binding var selectMultiple: Bool
     
     var body: some View {
         VStack {
@@ -51,14 +52,34 @@ struct AppDetailView: View {
         }
     }
     
+    var columns: [GridItem] = [
+        GridItem(.adaptive(minimum: 270, maximum: 400), spacing: 20)
+    ]
+    
     var reviewsList: some View {
-        VStack(spacing: 32) {
-            ForEach(reviewManager.retrievedReviews, id: \.id) { review in
-                DetailReviewView(review: review, reviewManager: reviewManager)
-            }
-            .padding(.horizontal, 40)
-        }
-        .padding(.vertical, 40)
+        LazyVGrid(
+           columns: columns,
+           alignment: .center,
+           spacing: 12
+       ) {
+           ForEach(reviewManager.retrievedReviews, id: \.id) { review in
+               DetailReviewView(
+                review: review,
+                reviewManager: reviewManager,
+                selectMultiple: $selectMultiple
+               )
+           }
+       }
+       .padding(12)
+       .padding(.vertical, 40)
+        
+        
+//        VStack(spacing: 32) {
+//            ForEach(reviewManager.retrievedReviews, id: \.id) { review in
+//                DetailReviewView(review: review, reviewManager: reviewManager)
+//            }
+//            .padding(.horizontal, 40)
+//        }
     }
     
     var header: some View {
@@ -76,15 +97,17 @@ struct AppDetailView: View {
             
             VStack(alignment: .leading) {
                 Text(app.attributes?.name ?? "")
-                        .font(.title)
+                    .font(.system(.title, design: .rounded))
+                    .bold()
                 if !reviewManager.loadingReviews {
-                    Text("\(reviewManager.retrievedReviews.count) ratings")
+                    Text("\(reviewManager.retrievedReviews.count) unanswered reviews")
+                        .font(.system(.title2, design: .rounded))
                 }
             }
             
             Spacer()
         }
-        .padding(12)
+        .padding()
     }
     
 }

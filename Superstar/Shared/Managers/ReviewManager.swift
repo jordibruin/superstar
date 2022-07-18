@@ -61,10 +61,10 @@ class ReviewManager: ObservableObject {
     }
     
     @MainActor
-    func replyTo(review: CustomerReview, with response: String) {
-        Task {
+    func replyTo(review: CustomerReview, with response: String) async -> Bool {
+//        Task {
             do {
-                guard let jwt = CredentialsManager.shared.getJWT(), let service = try? BagbutikService(jwt: jwt) else { return }
+                guard let jwt = CredentialsManager.shared.getJWT(), let service = try? BagbutikService(jwt: jwt) else { return false }
                 
                 let requestBody = CustomerReviewResponseV1CreateRequest.init(
                     data: CustomerReviewResponseV1CreateRequest.Data.init(attributes: .init(responseBody: response), relationships: .init(review: .init(data: .init(id: review.id)))))
@@ -75,13 +75,17 @@ class ReviewManager: ObservableObject {
                 
                 if let state = response.data.attributes?.state {
                     if state == .pendingPublish {
-                        remove(review: review)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            self.remove(review: review)
+                        }
                     }
                 }
+                return true
             } catch {
                 print(error.localizedDescription)
+                return false
             }
-        }
+//        }
     }
     
     func remove(review: CustomerReview) {

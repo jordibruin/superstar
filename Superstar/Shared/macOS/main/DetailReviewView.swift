@@ -15,96 +15,198 @@ struct DetailReviewView: View {
     
     @State var showReplyField = false
     @State var replyText = ""
-    
+    @Binding var selectMultiple: Bool
     @FocusState private var isReplyFocused: Bool
+    
+    @State var selectedInMultiple = false
+    
+    @State var succesfullyReplied = false
+    @State var selectedItem: Int = 0
+    @AppStorage("suggestions") var suggestions: [Suggestion] = []
+    
+    @State var isReplying = false
     
     var body: some View {
         VStack(alignment: .leading) {
-        
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        starsFor(review: review)
-                            .font(.system(.title2, design: .rounded))
-                        
-                        Spacer()
-                        
-                        HStack {
-                            Text(review.attributes?.territory?.flag ?? "")
-                            Text(review.attributes?.reviewerNickname ?? "")
-                                .opacity(0.8)
-                            Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
-                                .opacity(0.8)
-                        }
-                        .font(.system(.subheadline, design: .rounded))
+            VStack(alignment: .leading) {
+                header
+
+                ScrollView {
+                    Text(review.attributes?.body ?? "")
+                        .font(.system(showReplyField ? .body : .title2, design: .rounded))
+                        .padding(.bottom)
+                        .minimumScaleFactor(0.7)
+                }
+                Spacer()
+                suggestionsAndReply
+            }
+            .padding([.top, .horizontal])
+            .padding(.bottom, showReplyField ? 4 : 20)
+
+            if showReplyField {
+                replyArea
+            }
+//            Button {
+//
+//            } label: {
+//                Text("Tappp")
+//            }
+
+        }
+        .frame(height: 300)
+        .overlay(
+            ZStack {
+                Color(.controlBackgroundColor)
+                VStack {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                        .font(.system(size: 60))
+                        .opacity(succesfullyReplied ? 1 : 0)
+                        .animation(.default, value: isReplying)
+                    
+                    if isReplying {
+                        ProgressView()
                     }
                     
-//                    Text("This is the title of the review")
-                    Text(review.attributes?.title ?? "")
+                    Text(isReplying ? "Sending Reply..." : "Reply sent")
                         .font(.system(.title, design: .rounded))
                         .bold()
                 }
-                
-//                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
-                Text(review.attributes?.body ?? "")
-                    .font(.system(.title, design: .rounded))
-                    .padding(.vertical, 4)
-                Spacer()
-                
-                
-            
             }
-            .padding()
-            
-            replyArea
-            
-        }
-//        .padding()
+            .opacity(isReplying || succesfullyReplied ? 1 : 0)
+        )
         .background(Color(.controlBackgroundColor))
-        .cornerRadius(20)
-        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 0)
-        .onAppear() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
-                isReplyFocused = true
-            }
-        }
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 0)
     }
     
-    @State var selectedItem: Int = 0
-    
-    @AppStorage("suggestions") var suggestions: [Suggestion] = []
-        
-    var suggestionsView: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack {
-                ForEach(suggestions) { suggestion in
-                    Button {
-                        showReplyField = true
-                        replyText = suggestion.text
-                    } label: {
-                        Text(suggestion.title.capitalized)
-                            .padding(.vertical, 6)
-                            .padding(.horizontal, 12)
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(12)
-                    }
-                    .buttonStyle(.plain)
+    var suggestionsAndReply: some View {
+        HStack {
+            suggestionsPicker
+
+            Spacer()
+
+            if !showReplyField {
+                Button {
+                    showReplyField = true
+                    isReplyFocused = true
+                } label: {
+                    Label("Reply", systemImage: "arrowshape.turn.up.left.fill")
+
                 }
+            } else {
+
+                Button {
+                    showReplyField = false
+                    replyText = ""
+                } label: {
+                    Text("Cancel")
+                }
+
+                Button {
+                    Task {
+                        isReplying = true
+                        let replied = await reviewManager.replyTo(review: review, with: replyText)
+                        
+                        isReplying = false
+                        if replied {
+                            print("replied succesfully")
+                            succesfullyReplied = true
+                        } else {
+                            print("could not reply")
+                            succesfullyReplied = false
+                        }
+                    }
+                } label: {
+                    Text("Send")
+                }
+                .disabled(replyText.isEmpty)
             }
-            .padding([.horizontal, .bottom])
         }
     }
+    
+    var suggestionsPicker: some View {
+        Menu {
+            ForEach(suggestions) {  suggestion in
+                Button {
+                    showReplyField = true
+                    replyText = suggestion.text
+                } label: {
+                    Text(suggestion.title.capitalized)
+                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                }
+                .buttonStyle(.plain)
+            }
+        } label: {
+            Text("Suggestions")
+        }
+        .menuStyle(.borderlessButton)
+        .frame(width: 110)
+        .padding(.vertical, 4)
+        .padding(.horizontal, 6)
+        .background(RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Color.secondary.opacity(0.1)))
+    }
+    
+    var header: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    if selectMultiple {
+                        multipleSelector
+                    }
+                    starsFor(review: review)
+                        .font(.system(showReplyField ? .body :.title3, design: .rounded))
+                    Spacer()
+                    metadata
+                }
+                
+                Text(review.attributes?.title ?? "")
+                    .font(.system(showReplyField ? .body : .title2, design: .rounded))
+                    .bold()
+                    .padding(.leading, 2)
+            }
+            
+        }
+    }
+    
+    var multipleSelector: some View {
+        Button {
+            selectedInMultiple.toggle()
+        } label: {
+            Image(systemName: selectedInMultiple ? "circle.fill" : "circle")
+                .foregroundColor(.blue)
+                .font(.title2)
+        }
+        .buttonStyle(.plain)
+    }
+    
+    var metadata: some View {
+        VStack(alignment: .trailing) {
+            HStack {
+                Text(review.attributes?.territory?.flag ?? "")
+                Text(review.attributes?.reviewerNickname ?? "")
+                    .opacity(0.8)
+            }
+            Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
+                .opacity(0.8)
+        }
+        .font(.system(.subheadline, design: .rounded))
+    }
+    
     
     var replyArea: some View {
         VStack {
             HStack {
                 ZStack(alignment: .bottomLeading) {
-
                     Color(.controlBackgroundColor)
                         .frame(height: replyText.count < 50 ? 44 : replyText.count < 110 ? 70 : 110)
                     
                     TextEditor(text: $replyText)
+                        .focused($isReplyFocused)
                         .padding(.leading, 12)
                         .padding(.trailing)
                         .padding(.vertical, 8)
@@ -119,42 +221,11 @@ struct DetailReviewView: View {
                                 .opacity(replyText.isEmpty ? 1 : 0)
                                 .frame(height: replyText.count < 50 ? 44 : replyText.count < 110 ? 70 : 110)
                         )
-                        .font(.title)
-//                    TextEditor(text: $replyText)
-//                        .focused($isReplyFocused)
-//                        .frame(maxHeight: 200)
-
-//                        .frame(height: 200)
-                    
-//                    Text("Custom Reply")
-//                        .font(.system(.title3, design: .rounded))
-//                        .padding(.leading, 12)
-//                        .opacity(0.5)
-//                        .allowsHitTesting(false)
-//                        .opacity(replyText.isEmpty ? 1 : 0)
+                        .font(.title3)
                 }
-//                .padding(8)
-                .cornerRadius(30)
-//                .frame(height: replyText.count < 70 ? 32 : replyText.count < 140 ? 70 : 110)
-//                .lineSpacing(10)
-                .padding(.top, 8)
-                
-                Spacer()
-                Button {
-                    reviewManager.replyTo(review: review, with: replyText)
-                } label: {
-                    Text("REPLY")
-                        .padding(8)
-                        .padding(.horizontal, 6)
-                        .background(Color.blue)
-                        .cornerRadius(12)
-                        .foregroundColor(.white)
-                }
-                .buttonStyle(.plain)
+                .cornerRadius(8)
             }
             .padding(10)
-            
-            suggestionsView
         }
         .background(Color.gray.opacity(0.2))
     }
@@ -164,28 +235,29 @@ struct DetailReviewView: View {
         
         return HStack(spacing: 2) {
             ForEach(0..<realRating, id: \.self) { star in
-                Text("⭐️")
+                Image(systemName: "star.fill")
+                    .foregroundColor(.orange)
             }
             ForEach(realRating..<5, id: \.self) { star in
-                Text("⭐️")
-                    .opacity(0.4)
+                Image(systemName: "star")
+                    .foregroundColor(.orange)
             }
         }
     }
     
 }
 
-struct DetailReviewView_Previews: PreviewProvider {
-    static var previews: some View {
-        DetailReviewView(
-            review: CustomerReview(
-                id: "",
-                links: ResourceLinks(self: "")
-            ),
-            reviewManager: ReviewManager()
-        )
-    }
-}
+//struct DetailReviewView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        DetailReviewView(
+//            review: CustomerReview(
+//                id: "",
+//                links: ResourceLinks(self: "")
+//            ),
+//            reviewManager: ReviewManager()
+//        )
+//    }
+//}
 
 struct Suggestion: Identifiable, Codable {
     
@@ -213,10 +285,10 @@ extension TerritoryCode {
 }
 
 extension NSTextView {
-  open override var frame: CGRect {
-    didSet {
-      backgroundColor = .clear
-      drawsBackground = true
+    open override var frame: CGRect {
+        didSet {
+            backgroundColor = .clear
+            drawsBackground = true
+        }
     }
-  }
 }

@@ -21,6 +21,7 @@
 		C245B4962884AE8700ABE387 /* SuggestionsConfigView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4912884AE8700ABE387 /* SuggestionsConfigView.swift */; };
 		C245B4972884AE8700ABE387 /* DetailReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4922884AE8700ABE387 /* DetailReviewView.swift */; };
 		C245B49A2884B02100ABE387 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4992884B02100ABE387 /* SettingsSheet.swift */; };
+		C245B49C2885513600ABE387 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B49B2885513600ABE387 /* EmptyStateView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		C245B4912884AE8700ABE387 /* SuggestionsConfigView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SuggestionsConfigView.swift; sourceTree = "<group>"; };
 		C245B4922884AE8700ABE387 /* DetailReviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailReviewView.swift; sourceTree = "<group>"; };
 		C245B4992884B02100ABE387 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
+		C245B49B2885513600ABE387 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +116,7 @@
 				C245B4902884AE8700ABE387 /* AppDetailView.swift */,
 				C245B4922884AE8700ABE387 /* DetailReviewView.swift */,
 				C245B48F2884AE8700ABE387 /* FullAppView.swift */,
+				C245B49B2885513600ABE387 /* EmptyStateView.swift */,
 				C245B4982884B01500ABE387 /* Sheets */,
 			);
 			path = main;
@@ -219,6 +222,7 @@
 				C245B4882884AE0B00ABE387 /* CredentialsManager.swift in Sources */,
 				C245B4732884ACF700ABE387 /* ContentView.swift in Sources */,
 				C245B4892884AE0B00ABE387 /* AppsManager.swift in Sources */,
+				C245B49C2885513600ABE387 /* EmptyStateView.swift in Sources */,
 				C245B4942884AE8700ABE387 /* FullAppView.swift in Sources */,
 				C245B4952884AE8700ABE387 /* AppDetailView.swift in Sources */,
 				C245B48A2884AE0B00ABE387 /* ReviewManager.swift in Sources */,

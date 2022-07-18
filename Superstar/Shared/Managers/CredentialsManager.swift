@@ -37,9 +37,9 @@ class CredentialsManager: ObservableObject {
         self.issuerId = issuerIDStorage
         self.privateKey = privateKeyStorage
     }
+    
     static let shared = CredentialsManager()
     
-    @Published var updatedCredentials: UUID = UUID()
     
     func allCredentialsAvailable() -> Bool {
         return !keyID.isEmpty && !issuerId.isEmpty && !privateKey.isEmpty && privateKey.count == 252 || privateKey.count == 257
