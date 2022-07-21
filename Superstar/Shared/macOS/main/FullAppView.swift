@@ -52,41 +52,7 @@ struct FullAppView: View {
     
     
     var toolbarItems: some ToolbarContent {
-        Group {
-            
-            ToolbarItem(placement: .automatic) {
-                Menu {
-                    ForEach(1..<6, id: \.self) { index in
-                        Button {
-                            if let index = selectedRatings.firstIndex(of: index) {
-                                selectedRatings.remove(at: index)
-                            } else {
-                                selectedRatings.append(index)
-                            }
-                        } label: {
-                            Label("\(index) star\(index > 1 ? "s" : "")", systemImage: "checkmark")
-                            
-                            //                            HStack {
-                            //                                Text("\(index) star\(index > 1 ? "s" : "")")
-                            //
-                            //                                if selectedRatings.contains(index) {
-                            //                                    Image(systemName: "checkmark")
-                            //                                }
-                            //                            }
-                        }
-                        
-                    }
-                } label: {
-                    Text("Sort")
-                }
-            }
-            
-            //            ToolbarItem(placement: .automatic) {
-            //                Toggle(isOn: $selectMultiple) {
-            //                    Text("Multi-Select")
-            //                }
-            //            }
-            
+        Group {    
             ToolbarItem(placement: .automatic) {
                 Toggle(isOn: $autoReply) {
                     Text("Auto Reply")
@@ -141,7 +107,7 @@ struct FullAppView: View {
 //                            } label: {
 //                                Text("Load Icons")
 //                            }
-//                            
+//
 //                        } header: {
 //                            Text("Settings")
 //                        }

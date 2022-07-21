@@ -180,7 +180,7 @@ struct MenuBarReview: View {
                                 .padding(.vertical, 8)
                                 .allowsHitTesting(false)
                                 .opacity(replyText.isEmpty ? 1 : 0)
-                                .frame(height: replyText.count < 50 ? 44 : replyText.count < 110 ? 70 : 110)
+                                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
                         )
                         .font(.title3)
                 }

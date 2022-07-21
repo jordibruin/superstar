@@ -16,35 +16,55 @@ struct AppDetailView: View {
     @Binding var selectMultiple: Bool
     @Binding var autoReply: Bool
     
+    @State var selectedReview: CustomerReview?
+    
+    @AppStorage("pendingPublications") var pendingPublications: [String] = []
+    
     var body: some View {
-        VStack {
-            header
-            
-            ScrollView {
-                if reviewManager.loadingReviews {
-                    loading
-                } else {
-                    if reviewManager.retrievedReviews.isEmpty {
-                        noReviews
+//        HStack(spacing: 0) {
+        HSplitView {
+            VStack(spacing: 0) {
+                header
+                    if reviewManager.loadingReviews {
+                        loading
+                            .frame(maxWidth: .infinity)
                     } else {
-                        reviewsList
-                            .animation(.default, value: reviewManager.retrievedReviews)
+                        ScrollView {
+                            if reviewManager.retrievedReviews.isEmpty {
+                                noReviews
+                            } else {
+                                reviewsList
+                                    .animation(.default, value: reviewManager.retrievedReviews)
+                            }
+                        }
+                        .background(Color(.controlBackgroundColor))
                     }
-                }
+            }
+            .background(Color(.controlBackgroundColor))
+            .onTapGesture {
+                selectedReview = nil
+            }
+            
+            if let selectedReview = selectedReview {
+                FullReviewSide(review: selectedReview)
             }
         }
-        
         .onAppear {
-            Task {
-                await reviewManager.getReviewsFor(id: app.id)
-            }
+            Task { await reviewManager.getReviewsFor(id: app.id) }
         }
     }
     
     var loading: some View {
-        VStack {
-            ProgressView()
-            Text("Loading Reviews")
+        ZStack {
+            Color(.controlBackgroundColor)
+            VStack {
+                Spacer()
+                VStack {
+                    ProgressView()
+                    Text("Loading Reviews")
+                }
+                Spacer()
+            }
         }
     }
     
@@ -59,31 +79,48 @@ struct AppDetailView: View {
     ]
     
     var reviewsList: some View {
-        LazyVGrid(
-            columns: columns,
-            alignment: .center,
-            spacing: 12
-        ) {
+        ScrollView {
             ForEach(reviewManager.retrievedReviews, id: \.id) { review in
-                DetailReviewView(
-                    review: review,
-                    reviewManager: reviewManager,
-                    selectMultiple: $selectMultiple,
-                    autoReply: $autoReply
-                )
+                Button {
+                    selectedReview = review
+                } label: {
+                    DetailReviewView(
+                        review: review,
+                        reviewManager: reviewManager,
+                        selectMultiple: $selectMultiple,
+                        autoReply: $autoReply
+                    )
+                }
+                .buttonStyle(.plain)
             }
         }
-        .padding(12)
-        .padding(.vertical, 40)
+//        LazyVGrid(
+//            columns: columns,
+//            alignment: .center,
+//            spacing: 12
+//        ) {
+//            ForEach(reviewManager.retrievedReviews, id: \.id) { review in
+//                DetailReviewView(
+//                    review: review,
+//                    reviewManager: reviewManager,
+//                    selectMultiple: $selectMultiple,
+//                    autoReply: $autoReply
+//                )
+//                .contentShape(Rectangle())
+//                .onTapGesture {
+//                    selectedReview = review
+//                }
+//            }
+//        }
+//        .padding(12)
+//        .padding(.vertical, 40)
+//        .onTapGesture {
+//            selectedReview = nil
+//        }
         
-        
-        //        VStack(spacing: 32) {
-        //            ForEach(reviewManager.retrievedReviews, id: \.id) { review in
-        //                DetailReviewView(review: review, reviewManager: reviewManager)
-        //            }
-        //            .padding(.horizontal, 40)
-        //        }
     }
+    
+    
     
     var header: some View {
         HStack {
@@ -109,7 +146,8 @@ struct AppDetailView: View {
                     .font(.system(.title, design: .rounded))
                     .bold()
                 if !reviewManager.loadingReviews {
-                    Text("\(reviewManager.retrievedReviews.count) unanswered reviews")
+                    
+                    Text("\(unansweredReviewCount) unanswered reviews")
                         .font(.system(.title2, design: .rounded))
                 }
             }
@@ -117,6 +155,11 @@ struct AppDetailView: View {
             Spacer()
         }
         .padding()
+        .background(Color(.controlBackgroundColor))
+    }
+    
+    var unansweredReviewCount: Int {
+        return reviewManager.retrievedReviews.filter { !pendingPublications.contains($0.id) }.count
     }
     
 }

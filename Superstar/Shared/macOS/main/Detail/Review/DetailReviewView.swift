@@ -37,21 +37,24 @@ struct DetailReviewView: View {
                 
                 ScrollView {
                     Text(review.attributes?.body ?? "")
-                        .font(.system(showReplyField ? .body : .title2, design: .rounded))
+                        .font(.system(.body, design: .rounded))
                         .padding(.bottom)
                         .minimumScaleFactor(0.7)
-                        .textSelection(.enabled)
+//                        .textSelection(.enabled)
                 }
                 Spacer()
                 suggestionsAndReply
             }
             .padding([.top, .horizontal])
             .padding(.bottom, showReplyField ? 4 : 20)
-
+            
             if showReplyField {
                 replyArea
             }
         }
+        .sheet(isPresented: $showSuggestionsSheet, content: {
+            SuggestionsConfigView(showSheet: $showSuggestionsSheet)
+        })
         .frame(height: 300)
         .overlay(
             ZStack {
@@ -74,9 +77,10 @@ struct DetailReviewView: View {
             }
             .opacity(isReplying || succesfullyReplied ? 1 : 0)
         )
-        .background(Color(.controlBackgroundColor))
+        .background(Color.gray.opacity(0.1))
+        .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
         .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 0)
+        
         .onAppear {
             if pendingPublications.contains(review.id) {
                 succesfullyReplied = true
@@ -135,6 +139,8 @@ struct DetailReviewView: View {
         }
     }
     
+    @State var showSuggestionsSheet = false
+    
     var suggestionsPicker: some View {
         Menu {
             ForEach(suggestions) {  suggestion in
@@ -162,6 +168,39 @@ struct DetailReviewView: View {
         } label: {
             Text("Suggestions")
         }
+        .onTapGesture {
+            if suggestions.isEmpty {
+                showSuggestionsSheet = true
+            }
+        }
+
+
+//        Menu {
+//            ForEach(suggestions) {  suggestion in
+//                Button {
+//                    replyText = suggestion.text
+//
+//                    if autoReply {
+//                        print("we should automatically sent it now")
+//                        Task {
+//                            await respondToReview()
+//                        }
+//                    } else {
+//                        showReplyField = true
+//                    }
+//                } label: {
+//                    Text(suggestion.title.capitalized)
+//                        .padding(.vertical, 6)
+//                        .padding(.horizontal, 12)
+//                        .background(Color.blue)
+//                        .foregroundColor(.white)
+//                        .cornerRadius(12)
+//                }
+//                .buttonStyle(.plain)
+//            }
+//        } label: {
+//            Text("Suggestions")
+//        }
         .menuStyle(.borderlessButton)
         .frame(width: 110)
         .padding(.vertical, 4)
@@ -173,17 +212,14 @@ struct DetailReviewView: View {
         VStack(alignment: .leading, spacing: 8) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    if selectMultiple {
-                        multipleSelector
-                    }
                     starsFor(review: review)
-                        .font(.system(showReplyField ? .body :.title3, design: .rounded))
+                        .font(.system(.body, design: .rounded))
                     Spacer()
                     metadata
                 }
                 
                 Text(review.attributes?.title ?? "")
-                    .font(.system(showReplyField ? .body : .title2, design: .rounded))
+                    .font(.system(.body, design: .rounded))
                     .bold()
                     .padding(.leading, 2)
             }
@@ -191,16 +227,6 @@ struct DetailReviewView: View {
         }
     }
     
-    var multipleSelector: some View {
-        Button {
-            selectedInMultiple.toggle()
-        } label: {
-            Image(systemName: selectedInMultiple ? "circle.fill" : "circle")
-                .foregroundColor(.blue)
-                .font(.title2)
-        }
-        .buttonStyle(.plain)
-    }
     
     var metadata: some View {
         VStack(alignment: .trailing) {
@@ -221,14 +247,14 @@ struct DetailReviewView: View {
             HStack {
                 ZStack(alignment: .bottomLeading) {
                     Color(.controlBackgroundColor)
-                        .frame(height: replyText.count < 50 ? 44 : replyText.count < 110 ? 70 : 110)
+                        .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
                     
                     TextEditor(text: $replyText)
                         .focused($isReplyFocused)
                         .padding(.leading, 12)
                         .padding(.trailing)
                         .padding(.vertical, 8)
-                        .frame(height: replyText.count < 50 ? 44 : replyText.count < 110 ? 70 : 110)
+                        .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
                         .overlay(
                             TextEditor(text: .constant("Custom Reply"))
                                 .opacity(0.4)
@@ -237,13 +263,11 @@ struct DetailReviewView: View {
                                 .padding(.vertical, 8)
                                 .allowsHitTesting(false)
                                 .opacity(replyText.isEmpty ? 1 : 0)
-                                .frame(height: replyText.count < 50 ? 44 : replyText.count < 110 ? 70 : 110)
+                                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
                         )
                         .font(.title3)
                 }
-                .cornerRadius(8)
             }
-            .padding(10)
         }
         .background(Color.gray.opacity(0.2))
     }

@@ -85,7 +85,7 @@ struct SettingsSheet: View {
     var menuBarToggle: some View {
         VStack(alignment: .leading) {
             Toggle(isOn: $menuBarVisible) {
-                Text("🌟 Show Menu Bar icon")
+                Text("Show Menu Bar icon")
                     .font(.system(.body, design: .rounded))
             }
             .onChange(of: menuBarVisible) { menuBarVisible in

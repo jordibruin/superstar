@@ -43,9 +43,13 @@ struct SuggestionsConfigView: View {
                             }
                             selection = nil
                         } label: {
-                            Image(systemName: "trash.fill")
-                                .padding(.vertical, 4)
+                            HStack {
+                                Spacer()
+                                Image(systemName: "trash.fill")
+                                Spacer()
+                            }
                         }
+                        .buttonStyle(.plain)
                     }
                     .width(60)
                 }
@@ -65,11 +69,12 @@ struct SuggestionsConfigView: View {
 //
 //                    }
                 } else {
-                    HStack {
+                    HStack(alignment: .top) {
                         TextField("Title", text: $title)
                             .frame(width: 150)
-                        TextField("Text", text: $text)
-    //                    Text("\(appId)")
+                        
+                        textEditors
+
                         Button {
                             suggestions.append(Suggestion(title: title, text: text, appId: 0))
                             title = ""
@@ -98,6 +103,28 @@ struct SuggestionsConfigView: View {
                 Color.gray.opacity(0.2)
             )
         
+    }
+    
+    var textEditors: some View {
+        ZStack {
+            TextEditor(text: $text)
+                .background(Color(.controlBackgroundColor))
+//                .padding(.leading, 12)
+//                .padding(.trailing)
+//                .padding(.vertical, 8)
+                .frame(height: 80)
+                .overlay(
+                    TextEditor(text: .constant("Response Text"))
+                        .background(Color(.controlBackgroundColor))
+                        .opacity(0.4)
+//                        .padding(.leading, 12)
+//                        .padding(.trailing)
+//                        .padding(.vertical, 8)
+                        .allowsHitTesting(false)
+                        .opacity(text.isEmpty ? 1 : 0)
+                        .frame(height: 80)
+                )
+        }
     }
 }
 

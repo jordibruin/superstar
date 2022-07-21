@@ -51,7 +51,7 @@ struct AddCredentialsView: View {
             
                 .font(.system(.title3, design: .rounded))
                 .bold()
-            Text("Go to https://appstoreconnect.apple.com/access/api and create your own key. This is also the page to find your private key ID and the issuer ID.")
+            Text("Go to https://appstoreconnect.apple.com/access/api and create a new API key. Make sure to give the key Admin access (I've filed a FB to also allow users to make a Customer Support role. Once you've made the key copy the keyID and the issuerID as well.")
                 .font(.system(.caption, design: .rounded))
         }
     }
@@ -62,7 +62,7 @@ struct AddCredentialsView: View {
             Button {
                 dismiss()
             } label: {
-                Text("Close")
+                Text("Save Credentials")
             }
         }
     }
@@ -96,7 +96,7 @@ struct AddCredentialsView: View {
                 .font(.caption)
             
             TextEditor(text: $credentials.privateKey)
-                .frame(width: 500, height: 100)
+                .frame(width: 300, height: 100)
                 .background(Color.gray.opacity(0.1))
         }
     }
