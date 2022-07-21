@@ -7,7 +7,7 @@
 
 import Foundation
 import Bagbutik
-
+import SwiftUI
 
 extension Bagbutik.CustomerReview: Equatable {
     public static func == (lhs: Bagbutik.CustomerReview, rhs: Bagbutik.CustomerReview) -> Bool {
@@ -21,6 +21,7 @@ class ReviewManager: ObservableObject {
     @Published var retrievedReviews: [Bagbutik.CustomerReview] = []
     @Published var loadingReviews = false
     
+    
     @MainActor
     func getReviewsFor(id: String) async {
         loadingReviews = true
@@ -30,24 +31,45 @@ class ReviewManager: ObservableObject {
             let response = try await service.request(
                 .listCustomerReviewsForAppV1(
                     id: id,
-                    exists: [.publishedResponse(false)],
-                    sorts: [.createdDateAscending]
+                    exists: [.publishedResponse(false),],
+                    sorts: [.createdDateDescending]
                 )
             )
 
-//            var reviewsWithoutResponse: [CustomerReview] = []
-//
+            var reviewsWithoutResponse: [CustomerReview] = []
+
 //            for review in response.data {
-//                if let responseId = review.relationships?.response?.data?.id {
-//                    let resp = try await service.request(
-//                        .getResponseForCustomerReviewV1(id: review.id)
-//                    )
+//                print("review")
+//                print("----")
+////                print(review)
+//                print("----XXXXXXXXXX")
+//                print(review.relationships?.response)
+//                print(review.relationships?.response?.data)
+//                print("----VCBCBCVCCVC")
+////                if review.relationships?.response == nil {
+////                    print("no response")
+////                    continue
+////                }
+////                print(review.relationships?.response)
 //
-//                    print("response?:")
-//                    print(resp)
-//                } else {
-//                    reviewsWithoutResponse.append(review)
-//                }
+//                let resp = try await service.request(
+//                    .getResponseForCustomerReviewV1(id: review.id)
+//                )
+//
+////                print("response?:")
+//                print(resp)
+////                print(resp.data.attributes?.state)
+////                if let responseId = review.relationships?.response?.data?.id {
+////                    let resp = try await service.request(
+////                        .getResponseForCustomerReviewV1(id: review.id)
+////                    )
+////
+////                    print("response?:")
+////                    print(resp)
+////                    print(resp.data.attributes?.state)
+////                } else {
+//////                    reviewsWithoutResponse.append(review)
+////                }
 //            }
             
             self.retrievedReviews = response.data //.filter( { $0.relationships?.response?.data?.id == nil } )
@@ -88,9 +110,13 @@ class ReviewManager: ObservableObject {
 //        }
     }
     
+    @AppStorage("pendingPublications") var pendingPublications: [String] = []
+    
     func remove(review: CustomerReview) {
         if let index = retrievedReviews.firstIndex(where: { review.id == $0.id }) {
-            retrievedReviews.remove(at: index)
+            
+            pendingPublications.append(review.id)
+//            retrievedReviews.remove(at: index)
         }
     }
     

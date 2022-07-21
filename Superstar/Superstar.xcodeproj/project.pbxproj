@@ -55,6 +55,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C23B545B28899F27006EB4B2 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				C245B4902884AE8700ABE387 /* AppDetailView.swift */,
+				C23B545C28899F2F006EB4B2 /* Review */,
+			);
+			path = Detail;
+			sourceTree = "<group>";
+		};
+		C23B545C28899F2F006EB4B2 /* Review */ = {
+			isa = PBXGroup;
+			children = (
+				C245B4922884AE8700ABE387 /* DetailReviewView.swift */,
+			);
+			path = Review;
+			sourceTree = "<group>";
+		};
 		C245B45A2884ACF600ABE387 = {
 			isa = PBXGroup;
 			children = (
@@ -113,10 +130,9 @@
 		C245B4832884AD8400ABE387 /* main */ = {
 			isa = PBXGroup;
 			children = (
-				C245B4902884AE8700ABE387 /* AppDetailView.swift */,
-				C245B4922884AE8700ABE387 /* DetailReviewView.swift */,
 				C245B48F2884AE8700ABE387 /* FullAppView.swift */,
 				C245B49B2885513600ABE387 /* EmptyStateView.swift */,
+				C23B545B28899F27006EB4B2 /* Detail */,
 				C245B4982884B01500ABE387 /* Sheets */,
 			);
 			path = main;

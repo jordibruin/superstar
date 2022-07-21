@@ -34,6 +34,8 @@ struct FullAppView: View {
             .sheet(isPresented: $showSettings, content: {
                 SettingsSheet(appsManager: appsManager)
             })
+            .onAppear {
+            }
             .onChange(of: credentials.allCredentialsAvailable()) { available in
                 if available {
                     Task {
@@ -151,7 +153,8 @@ struct FullAppView: View {
                                         appsManager: appsManager,
                                         reviewManager: reviewManager,
                                         app: app,
-                                        selectMultiple: $selectMultiple
+                                        selectMultiple: $selectMultiple,
+                                        autoReply: $autoReply
                                     )
                                 } label: {
                                     HStack {
@@ -197,7 +200,6 @@ struct FullAppView: View {
             }
         }
     }
-    
 }
 
 

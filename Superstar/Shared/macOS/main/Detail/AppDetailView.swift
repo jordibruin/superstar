@@ -14,6 +14,7 @@ struct AppDetailView: View {
     @ObservedObject var reviewManager: ReviewManager
     let app: Bagbutik.App
     @Binding var selectMultiple: Bool
+    @Binding var autoReply: Bool
     
     var body: some View {
         VStack {
@@ -27,6 +28,7 @@ struct AppDetailView: View {
                         noReviews
                     } else {
                         reviewsList
+                            .animation(.default, value: reviewManager.retrievedReviews)
                     }
                 }
             }
@@ -66,7 +68,8 @@ struct AppDetailView: View {
                DetailReviewView(
                 review: review,
                 reviewManager: reviewManager,
-                selectMultiple: $selectMultiple
+                selectMultiple: $selectMultiple,
+                autoReply: $autoReply
                )
            }
        }

@@ -26,16 +26,21 @@ struct DetailReviewView: View {
     
     @State var isReplying = false
     
+    @AppStorage("pendingPublications") var pendingPublications: [String] = []
+    
+    @Binding var autoReply: Bool
+    
     var body: some View {
         VStack(alignment: .leading) {
             VStack(alignment: .leading) {
                 header
-
+                
                 ScrollView {
                     Text(review.attributes?.body ?? "")
                         .font(.system(showReplyField ? .body : .title2, design: .rounded))
                         .padding(.bottom)
                         .minimumScaleFactor(0.7)
+                        .textSelection(.enabled)
                 }
                 Spacer()
                 suggestionsAndReply
@@ -46,12 +51,6 @@ struct DetailReviewView: View {
             if showReplyField {
                 replyArea
             }
-//            Button {
-//
-//            } label: {
-//                Text("Tappp")
-//            }
-
         }
         .frame(height: 300)
         .overlay(
@@ -68,7 +67,7 @@ struct DetailReviewView: View {
                         ProgressView()
                     }
                     
-                    Text(isReplying ? "Sending Reply..." : "Reply sent")
+                    Text(succesfullyReplied ? "Pending Publication" : "Sending Reply...")
                         .font(.system(.title, design: .rounded))
                         .bold()
                 }
@@ -78,6 +77,11 @@ struct DetailReviewView: View {
         .background(Color(.controlBackgroundColor))
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 0)
+        .onAppear {
+            if pendingPublications.contains(review.id) {
+                succesfullyReplied = true
+            }
+        }
     }
     
     var suggestionsAndReply: some View {
@@ -105,17 +109,7 @@ struct DetailReviewView: View {
 
                 Button {
                     Task {
-                        isReplying = true
-                        let replied = await reviewManager.replyTo(review: review, with: replyText)
-                        
-                        isReplying = false
-                        if replied {
-                            print("replied succesfully")
-                            succesfullyReplied = true
-                        } else {
-                            print("could not reply")
-                            succesfullyReplied = false
-                        }
+                        await respondToReview()
                     }
                 } label: {
                     Text("Send")
@@ -125,12 +119,36 @@ struct DetailReviewView: View {
         }
     }
     
+    func respondToReview() async {
+        Task {
+            isReplying = true
+            let replied = await reviewManager.replyTo(review: review, with: replyText)
+            
+            isReplying = false
+            if replied {
+                print("replied succesfully")
+                succesfullyReplied = true
+            } else {
+                print("could not reply")
+                succesfullyReplied = false
+            }
+        }
+    }
+    
     var suggestionsPicker: some View {
         Menu {
             ForEach(suggestions) {  suggestion in
                 Button {
-                    showReplyField = true
                     replyText = suggestion.text
+                    
+                    if autoReply {
+                        print("we should automatically sent it now")
+                        Task {
+                            await respondToReview()
+                        }
+                    } else {
+                        showReplyField = true
+                    }
                 } label: {
                     Text(suggestion.title.capitalized)
                         .padding(.vertical, 6)
