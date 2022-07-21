@@ -13,6 +13,8 @@ struct SettingsSheet: View {
     @ObservedObject var appsManager: AppsManager
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
+    @AppStorage("menuBarVisible") var menuBarVisible: Bool = true
+    
     var body: some View {
         
         VStack(alignment: .leading) {
@@ -21,6 +23,7 @@ struct SettingsSheet: View {
             VStack(alignment: .leading, spacing: 20) {
                 fetchIcons
                 removePending
+                menuBarToggle
                 Spacer()
             }
             
@@ -78,6 +81,29 @@ struct SettingsSheet: View {
                 .font(.system(.caption, design: .rounded))
         }
     }
+    
+    var menuBarToggle: some View {
+        VStack(alignment: .leading) {
+            Toggle(isOn: $menuBarVisible) {
+                Text("🌟 Show Menu Bar icon")
+                    .font(.system(.body, design: .rounded))
+            }
+            .onChange(of: menuBarVisible) { menuBarVisible in
+                updateMenuBar()
+            }
+//            Text("When you respond to a review, its ID is saved locally so that it can be hidden while it's being reviewed by Apple. You can reset the cache, but be aware that this will cause you to see reviews that you have already responded to which are in still in review.")
+//                .font(.system(.caption, design: .rounded))
+        }
+    }
+    
+    func updateMenuBar() {
+        NotificationCenter.default.post(
+            name: Notification.Name.init("changeMenu"),
+            object: "Object",
+            userInfo: ["menuBarVisible": menuBarVisible]
+        )
+    }
+    
 }
 
 struct SettingsSheet_Previews: PreviewProvider {

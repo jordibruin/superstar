@@ -15,9 +15,11 @@ class StatusBarDelegate: NSObject, NSApplicationDelegate {
     
     var statusBarItem: NSStatusItem!
     
+    @AppStorage("menuBarVisible") var menuBarVisible: Bool = true
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         // Create the SwiftUI view that provides the window contents.
-        let contentView = ContentView()
+        let contentView = MenuBarView()
         
         // Create the popover
         let popover = NSPopover()
@@ -28,12 +30,55 @@ class StatusBarDelegate: NSObject, NSApplicationDelegate {
         self.popover = popover
         
         // Create the status item
+        if menuBarVisible {
+            createMenuBarItem()
+        }
+        
+        setupNotification()
+    }
+    
+    func createMenuBarItem() {
         self.statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
         
         if let button = self.statusBarItem.button {
-            button.title = "🌟"
+//            button.image = NSImage(systemSymbolName: "star.bubble", accessibilityDescription: "")
+            
+            if let image = NSImage(
+                systemSymbolName: "star.bubble",
+                accessibilityDescription: "Superstar"
+            ) {
+
+                let config = NSImage.SymbolConfiguration(
+                    textStyle: .title3,
+                    scale: .medium
+                )
+                
+//                config = config.applying(.init(paletteColors: [.yellow, .white]))
+                
+                button.image = image.withSymbolConfiguration(config)
+            }
+                                   
             button.action = #selector(togglePopover(_:))
             button.toolTip = "Open Superstar"
+        }
+    }
+    
+    func setupNotification() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(changeMenu),
+            name: Notification.Name.init("changeMenu"),
+            object: nil
+        )
+    }
+    
+    @objc func changeMenu(notification: Notification) {
+        if let menuBarVisible = notification.userInfo?["menuBarVisible"] as? Bool {
+            if menuBarVisible {
+                createMenuBarItem()
+            } else {
+                statusBarItem = nil
+            }
         }
     }
     
@@ -47,6 +92,8 @@ class StatusBarDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
+    
+    
 }
 
 

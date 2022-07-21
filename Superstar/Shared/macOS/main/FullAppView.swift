@@ -65,27 +65,27 @@ struct FullAppView: View {
                             }
                         } label: {
                             Label("\(index) star\(index > 1 ? "s" : "")", systemImage: "checkmark")
-                                
-//                            HStack {
-//                                Text("\(index) star\(index > 1 ? "s" : "")")
-//
-//                                if selectedRatings.contains(index) {
-//                                    Image(systemName: "checkmark")
-//                                }
-//                            }
+                            
+                            //                            HStack {
+                            //                                Text("\(index) star\(index > 1 ? "s" : "")")
+                            //
+                            //                                if selectedRatings.contains(index) {
+                            //                                    Image(systemName: "checkmark")
+                            //                                }
+                            //                            }
                         }
-
+                        
                     }
                 } label: {
                     Text("Sort")
                 }
             }
             
-//            ToolbarItem(placement: .automatic) {
-//                Toggle(isOn: $selectMultiple) {
-//                    Text("Multi-Select")
-//                }
-//            }
+            //            ToolbarItem(placement: .automatic) {
+            //                Toggle(isOn: $selectMultiple) {
+            //                    Text("Multi-Select")
+            //                }
+            //            }
             
             ToolbarItem(placement: .automatic) {
                 Toggle(isOn: $autoReply) {
@@ -133,18 +133,18 @@ struct FullAppView: View {
                     }
                 } else {
                     List {
-                        Section {
-                            Button {
-                                Task {
-                                    await appsManager.getIcons()
-                                }
-                            } label: {
-                                Text("Load Icons")
-                            }
-
-                        } header: {
-                            Text("Settings")
-                        }
+//                        Section {
+//                            Button {
+//                                Task {
+//                                    await appsManager.getIcons()
+//                                }
+//                            } label: {
+//                                Text("Load Icons")
+//                            }
+//                            
+//                        } header: {
+//                            Text("Settings")
+//                        }
                         
                         Section {
                             ForEach(appsManager.foundApps, id: \.id) { app in
@@ -158,16 +158,22 @@ struct FullAppView: View {
                                     )
                                 } label: {
                                     HStack {
-                                        AsyncImage(url: appsManager.imageURL(for: app), scale: 2) { image in
-                                            image
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .clipShape(RoundedRectangle(cornerRadius: 6))
-                                                .clipped()
-                                        } placeholder: {
-                                            Color.clear
+                                        if let url = appsManager.imageURL(for: app) {
+                                            AsyncImage(url: url, scale: 2) { image in
+                                                image
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                                                    .clipped()
+                                            } placeholder: {
+                                                Color.clear
+                                            }
+                                            .frame(width: 32, height: 32)
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 5)
+                                                .foregroundColor(.blue)
+                                                .frame(width: 32, height: 32)
                                         }
-                                        .frame(width: 32, height: 32)
                                         Text(app.attributes?.name ?? "No Name")
                                     }
                                 }

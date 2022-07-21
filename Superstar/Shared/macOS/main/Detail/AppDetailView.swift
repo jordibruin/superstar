@@ -19,7 +19,7 @@ struct AppDetailView: View {
     var body: some View {
         VStack {
             header
-
+            
             ScrollView {
                 if reviewManager.loadingReviews {
                     loading
@@ -47,7 +47,7 @@ struct AppDetailView: View {
             Text("Loading Reviews")
         }
     }
-
+    
     var noReviews: some View {
         VStack {
             Text("No reviews without a response found")
@@ -60,43 +60,49 @@ struct AppDetailView: View {
     
     var reviewsList: some View {
         LazyVGrid(
-           columns: columns,
-           alignment: .center,
-           spacing: 12
-       ) {
-           ForEach(reviewManager.retrievedReviews, id: \.id) { review in
-               DetailReviewView(
-                review: review,
-                reviewManager: reviewManager,
-                selectMultiple: $selectMultiple,
-                autoReply: $autoReply
-               )
-           }
-       }
-       .padding(12)
-       .padding(.vertical, 40)
+            columns: columns,
+            alignment: .center,
+            spacing: 12
+        ) {
+            ForEach(reviewManager.retrievedReviews, id: \.id) { review in
+                DetailReviewView(
+                    review: review,
+                    reviewManager: reviewManager,
+                    selectMultiple: $selectMultiple,
+                    autoReply: $autoReply
+                )
+            }
+        }
+        .padding(12)
+        .padding(.vertical, 40)
         
         
-//        VStack(spacing: 32) {
-//            ForEach(reviewManager.retrievedReviews, id: \.id) { review in
-//                DetailReviewView(review: review, reviewManager: reviewManager)
-//            }
-//            .padding(.horizontal, 40)
-//        }
+        //        VStack(spacing: 32) {
+        //            ForEach(reviewManager.retrievedReviews, id: \.id) { review in
+        //                DetailReviewView(review: review, reviewManager: reviewManager)
+        //            }
+        //            .padding(.horizontal, 40)
+        //        }
     }
     
     var header: some View {
         HStack {
-            AsyncImage(url: appsManager.imageURL(for: app), scale: 2) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .clipped()
-            } placeholder: {
-                Color.clear
+            if let url = appsManager.imageURL(for: app) {
+                AsyncImage(url: url, scale: 2) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .clipped()
+                } placeholder: {
+                    Color.clear
+                }
+                .frame(width: 72, height: 72)
+            } else {
+                RoundedRectangle(cornerRadius: 5)
+                    .foregroundColor(.blue)
+                    .frame(width: 72, height: 72)
             }
-            .frame(width: 72, height: 72)
             
             VStack(alignment: .leading) {
                 Text(app.attributes?.name ?? "")

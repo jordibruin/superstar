@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C23B545E2889AC0D006EB4B2 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B545D2889AC0D006EB4B2 /* MenuBarView.swift */; };
+		C23B54612889AFB2006EB4B2 /* MenuAppsSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54602889AFB2006EB4B2 /* MenuAppsSelector.swift */; };
+		C23B54632889B0E5006EB4B2 /* MenuBarHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54622889B0E5006EB4B2 /* MenuBarHeader.swift */; };
+		C23B54652889B601006EB4B2 /* MenuBarReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54642889B601006EB4B2 /* MenuBarReview.swift */; };
 		C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4602884ACF600ABE387 /* SuperstarApp.swift */; };
 		C245B4732884ACF700ABE387 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4612884ACF600ABE387 /* ContentView.swift */; };
 		C245B4752884ACF700ABE387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C245B4622884ACF700ABE387 /* Assets.xcassets */; };
@@ -25,6 +29,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C23B545D2889AC0D006EB4B2 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
+		C23B54602889AFB2006EB4B2 /* MenuAppsSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuAppsSelector.swift; sourceTree = "<group>"; };
+		C23B54622889B0E5006EB4B2 /* MenuBarHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarHeader.swift; sourceTree = "<group>"; };
+		C23B54642889B601006EB4B2 /* MenuBarReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarReview.swift; sourceTree = "<group>"; };
 		C245B4602884ACF600ABE387 /* SuperstarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperstarApp.swift; sourceTree = "<group>"; };
 		C245B4612884ACF600ABE387 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C245B4622884ACF700ABE387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -72,6 +80,17 @@
 			path = Review;
 			sourceTree = "<group>";
 		};
+		C23B545F2889AFA4006EB4B2 /* MenuBarView */ = {
+			isa = PBXGroup;
+			children = (
+				C23B545D2889AC0D006EB4B2 /* MenuBarView.swift */,
+				C23B54602889AFB2006EB4B2 /* MenuAppsSelector.swift */,
+				C23B54622889B0E5006EB4B2 /* MenuBarHeader.swift */,
+				C23B54642889B601006EB4B2 /* MenuBarReview.swift */,
+			);
+			path = MenuBarView;
+			sourceTree = "<group>";
+		};
 		C245B45A2884ACF600ABE387 = {
 			isa = PBXGroup;
 			children = (
@@ -113,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				C245B47F2884AD3000ABE387 /* Menubar.swift */,
+				C23B545F2889AFA4006EB4B2 /* MenuBarView */,
 			);
 			path = Menubar;
 			sourceTree = "<group>";
@@ -234,14 +254,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				C245B49A2884B02100ABE387 /* SettingsSheet.swift in Sources */,
+				C23B54632889B0E5006EB4B2 /* MenuBarHeader.swift in Sources */,
 				C245B4972884AE8700ABE387 /* DetailReviewView.swift in Sources */,
 				C245B4882884AE0B00ABE387 /* CredentialsManager.swift in Sources */,
 				C245B4732884ACF700ABE387 /* ContentView.swift in Sources */,
+				C23B54652889B601006EB4B2 /* MenuBarReview.swift in Sources */,
+				C23B54612889AFB2006EB4B2 /* MenuAppsSelector.swift in Sources */,
 				C245B4892884AE0B00ABE387 /* AppsManager.swift in Sources */,
 				C245B49C2885513600ABE387 /* EmptyStateView.swift in Sources */,
 				C245B4942884AE8700ABE387 /* FullAppView.swift in Sources */,
 				C245B4952884AE8700ABE387 /* AppDetailView.swift in Sources */,
 				C245B48A2884AE0B00ABE387 /* ReviewManager.swift in Sources */,
+				C23B545E2889AC0D006EB4B2 /* MenuBarView.swift in Sources */,
 				C245B4962884AE8700ABE387 /* SuggestionsConfigView.swift in Sources */,
 				C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */,
 				C245B4932884AE8700ABE387 /* AddCredentialsView.swift in Sources */,

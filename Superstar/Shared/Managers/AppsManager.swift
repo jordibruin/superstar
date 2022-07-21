@@ -67,6 +67,10 @@ class AppsManager: ObservableObject {
         
     }
     
+    func makeActive(app: Bagbutik.App) {
+        self.selectedApp = app
+    }
+    
     @MainActor
     func getIcons() async {
         loadingIcons = true
@@ -109,7 +113,7 @@ class AppsManager: ObservableObject {
         loadingIcons = false
     }
     
-    func imageURL(for app: Bagbutik.App) -> URL {
+    func imageURL(for app: Bagbutik.App) -> URL? {
         
         if let firstIndex = appsMatchedWithIcons.firstIndex(where: { $0.appId == app.id } ) {
             var imageURLRaw = appsMatchedWithIcons[firstIndex].iconURL ?? ""
@@ -121,11 +125,10 @@ class AppsManager: ObservableObject {
             if let url = URL(string: imageURLRaw) {
                 return url
             } else {
-                return URL(string: "https://cdn.dribbble.com/users/361233/screenshots/14417969/media/f3555d1770897661fe5e4a049a000606.jpg?compress=1&resize=200x200&vertical=top")!
+                return nil
             }
-//            return appsMatchedWithIcons[firstIndex].iconURL
         } else {
-            return URL(string: "https://cdn.dribbble.com/users/361233/screenshots/14417969/media/f3555d1770897661fe5e4a049a000606.jpg?compress=1&resize=200x200&vertical=top")!
+            return nil
 
         }
     }
