@@ -25,6 +25,8 @@ struct MenuBarReview: View {
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
+    var getNewReview: () -> ()
+    
     var body: some View {
         VStack(alignment: .leading) {
             header
@@ -96,6 +98,10 @@ struct MenuBarReview: View {
                 print("replied succesfully")
                 succesfullyReplied = true
 //                getNewRandomReview()
+                getNewReview()
+                replyText = ""
+                showReplyField = false
+                
             } else {
                 print("could not reply")
                 succesfullyReplied = false
@@ -209,6 +215,8 @@ struct MenuBarReview: View {
 
 struct MenuBarReview_Previews: PreviewProvider {
     static var previews: some View {
-        MenuBarReview(reviewManager: ReviewManager(), appsManager: AppsManager(), review: .init(id: "", links: .init(self: "")))
+        MenuBarReview(reviewManager: ReviewManager(), appsManager: AppsManager(), review: .init(id: "", links: .init(self: ""))) {
+            
+        }
     }
 }

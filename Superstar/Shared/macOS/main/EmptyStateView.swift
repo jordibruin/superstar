@@ -15,9 +15,13 @@ struct EmptyStateView: View {
     var body: some View {
         if credentials.allCredentialsAvailable() {
             Text("Select an app to see reviews")
+                .font(.system(.largeTitle, design: .rounded))
+                .bold()
         } else {
             VStack {
                 Text("Add your App Store Connect Credentials")
+                    .font(.system(.largeTitle, design: .rounded))
+                    .bold()
                 Button {
                     showCredentialsScreen = true
                 } label: {
@@ -31,5 +35,17 @@ struct EmptyStateView: View {
 struct EmptyStateView_Previews: PreviewProvider {
     static var previews: some View {
         EmptyStateView(showCredentialsScreen: .constant(false))
+    }
+}
+
+extension Color {
+    static func random() -> Color {
+        return Color(
+            .displayP3,
+            red: Double.random(in: 0...1.0),
+            green: Double.random(in: 0...1.0),
+            blue: Double.random(in: 0...1.0),
+            opacity: 1
+        )
     }
 }

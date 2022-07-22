@@ -51,7 +51,7 @@ struct AddCredentialsView: View {
             
                 .font(.system(.title3, design: .rounded))
                 .bold()
-            Text("Go to https://appstoreconnect.apple.com/access/api and create a new API key. Make sure to give the key Admin access (I've filed a FB to also allow users to make a Customer Support role. Once you've made the key copy the keyID and the issuerID as well.")
+            Text("Go to https://appstoreconnect.apple.com/access/api and create a new API key.\nMake sure to give the key Admin access (I've filed a FB to also allow users to make a Customer Support role. \nOnce you've made the key copy the keyID and the issuerID as well.")
                 .font(.system(.caption, design: .rounded))
         }
     }
@@ -59,6 +59,11 @@ struct AddCredentialsView: View {
     var footer: some View {
         HStack {
             Spacer()
+            Button {
+                credentials.clearAllCredentials()
+            } label: {
+                Text("Clear Credentials")
+            }
             Button {
                 dismiss()
             } label: {
@@ -89,15 +94,21 @@ struct AddCredentialsView: View {
     
     var privateKey: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("privateId")
+            Text("Private Key")
                 .font(.system(.title3, design: .rounded))
                 .bold()
             Text("After downloading your private key, drag and drop the .p8 file containing the private key onto this window.")
                 .font(.caption)
             
-            TextEditor(text: $credentials.privateKey)
+            Color(.controlBackgroundColor)
                 .frame(width: 300, height: 100)
-                .background(Color.gray.opacity(0.1))
+                .overlay(
+                    Text(credentials.privateKey)
+                )
+                .overlay(
+                    Text("Drop p8 file here")
+                        .opacity(credentials.privateKey.isEmpty ? 1 : 0)
+                )
         }
     }
     

@@ -18,6 +18,8 @@ struct FullAppView: View {
     
     @StateObject var credentials = CredentialsManager.shared
     
+    @AppStorage("hiddenAppIds") var hiddenAppIds: [String] = []
+    
     var body: some View {
         HSplitView {
             NavigationView {
@@ -56,6 +58,7 @@ struct FullAppView: View {
             ToolbarItem(placement: .automatic) {
                 Toggle(isOn: $autoReply) {
                     Text("Auto Reply")
+                        .help(Text("Automatically send response when you select a template reply."))
                 }
             }
             
@@ -114,33 +117,42 @@ struct FullAppView: View {
                         
                         Section {
                             ForEach(appsManager.foundApps, id: \.id) { app in
-                                NavigationLink {
-                                    AppDetailView(
-                                        appsManager: appsManager,
-                                        reviewManager: reviewManager,
-                                        app: app,
-                                        selectMultiple: $selectMultiple,
-                                        autoReply: $autoReply
-                                    )
-                                } label: {
-                                    HStack {
-                                        if let url = appsManager.imageURL(for: app) {
-                                            AsyncImage(url: url, scale: 2) { image in
-                                                image
-                                                    .resizable()
-                                                    .aspectRatio(contentMode: .fit)
-                                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                                                    .clipped()
-                                            } placeholder: {
-                                                Color.clear
-                                            }
-                                            .frame(width: 32, height: 32)
-                                        } else {
-                                            RoundedRectangle(cornerRadius: 5)
-                                                .foregroundColor(.blue)
+                                if !hiddenAppIds.contains(app.id) {
+                                    NavigationLink {
+                                        AppDetailView(
+                                            appsManager: appsManager,
+                                            reviewManager: reviewManager,
+                                            app: app,
+                                            selectMultiple: $selectMultiple,
+                                            autoReply: $autoReply
+                                        )
+                                    } label: {
+                                        HStack {
+                                            if let url = appsManager.imageURL(for: app) {
+                                                AsyncImage(url: url, scale: 2) { image in
+                                                    image
+                                                        .resizable()
+                                                        .aspectRatio(contentMode: .fit)
+                                                        .clipShape(RoundedRectangle(cornerRadius: 9))
+                                                        .clipped()
+                                                } placeholder: {
+                                                    Color.clear
+                                                }
                                                 .frame(width: 32, height: 32)
+                                            } else {
+                                                RoundedRectangle(cornerRadius: 7)
+                                                    .foregroundColor(.blue)
+                                                    .frame(width: 32, height: 32)
+                                            }
+                                            Text(app.attributes?.name ?? "No Name")
                                         }
-                                        Text(app.attributes?.name ?? "No Name")
+                                    }
+                                    .contextMenu {
+                                        Button {
+                                            hiddenAppIds.append(app.id)
+                                        } label: {
+                                            Text("Hide")
+                                        }
                                     }
                                 }
                             }
@@ -148,23 +160,23 @@ struct FullAppView: View {
                             Text("Apps")
                         }
                     }
-                    .overlay(
-                        VStack {
-                            Spacer()
-                            
-                            VStack {
-                                ProgressView()
-                                Text("Loading Icons")
-                                    .font(.system(.title2, design: .rounded))
-                                    .bold()
-                            }
-                            .padding(12)
-                            .frame(width: 120)
-                            .background(.thinMaterial)
-                            .cornerRadius(12)
-                        }
-                            .opacity(appsManager.loadingIcons ? 1 : 0)
-                    )
+//                    .overlay(
+//                        VStack {
+//                            Spacer()
+//                            
+//                            VStack {
+//                                ProgressView()
+//                                Text("Loading Icons")
+//                                    .font(.system(.title2, design: .rounded))
+//                                    .bold()
+//                            }
+//                            .padding(12)
+//                            .frame(width: 120)
+//                            .background(.thinMaterial)
+//                            .cornerRadius(12)
+//                        }
+//                            .opacity(appsManager.loadingIcons ? 1 : 0)
+//                    )
                     .listStyle(.sidebar)
                 }
             } else {

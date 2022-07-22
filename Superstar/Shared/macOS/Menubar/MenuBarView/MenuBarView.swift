@@ -18,28 +18,42 @@ struct MenuBarView: View {
     @State var selectedItem: Int = 0
     @State var showAppPicker = false
     
+    @AppStorage("pendingPublications") var pendingPublications: [String] = []
+    
+    @State var noReviewsAvailable = false
+    
     var body: some View {
         VStack {
-            MenuBarHeader(
-                showAppPicker: $showAppPicker,
-                appsManager: appsManager,
-                reviewManager: reviewManager,
-                review: $review
-            )
+            if !showAppPicker {
+                MenuBarHeader(
+                    showAppPicker: $showAppPicker,
+                    appsManager: appsManager,
+                    reviewManager: reviewManager,
+                    review: $review
+                )
+            }
             
             if let review = review {
                 MenuBarReview(
                     reviewManager: reviewManager,
                     appsManager: appsManager,
-                    review: review
-                )
+                    review: review) {
+                        getNewRandomReview()
+                    }
             } else {
                 Spacer()
-                VStack {
-                    ProgressView()
-                        .scaleEffect(0.5)
-                    Text("Loading reviews")
-                        .font(.system(.body, design: .rounded))
+                if noReviewsAvailable {
+                    VStack {
+                        Text("No new reviews available")
+                            .font(.system(.body, design: .rounded))
+                    }
+                } else {
+                    VStack {
+                        ProgressView()
+                            .scaleEffect(0.5)
+                        Text("Loading reviews")
+                            .font(.system(.body, design: .rounded))
+                    }
                 }
                 Spacer()
             }
@@ -71,6 +85,32 @@ struct MenuBarView: View {
         })
     }
     
+    func getNewRandomReview() {
+        
+        let availableReviews = reviewManager.retrievedReviews.filter { !pendingPublications.contains($0.id) }
+        
+        if availableReviews.isEmpty {
+            noReviewsAvailable = true
+        } else {
+            if let review = availableReviews.randomElement() {
+                self.review = review
+            } else {
+                noReviewsAvailable = true
+            }
+        }
+        
+//        } else {
+//            noReviewsAvailable = true
+//        }
+//        if let review = reviewManager.retrievedReviews.randomElement() {
+//
+//            if !pendingPublications.contains(review.id) {
+//                self.review = review
+//            } else {
+//                getNewRandomReview()
+//            }
+//        }
+    }
     
 }
 

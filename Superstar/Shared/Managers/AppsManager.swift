@@ -12,21 +12,20 @@ import SwiftUI
 
 class AppsManager: ObservableObject {
     
-    
     @Published var loadingIcons = false
-    
     @Published var foundApps: [Bagbutik.App] = []
-    
     @Published var appsAndImages: [AppIdAndImage] = []
-    
     @Published var foundReviews: [Bagbutik.CustomerReview] = []
-    
     @Published var selectedApp: Bagbutik.App = Bagbutik.App(id: "Placeholder", links: ResourceLinks(self: ""))
     
     init() {
         Task {
             await getApps()
         }
+    }
+    
+    func removeCachedIcons() {
+        appsMatchedWithIcons.removeAll()
     }
     
     @MainActor
@@ -49,11 +48,6 @@ class AppsManager: ObservableObject {
             )
             self.foundApps = response.data
             
-            if appsMatchedWithIcons.isEmpty {
-                // Never got icons yet
-                // get the icons
-                await getIcons()
-            }
             
             // Add apps to the list for retrieving icons
             for app in response.data {
@@ -61,6 +55,16 @@ class AppsManager: ObservableObject {
                     appsMatchedWithIcons.append(AppIdAndImage(appId: app.id))
                 }
             }
+            
+            let imageURLs: [String] = appsMatchedWithIcons.compactMap { $0.iconURL }
+            
+//            if imageURLs.isEmpty {
+                // Never got icons yet
+                // get the icons
+                Task {
+                    await getIcons()
+                }
+//            }
         } catch {
             print(error.localizedDescription)
         }
@@ -85,19 +89,12 @@ class AppsManager: ObservableObject {
                         .listBuildsForAppV1(id: app.appId)
                     )
                     
-                    for build in response.data.suffix(1) {
-                        print("build found")
+                    for build in response.data.prefix(1) {
                         if let url = build.attributes?.iconAssetToken?.templateUrl {
-                            
                             if let firstIndex = appsMatchedWithIcons.firstIndex(where: { $0.appId == app.appId }) {
-                                print("found app in array so we can add the image to it")
                                 DispatchQueue.main.async(execute: {
-                                    
                                     let new = AppIdAndImage(appId: app.appId, iconURL: url)
-                                    
                                     self.appsMatchedWithIcons[firstIndex] = new
-//                                    print(self.appsMatchedWithIcons[firstIndex].iconURL)
-                                    
                                 })
                             }
                         }
@@ -107,9 +104,7 @@ class AppsManager: ObservableObject {
         } catch {
             print(error.localizedDescription)
         }
-        
-        print("we're done with stuff")
-        print("apps matched with icons count \(appsMatchedWithIcons.count))")
+                
         loadingIcons = false
     }
     

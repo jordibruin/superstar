@@ -45,6 +45,12 @@ class CredentialsManager: ObservableObject {
         return !keyID.isEmpty && !issuerId.isEmpty && !privateKey.isEmpty && privateKey.count == 252 || privateKey.count == 257
     }
     
+    func clearAllCredentials() {
+        keyID = ""
+        issuerId = ""
+        privateKey = ""
+    }
+    
     func getJWT() -> JWT? {
         var formattedKey = ""
         

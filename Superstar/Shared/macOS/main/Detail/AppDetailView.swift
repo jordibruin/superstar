@@ -16,13 +16,13 @@ struct AppDetailView: View {
     @Binding var selectMultiple: Bool
     @Binding var autoReply: Bool
     
-    @State var selectedReview: CustomerReview?
+//    @State var selectedReview: CustomerReview?
     
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     var body: some View {
 //        HStack(spacing: 0) {
-        HSplitView {
+//        HSplitView {
             VStack(spacing: 0) {
                 header
                     if reviewManager.loadingReviews {
@@ -41,14 +41,14 @@ struct AppDetailView: View {
                     }
             }
             .background(Color(.controlBackgroundColor))
-            .onTapGesture {
-                selectedReview = nil
-            }
+//            .onTapGesture {
+//                selectedReview = nil
+//            }
             
-            if let selectedReview = selectedReview {
-                FullReviewSide(review: selectedReview)
-            }
-        }
+//            if let selectedReview = selectedReview {
+//                FullReviewSide(review: selectedReview)
+//            }
+//        }
         .onAppear {
             Task { await reviewManager.getReviewsFor(id: app.id) }
         }
@@ -79,48 +79,28 @@ struct AppDetailView: View {
     ]
     
     var reviewsList: some View {
-        ScrollView {
+        LazyVGrid(
+            columns: columns,
+            alignment: .center,
+            spacing: 12
+        ) {
             ForEach(reviewManager.retrievedReviews, id: \.id) { review in
-                Button {
-                    selectedReview = review
-                } label: {
+//                Button {
+//                    selectedReview = review
+//                } label: {
                     DetailReviewView(
                         review: review,
                         reviewManager: reviewManager,
                         selectMultiple: $selectMultiple,
                         autoReply: $autoReply
                     )
-                }
-                .buttonStyle(.plain)
+//                }
+//                .buttonStyle(.plain)
             }
         }
-//        LazyVGrid(
-//            columns: columns,
-//            alignment: .center,
-//            spacing: 12
-//        ) {
-//            ForEach(reviewManager.retrievedReviews, id: \.id) { review in
-//                DetailReviewView(
-//                    review: review,
-//                    reviewManager: reviewManager,
-//                    selectMultiple: $selectMultiple,
-//                    autoReply: $autoReply
-//                )
-//                .contentShape(Rectangle())
-//                .onTapGesture {
-//                    selectedReview = review
-//                }
-//            }
-//        }
-//        .padding(12)
-//        .padding(.vertical, 40)
-//        .onTapGesture {
-//            selectedReview = nil
-//        }
-        
+        .padding(12)
+        .padding(.vertical, 40)
     }
-    
-    
     
     var header: some View {
         HStack {
@@ -129,26 +109,26 @@ struct AppDetailView: View {
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
                         .clipped()
                 } placeholder: {
                     Color.clear
                 }
                 .frame(width: 72, height: 72)
             } else {
-                RoundedRectangle(cornerRadius: 5)
+                RoundedRectangle(cornerRadius: 12)
                     .foregroundColor(.blue)
                     .frame(width: 72, height: 72)
             }
             
             VStack(alignment: .leading) {
                 Text(app.attributes?.name ?? "")
-                    .font(.system(.title, design: .rounded))
+                    .font(.system(.title2, design: .rounded))
                     .bold()
                 if !reviewManager.loadingReviews {
                     
                     Text("\(unansweredReviewCount) unanswered reviews")
-                        .font(.system(.title2, design: .rounded))
+                        .font(.system(.title3, design: .rounded))
                 }
             }
             

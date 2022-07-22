@@ -22,7 +22,9 @@ struct SettingsSheet: View {
             
             VStack(alignment: .leading, spacing: 20) {
                 fetchIcons
+                removeCacheIcons
                 removePending
+                showHiddenApps
                 menuBarToggle
                 Spacer()
             }
@@ -52,8 +54,9 @@ struct SettingsSheet: View {
             }
             .buttonStyle(.plain)
         }
-        .padding(.top, 4)
+        .padding(.top, 8)
     }
+    
     var fetchIcons: some View {
         VStack(alignment: .leading) {
             Button {
@@ -66,6 +69,35 @@ struct SettingsSheet: View {
             }
             Text("Retrieve the latest icons for your apps")
                 .font(.system(.caption, design: .rounded))
+        }
+    }
+    
+    var removeCacheIcons: some View {
+        VStack(alignment: .leading) {
+            Button {
+                Task {
+                    await appsManager.removeCachedIcons()
+                }
+            } label: {
+                Label("Remove Icons Cache", systemImage: "trash.slash.circle.fill")
+                    .font(.system(.body, design: .rounded))
+            }
+            Text("Remove the cached icons")
+                .font(.system(.caption, design: .rounded))
+        }
+    }
+    
+    @AppStorage("hiddenAppIds") var hiddenAppIds: [String] = []
+    
+    var showHiddenApps: some View {
+        VStack(alignment: .leading) {
+            Button {
+                hiddenAppIds.removeAll()
+            } label: {
+                Label("Show hidden apps", systemImage: "eye.slash.fill")
+                    .font(.system(.body, design: .rounded))
+            }
+        
         }
     }
     
