@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Bagbutik
+import AppStoreConnect_Swift_SDK
 
 struct DetailReviewView: View {
     
@@ -300,31 +300,6 @@ struct DetailReviewView: View {
 //        )
 //    }
 //}
-
-struct Suggestion: Identifiable, Codable {
-    
-    var title: String
-    var text: String
-    let appId: Int
-    
-    var id: String { "\(self.appId) \(self.title) \(self.text)"}
-}
-
-extension TerritoryCode {
-    
-    var flag: String {
-        switch self {
-        case .usa:
-            return "🇺🇸"
-        case .nld:
-            return "🇳🇱"
-        case .ukr:
-            return "🇺🇦"
-        default:
-            return "🌎"
-        }
-    }
-}
 
 extension NSTextView {
     open override var frame: CGRect {

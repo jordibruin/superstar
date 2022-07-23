@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Bagbutik
+import AppStoreConnect_Swift_SDK
 
 struct MenuBarReview: View {
     
@@ -215,7 +215,7 @@ struct MenuBarReview: View {
 
 struct MenuBarReview_Previews: PreviewProvider {
     static var previews: some View {
-        MenuBarReview(reviewManager: ReviewManager(), appsManager: AppsManager(), review: .init(id: "", links: .init(self: ""))) {
+        MenuBarReview(reviewManager: ReviewManager(), appsManager: AppsManager(), review: .init(type: .customerReviews, id: "", links: .init(this: ""))) {
             
         }
     }

@@ -72,14 +72,25 @@ struct MenuAppsSelector: View {
                 } label: {
                     HStack {
                         if let url = appsManager.imageURL(for: app) {
-                            AsyncImage(url: url, scale: 2) { image in
-                                image
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                    .clipped()
-                            } placeholder: {
-                                Color.clear
+                            CacheAsyncImage(url: url, scale: 2) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                                            .clipped()
+                                case .failure(let _):
+                                    Text("E")
+                                case .empty:
+                                    Color.gray.opacity(0.05)
+
+                                @unknown default:
+                                    // AsyncImagePhase is not marked as @frozen.
+                                    // We need to support new cases in the future.
+                                    Image(systemName: "questionmark")
+                                }
                             }
                             .frame(width: 44, height: 44)
                         } else {

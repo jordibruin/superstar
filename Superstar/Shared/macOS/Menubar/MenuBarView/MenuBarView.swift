@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Bagbutik
+import AppStoreConnect_Swift_SDK
 
 struct MenuBarView: View {
     

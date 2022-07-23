@@ -25,8 +25,9 @@ struct FullAppView: View {
             NavigationView {
                 sidebar
                 EmptyStateView(showCredentialsScreen: $showCredentialsScreen)
+                    .toolbar(content: { toolbarItems })
             }
-            .toolbar(content: { toolbarItems })
+            
             .sheet(isPresented: $showCredentialsScreen, content: {
                 AddCredentialsView()
             })
@@ -41,7 +42,8 @@ struct FullAppView: View {
             .onChange(of: credentials.allCredentialsAvailable()) { available in
                 if available {
                     Task {
-                        await appsManager.getApps()
+//                        await appsManager.getApps()
+                        await appsManager.getAppsTwan()
                     }
                 }
             }
@@ -102,18 +104,29 @@ struct FullAppView: View {
                     }
                 } else {
                     List {
-//                        Section {
-//                            Button {
-//                                Task {
-//                                    await appsManager.getIcons()
-//                                }
-//                            } label: {
-//                                Text("Load Icons")
-//                            }
-//
-//                        } header: {
-//                            Text("Settings")
-//                        }
+                        Section {
+                            Button {
+                                showSettings = true
+                            } label: {
+                                Label("Settings", systemImage: "gearshape.fill")
+                            }
+                            .buttonStyle(.plain)
+                            
+                            NavigationLink {
+                                AddCredentialsView()
+                            } label: {
+                                Label("Credentials", systemImage: "key.fill")
+                            }
+                            
+                            NavigationLink {
+                                SuggestionsConfigView(showSheet: .constant(true))
+                            } label: {
+                                Label("Suggestions", systemImage: "star.bubble")
+                            }
+                        } header: {
+                            Text("Settings")
+                            
+                        }
                         
                         Section {
                             ForEach(appsManager.foundApps, id: \.id) { app in
@@ -129,14 +142,29 @@ struct FullAppView: View {
                                     } label: {
                                         HStack {
                                             if let url = appsManager.imageURL(for: app) {
-                                                AsyncImage(url: url, scale: 2) { image in
-                                                    image
-                                                        .resizable()
-                                                        .aspectRatio(contentMode: .fit)
-                                                        .clipShape(RoundedRectangle(cornerRadius: 9))
-                                                        .clipped()
-                                                } placeholder: {
-                                                    Color.clear
+                                                CacheAsyncImage(url: url, scale: 2) { phase in
+                                                    switch phase {
+                                                    case .success(let image):
+                                                        
+                                                            image
+                                                                .resizable()
+                                                                .aspectRatio(contentMode: .fit)
+                                                                .clipShape(RoundedRectangle(cornerRadius: 9))
+                                                                .clipped()
+                                                    case .failure(let _):
+                                                        Text("E")
+                                                    case .empty:
+                                                        Color.gray.opacity(0.05)
+//                                                        HStack {
+//                                                            ProgressView()
+//                                                                .progressViewStyle(CircularProgressViewStyle(tint: .red))
+//                                                            Spacer()
+//                                                        }
+                                                    @unknown default:
+                                                        // AsyncImagePhase is not marked as @frozen.
+                                                        // We need to support new cases in the future.
+                                                        Image(systemName: "questionmark")
+                                                    }
                                                 }
                                                 .frame(width: 32, height: 32)
                                             } else {

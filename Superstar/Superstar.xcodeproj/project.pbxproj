@@ -12,6 +12,11 @@
 		C23B54632889B0E5006EB4B2 /* MenuBarHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54622889B0E5006EB4B2 /* MenuBarHeader.swift */; };
 		C23B54652889B601006EB4B2 /* MenuBarReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54642889B601006EB4B2 /* MenuBarReview.swift */; };
 		C23B54672889FBDF006EB4B2 /* FullReviewSide.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54662889FBDF006EB4B2 /* FullReviewSide.swift */; };
+		C23B546A288B017D006EB4B2 /* TerritoryCode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B5469288B017D006EB4B2 /* TerritoryCode+Extensions.swift */; };
+		C23B546C288B01C1006EB4B2 /* Suggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B546B288B01C1006EB4B2 /* Suggestion.swift */; };
+		C23B5470288B0766006EB4B2 /* AppStoreConnect-Swift-SDK in Frameworks */ = {isa = PBXBuildFile; productRef = C23B546F288B0766006EB4B2 /* AppStoreConnect-Swift-SDK */; };
+		C23B5472288B57B7006EB4B2 /* ImageAsset+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B5471288B57B7006EB4B2 /* ImageAsset+Extensions.swift */; };
+		C23B5475288C77B6006EB4B2 /* CachedAsyncImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B5474288C77B6006EB4B2 /* CachedAsyncImage.swift */; };
 		C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4602884ACF600ABE387 /* SuperstarApp.swift */; };
 		C245B4732884ACF700ABE387 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4612884ACF600ABE387 /* ContentView.swift */; };
 		C245B4752884ACF700ABE387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C245B4622884ACF700ABE387 /* Assets.xcassets */; };
@@ -19,7 +24,6 @@
 		C245B4882884AE0B00ABE387 /* CredentialsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4852884AE0B00ABE387 /* CredentialsManager.swift */; };
 		C245B4892884AE0B00ABE387 /* AppsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4862884AE0B00ABE387 /* AppsManager.swift */; };
 		C245B48A2884AE0B00ABE387 /* ReviewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4872884AE0B00ABE387 /* ReviewManager.swift */; };
-		C245B48D2884AE3700ABE387 /* Bagbutik in Frameworks */ = {isa = PBXBuildFile; productRef = C245B48C2884AE3700ABE387 /* Bagbutik */; };
 		C245B4932884AE8700ABE387 /* AddCredentialsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B48E2884AE8700ABE387 /* AddCredentialsView.swift */; };
 		C245B4942884AE8700ABE387 /* FullAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B48F2884AE8700ABE387 /* FullAppView.swift */; };
 		C245B4952884AE8700ABE387 /* AppDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4902884AE8700ABE387 /* AppDetailView.swift */; };
@@ -35,6 +39,10 @@
 		C23B54622889B0E5006EB4B2 /* MenuBarHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarHeader.swift; sourceTree = "<group>"; };
 		C23B54642889B601006EB4B2 /* MenuBarReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarReview.swift; sourceTree = "<group>"; };
 		C23B54662889FBDF006EB4B2 /* FullReviewSide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullReviewSide.swift; sourceTree = "<group>"; };
+		C23B5469288B017D006EB4B2 /* TerritoryCode+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TerritoryCode+Extensions.swift"; sourceTree = "<group>"; };
+		C23B546B288B01C1006EB4B2 /* Suggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Suggestion.swift; sourceTree = "<group>"; };
+		C23B5471288B57B7006EB4B2 /* ImageAsset+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ImageAsset+Extensions.swift"; sourceTree = "<group>"; };
+		C23B5474288C77B6006EB4B2 /* CachedAsyncImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedAsyncImage.swift; sourceTree = "<group>"; };
 		C245B4602884ACF600ABE387 /* SuperstarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperstarApp.swift; sourceTree = "<group>"; };
 		C245B4612884ACF600ABE387 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C245B4622884ACF700ABE387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -58,7 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C245B48D2884AE3700ABE387 /* Bagbutik in Frameworks */,
+				C23B5470288B0766006EB4B2 /* AppStoreConnect-Swift-SDK in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,6 +102,23 @@
 			path = MenuBarView;
 			sourceTree = "<group>";
 		};
+		C23B5468288B016B006EB4B2 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				C23B5469288B017D006EB4B2 /* TerritoryCode+Extensions.swift */,
+				C23B546B288B01C1006EB4B2 /* Suggestion.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		C23B5473288C77A8006EB4B2 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				C23B5474288C77B6006EB4B2 /* CachedAsyncImage.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		C245B45A2884ACF600ABE387 = {
 			isa = PBXGroup;
 			children = (
@@ -108,7 +133,11 @@
 			isa = PBXGroup;
 			children = (
 				C245B4602884ACF600ABE387 /* SuperstarApp.swift */,
+				C23B5471288B57B7006EB4B2 /* ImageAsset+Extensions.swift */,
 				C245B4612884ACF600ABE387 /* ContentView.swift */,
+				C23B5473288C77A8006EB4B2 /* Extensions */,
+				C23B5468288B016B006EB4B2 /* Model */,
+				C245B49B2885513600ABE387 /* EmptyStateView.swift */,
 				C245B4842884AE0000ABE387 /* Managers */,
 				C245B4622884ACF700ABE387 /* Assets.xcassets */,
 			);
@@ -154,7 +183,6 @@
 			isa = PBXGroup;
 			children = (
 				C245B48F2884AE8700ABE387 /* FullAppView.swift */,
-				C245B49B2885513600ABE387 /* EmptyStateView.swift */,
 				C23B545B28899F27006EB4B2 /* Detail */,
 				C245B4982884B01500ABE387 /* Sheets */,
 			);
@@ -198,7 +226,7 @@
 			);
 			name = "Superstar (macOS)";
 			packageProductDependencies = (
-				C245B48C2884AE3700ABE387 /* Bagbutik */,
+				C23B546F288B0766006EB4B2 /* AppStoreConnect-Swift-SDK */,
 			);
 			productName = "Superstar (macOS)";
 			productReference = C245B46D2884ACF700ABE387 /* Superstar.app */;
@@ -229,7 +257,7 @@
 			);
 			mainGroup = C245B45A2884ACF600ABE387;
 			packageReferences = (
-				C245B48B2884AE3600ABE387 /* XCRemoteSwiftPackageReference "Bagbutik" */,
+				C23B546E288B0766006EB4B2 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */,
 			);
 			productRefGroup = C245B4682884ACF700ABE387 /* Products */;
 			projectDirPath = "";
@@ -259,8 +287,10 @@
 				C245B49A2884B02100ABE387 /* SettingsSheet.swift in Sources */,
 				C23B54632889B0E5006EB4B2 /* MenuBarHeader.swift in Sources */,
 				C245B4972884AE8700ABE387 /* DetailReviewView.swift in Sources */,
+				C23B5472288B57B7006EB4B2 /* ImageAsset+Extensions.swift in Sources */,
 				C245B4882884AE0B00ABE387 /* CredentialsManager.swift in Sources */,
 				C245B4732884ACF700ABE387 /* ContentView.swift in Sources */,
+				C23B5475288C77B6006EB4B2 /* CachedAsyncImage.swift in Sources */,
 				C23B54652889B601006EB4B2 /* MenuBarReview.swift in Sources */,
 				C23B54612889AFB2006EB4B2 /* MenuAppsSelector.swift in Sources */,
 				C245B4892884AE0B00ABE387 /* AppsManager.swift in Sources */,
@@ -274,6 +304,8 @@
 				C245B4932884AE8700ABE387 /* AddCredentialsView.swift in Sources */,
 				C245B4812884AD7100ABE387 /* Menubar.swift in Sources */,
 				C23B54672889FBDF006EB4B2 /* FullReviewSide.swift in Sources */,
+				C23B546A288B017D006EB4B2 /* TerritoryCode+Extensions.swift in Sources */,
+				C23B546C288B01C1006EB4B2 /* Suggestion.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,7 +429,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -426,7 +458,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -471,21 +503,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C245B48B2884AE3600ABE387 /* XCRemoteSwiftPackageReference "Bagbutik" */ = {
+		C23B546E288B0766006EB4B2 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/MortenGregersen/Bagbutik";
+			repositoryURL = "https://github.com/AvdLee/appstoreconnect-swift-sdk.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
+				branch = master;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C245B48C2884AE3700ABE387 /* Bagbutik */ = {
+		C23B546F288B0766006EB4B2 /* AppStoreConnect-Swift-SDK */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C245B48B2884AE3600ABE387 /* XCRemoteSwiftPackageReference "Bagbutik" */;
-			productName = Bagbutik;
+			package = C23B546E288B0766006EB4B2 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */;
+			productName = "AppStoreConnect-Swift-SDK";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

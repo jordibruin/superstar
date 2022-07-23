@@ -31,6 +31,7 @@ struct AddCredentialsView: View {
         .onDrop(of: [.fileURL], isTargeted: $p8Hovered) { providers in
             handleExternalFileDrop(providers: providers)
         }
+        .toolbar(content: { ToolbarItem(content: {Text("")}) })
         .overlay(
             ZStack {
                 Color.white.opacity(0.2)

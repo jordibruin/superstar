@@ -6,11 +6,11 @@
 //
 
 import Foundation
-import Bagbutik
 import SwiftUI
+import AppStoreConnect_Swift_SDK
 
-extension Bagbutik.CustomerReview: Equatable {
-    public static func == (lhs: Bagbutik.CustomerReview, rhs: Bagbutik.CustomerReview) -> Bool {
+extension AppStoreConnect_Swift_SDK.CustomerReview: Equatable {
+    public static func == (lhs: AppStoreConnect_Swift_SDK.CustomerReview, rhs: AppStoreConnect_Swift_SDK.CustomerReview) -> Bool {
         return lhs.id == rhs.id
     }
     
@@ -18,7 +18,7 @@ extension Bagbutik.CustomerReview: Equatable {
 
 class ReviewManager: ObservableObject {
     
-    @Published var retrievedReviews: [Bagbutik.CustomerReview] = []
+    @Published var retrievedReviews: [AppStoreConnect_Swift_SDK.CustomerReview] = []
     @Published var loadingReviews = false
     
     
@@ -26,53 +26,21 @@ class ReviewManager: ObservableObject {
     func getReviewsFor(id: String) async {
         loadingReviews = true
         do {
-            guard let jwt = CredentialsManager.shared.getJWT(), let service = try? BagbutikService(jwt: jwt) else { return }
-                
-            let response = try await service.request(
-                .listCustomerReviewsForAppV1(
-                    id: id,
-                    exists: [.publishedResponse(false),],
-                    sorts: [.createdDateDescending]
-                )
-            )
-
-            var reviewsWithoutResponse: [CustomerReview] = []
-
-//            for review in response.data {
-//                print("review")
-//                print("----")
-////                print(review)
-//                print("----XXXXXXXXXX")
-//                print(review.relationships?.response)
-//                print(review.relationships?.response?.data)
-//                print("----VCBCBCVCCVC")
-////                if review.relationships?.response == nil {
-////                    print("no response")
-////                    continue
-////                }
-////                print(review.relationships?.response)
-//
-//                let resp = try await service.request(
-//                    .getResponseForCustomerReviewV1(id: review.id)
-//                )
-//
-////                print("response?:")
-//                print(resp)
-////                print(resp.data.attributes?.state)
-////                if let responseId = review.relationships?.response?.data?.id {
-////                    let resp = try await service.request(
-////                        .getResponseForCustomerReviewV1(id: review.id)
-////                    )
-////
-////                    print("response?:")
-////                    print(resp)
-////                    print(resp.data.attributes?.state)
-////                } else {
-//////                    reviewsWithoutResponse.append(review)
-////                }
-//            }
             
-            self.retrievedReviews = response.data //.filter( { $0.relationships?.response?.data?.id == nil } )
+            let provider = APIProvider(configuration: CredentialsManager.shared.configuration)
+            
+            let request = APIEndpoint
+                .v1
+                .apps
+                .id(id)
+                .customerReviews
+                .get()
+            
+            let reviews = try await provider.request(request).data
+            
+            var reviewsWithoutResponse: [CustomerReview] = []
+            
+            self.retrievedReviews = reviews
             loadingReviews = false
         } catch {
             let nsEr = error as NSError
@@ -84,18 +52,38 @@ class ReviewManager: ObservableObject {
     
     @MainActor
     func replyTo(review: CustomerReview, with response: String) async -> Bool {
-//        Task {
+        
             do {
-                guard let jwt = CredentialsManager.shared.getJWT(), let service = try? BagbutikService(jwt: jwt) else { return false }
+                let provider = APIProvider(configuration: CredentialsManager.shared.configuration)
                 
-                let requestBody = CustomerReviewResponseV1CreateRequest.init(
-                    data: CustomerReviewResponseV1CreateRequest.Data.init(attributes: .init(responseBody: response), relationships: .init(review: .init(data: .init(id: review.id)))))
-                
-                let response = try await service.request(
-                    .createCustomerReviewResponseV1(requestBody: requestBody)
+                let replyBody = response
+                let reviewResponse = CustomerReviewResponseV1CreateRequest.Data.Relationships.Review(
+                    data: .init(
+                        type: .customerReviews,
+                        id: review.id
+                    )
                 )
                 
-                if let state = response.data.attributes?.state {
+                let replyRequest = APIEndpoint.v1.customerReviewResponses
+                    .post(CustomerReviewResponseV1CreateRequest(
+                        data:
+                                .init(
+                                    type: .customerReviewResponses,
+                                    attributes: .init(responseBody: replyBody),
+                                    relationships: .init(review: reviewResponse)
+                                )
+                    )
+                    )
+                        let responseState = try! await provider.request(replyRequest)
+                
+//                let requestBody = CustomerReviewResponseV1CreateRequest.init(
+//                    data: CustomerReviewResponseV1CreateRequest.Data.init(attributes: .init(responseBody: response), relationships: .init(review: .init(data: .init(id: review.id)))))
+//
+//                let response = try await service.request(
+//                    .createCustomerReviewResponseV1(requestBody: requestBody)
+//                )
+
+                if let state = responseState.data.attributes?.state {
                     if state == .pendingPublish {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             self.remove(review: review)
@@ -107,7 +95,7 @@ class ReviewManager: ObservableObject {
                 print(error.localizedDescription)
                 return false
             }
-//        }
+        
     }
     
     @AppStorage("pendingPublications") var pendingPublications: [String] = []

@@ -17,7 +17,11 @@ struct SuperstarApp: App {
             FullAppView()
                 .frame(minWidth: 700, minHeight: 500)
         }
-        .windowToolbarStyle(.automatic)
         .windowStyle(.titleBar)
+        .windowToolbarStyle(.unified)
+//        .windowToolbarStyle(UnifiedCompactWindowToolbarStyle())
+//        .windowStyle(.automatic)
+//        .windowToolbarStyle(.automatic)
+//        .windowStyle(.titleBar)
     }
 }

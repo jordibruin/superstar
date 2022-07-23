@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Bagbutik
+import AppStoreConnect_Swift_SDK
 
 struct MenuBarHeader: View {
     
@@ -22,16 +22,27 @@ struct MenuBarHeader: View {
     var body: some View {
         HStack {
             if let url = appsManager.imageURL(for: appsManager.selectedApp) {
-                AsyncImage(url: url, scale: 2) { image in
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(RoundedRectangle(cornerRadius: 6))
-                        .clipped()
-                } placeholder: {
-                    Color.clear
+                CacheAsyncImage(url: url, scale: 2) { phase in
+                    switch phase {
+                    case .success(let image):
+                        
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                .clipped()
+                    case .failure(let _):
+                        Text("E")
+                    case .empty:
+                        Color.gray.opacity(0.05)
+                    @unknown default:
+                        // AsyncImagePhase is not marked as @frozen.
+                        // We need to support new cases in the future.
+                        Image(systemName: "questionmark")
+                    }
                 }
                 .frame(width: 28, height: 28)
+     
             } else {
                 RoundedRectangle(cornerRadius: 5)
                     .foregroundColor(.blue)
