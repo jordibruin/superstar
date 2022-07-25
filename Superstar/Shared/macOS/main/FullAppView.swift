@@ -36,17 +36,19 @@ struct FullAppView: View {
                 selectedReview: $selectedReview
             )
             
+            Color.clear
+            
                
             if showCredentialsScreen || showSuggestionsScreen {
                 Text("")
                     .toolbar(content: { ToolbarItem(content: {Text("")}) })
             } else {
-                FullReviewSide(
-                    review: $selectedReview,
-                    reviewManager: reviewManager
-                )
+                FullReviewSide(review: $selectedReview)
+                .environmentObject(appsManager)
+                .environmentObject(reviewManager)
             }
 //            .frame(width: showCredentialsScreen ? 0 : 200)
+            
         }
         .onChange(of: reviewManager.retrievedReviews) { newValue in
             selectedReview = nil

@@ -86,7 +86,7 @@ struct Sidebar: View {
     var appsList: some View {
         ForEach(appsManager.foundApps, id: \.id) { app in
             if !hiddenAppIds.contains(app.id) {
-                NavigationLink {
+                NavigationLink(tag: app.id, selection: $appsManager.selectedAppId) {
                     AppDetailView(
                         appsManager: appsManager,
                         reviewManager: reviewManager,

@@ -14,7 +14,9 @@ struct FullReviewSide: View {
     @State var replyText = ""
     @FocusState private var isReplyFocused: Bool
     @State var showReplyField = false
-    @ObservedObject var reviewManager: ReviewManager
+    
+    @EnvironmentObject var reviewManager: ReviewManager
+    @EnvironmentObject var appsManager: AppsManager
     
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     
@@ -58,11 +60,11 @@ struct FullReviewSide: View {
             .opacity(isReplying || succesfullyReplied ? 1 : 0)
         )
         .toolbar(content: {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItem(placement: .automatic) {
                 Spacer()
             }
             
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItem(placement: .automatic) {
                 Button {
                     Task {
                         await respondToReview()
@@ -132,6 +134,7 @@ struct FullReviewSide: View {
             }
             .padding()
         }
+        .clipped()
     }
     
     func respondToReview() async {
@@ -209,12 +212,37 @@ struct FullReviewSide: View {
 //                        showReplyField = true
 //                    }
                 } label: {
-                    Text(suggestion.title.capitalized)
-                        .padding(.vertical, 6)
-                        .padding(.horizontal, 12)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
+                    HStack {
+                        if let url = appsManager.imageURLfor(appId: "\(suggestion.appId)") {
+                            CacheAsyncImage(url: url, scale: 2) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .clipShape(RoundedRectangle(cornerRadius: 3))
+                                        .clipped()
+                                case .failure(let _):
+                                    Text("E")
+                                case .empty:
+                                    Color.gray.opacity(0.05)
+                                @unknown default:
+                                    // AsyncImagePhase is not marked as @frozen.
+                                    // We need to support new cases in the future.
+                                    Image(systemName: "questionmark")
+                                }
+                            }
+                            .frame(width: 18, height: 18)
+                        }
+                        
+//                        Text(appsManager.appNameFor(appId: "\(suggestion.appId)"))
+                        Text(suggestion.title.capitalized)
+                    }
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 8)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(6)
                 }
                 .buttonStyle(.plain)
             }

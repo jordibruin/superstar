@@ -37,29 +37,15 @@ struct AppDetailView: View {
                             .id(UUID())
                     }
                 }
-                .background(Color(.controlBackgroundColor))
+                .clipped()
             }
         }
         .toolbar(content: { toolbarItems })
-//        .toolbar(id: "list navigation") {
-//            toolbarItems
-////            Group {
-////
-////
-////
-////            ToolbarItem(placement: .primaryAction) {
-////                Toggle(isOn: $hidePending) {
-////                    Text("Hide Pending")
-////                }
-////            }
-////            }
-//        }
-        .background(Color(.controlBackgroundColor))
+        
         // there is no title anymore so let's fake it.
         .onTapGesture {
             selectedReview = nil
         }
-        .toolbar(content: { toolbarItems })
         .onAppear {
             Task { await reviewManager.getReviewsFor(id: app.id) }
         }
@@ -67,7 +53,7 @@ struct AppDetailView: View {
     
     var toolbarItems: some ToolbarContent {
         Group {
-            ToolbarItem(id: "title", placement: ToolbarItemPlacement.navigation, showsByDefault: true) {
+            ToolbarItem(placement: .navigation) {
                 HStack {
                     if let url = appsManager.imageURL(for: app) {
                         CacheAsyncImage(url: url, scale: 2) { phase in
@@ -98,11 +84,10 @@ struct AppDetailView: View {
                     VStack(alignment: .leading) {
                         Text(app.attributes?.name ?? "")
                             .font(.headline)
-                        if !reviewManager.loadingReviews {
-                            Text("\(unansweredReviewCount) unanswered reviews")
-                                .font(.system(.subheadline, design: .rounded))
-                                .opacity(0.6)
-                        }
+                        
+                        Text(reviewManager.loadingReviews ? "" : "\(unansweredReviewCount) unanswered reviews")
+                            .font(.system(.subheadline, design: .rounded))
+                            .opacity(0.6)
                     }
                     
                     Spacer()

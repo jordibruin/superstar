@@ -18,6 +18,8 @@ class AppsManager: ObservableObject {
     @Published var foundReviews: [AppStoreConnect_Swift_SDK.CustomerReview] = []
     @Published var selectedApp: AppStoreConnect_Swift_SDK.App = AppStoreConnect_Swift_SDK.App(type: .apps, id: "Placeholder", links: .init(this: ""))
     
+    @Published var selectedAppId: String? = "Placeholder"
+    
     init() {
         Task {
             await getAppsTwan()
@@ -38,6 +40,7 @@ class AppsManager: ObservableObject {
             let request = APIEndpoint
                 .v1
                 .apps
+
                 .get(parameters: .init(
                     sort: [.bundleID],
                     fieldsApps: [.name, .bundleID, .customerReviews]
