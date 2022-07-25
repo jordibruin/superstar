@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import KeychainAccess
+
 struct AddCredentialsView: View {
     
     @Environment(\.dismiss) var dismiss
@@ -14,6 +16,8 @@ struct AddCredentialsView: View {
     @State var p8Hovered = false
     
     @StateObject var credentials = CredentialsManager.shared
+    
+//    @EncryptedAppStorage("keyIDKeychainStorage") var keyID = "abc"
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -38,7 +42,7 @@ struct AddCredentialsView: View {
                 Text(p8Hovered ? "Drop P8 file here" : "")
                     .font(.system(.title, design: .rounded))
             }
-                .opacity(p8Hovered ? 1 : 0)
+            .opacity(p8Hovered ? 1 : 0)
         )
     }
     
@@ -60,13 +64,16 @@ struct AddCredentialsView: View {
     var footer: some View {
         HStack {
             Spacer()
+            
             Button {
                 credentials.clearAllCredentials()
             } label: {
                 Text("Clear Credentials")
             }
+            
             Button {
-                dismiss()
+                CredentialsManager.shared.saveCredentials()
+//                dismiss()
             } label: {
                 Text("Save Credentials")
             }
@@ -79,6 +86,7 @@ struct AddCredentialsView: View {
                 .font(.system(.title3, design: .rounded))
                 .bold()
             TextField("keyId", text: $credentials.keyID)
+//            TextField("keyId", text: $keyIDKeychainStorage)
                 .frame(width: 100)
         }
     }
@@ -89,7 +97,7 @@ struct AddCredentialsView: View {
                 .font(.system(.title3, design: .rounded))
                 .bold()
             TextField("issuerId", text: $credentials.issuerId)
-                .frame(width: 200)
+                .frame(width: 300)
         }
     }
     
@@ -102,7 +110,7 @@ struct AddCredentialsView: View {
                 .font(.caption)
             
             Color(.controlBackgroundColor)
-                .frame(width: 300, height: 100)
+                .frame(width: 450, height: 160)
                 .overlay(
                     Text(credentials.privateKey)
                 )

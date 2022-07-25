@@ -15,7 +15,6 @@ struct DetailReviewView: View {
     
     @State var showReplyField = false
     @State var replyText = ""
-    @Binding var selectMultiple: Bool
     @FocusState private var isReplyFocused: Bool
     
     @State var selectedInMultiple = false
@@ -29,33 +28,40 @@ struct DetailReviewView: View {
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     @Binding var autoReply: Bool
+    @Binding var selectedReview: CustomerReview?
     
     var body: some View {
-        VStack(alignment: .leading) {
+//        Button {
+//            selectedReview = review
+//        } label: {
             VStack(alignment: .leading) {
-                header
-                
-                ScrollView {
-                    Text(review.attributes?.body ?? "")
-                        .font(.system(.body, design: .rounded))
-                        .padding(.bottom)
-                        .minimumScaleFactor(0.7)
-//                        .textSelection(.enabled)
+                VStack(alignment: .leading) {
+                    header
+                    
+                    ScrollView {
+                        Text(review.attributes?.body ?? "")
+                            .font(.system(.body, design: .rounded))
+                            .padding(.bottom)
+                            .minimumScaleFactor(0.7)
+                        //                        .textSelection(.enabled)
+                    }
+                    Spacer()
+                    //                suggestionsAndReply
                 }
-                Spacer()
-                suggestionsAndReply
+                .padding([.top, .horizontal])
+                .padding(.bottom, showReplyField ? 4 : 20)
+                
+                if showReplyField {
+                    replyArea
+                }
             }
-            .padding([.top, .horizontal])
-            .padding(.bottom, showReplyField ? 4 : 20)
-            
-            if showReplyField {
-                replyArea
-            }
-        }
+//        }
+//        .buttonStyle(.plain)
+//        .disabled(isReplying || succesfullyReplied)
         .sheet(isPresented: $showSuggestionsSheet, content: {
             SuggestionsConfigView(showSheet: $showSuggestionsSheet)
         })
-        .frame(height: 300)
+        .frame(height: 260)
         .overlay(
             ZStack {
                 Color(.controlBackgroundColor)
@@ -75,7 +81,7 @@ struct DetailReviewView: View {
                         .bold()
                 }
             }
-            .opacity(isReplying || succesfullyReplied ? 1 : 0)
+                .opacity(isReplying || succesfullyReplied ? 1 : 0)
         )
         .background(Color.gray.opacity(0.1))
         .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
@@ -91,26 +97,26 @@ struct DetailReviewView: View {
     var suggestionsAndReply: some View {
         HStack {
             suggestionsPicker
-
+            
             Spacer()
-
+            
             if !showReplyField {
                 Button {
+                    
                     showReplyField = true
                     isReplyFocused = true
                 } label: {
                     Label("Reply", systemImage: "arrowshape.turn.up.left.fill")
-
                 }
             } else {
-
+                
                 Button {
                     showReplyField = false
                     replyText = ""
                 } label: {
                     Text("Cancel")
                 }
-
+                
                 Button {
                     Task {
                         await respondToReview()
@@ -173,34 +179,34 @@ struct DetailReviewView: View {
                 showSuggestionsSheet = true
             }
         }
-
-
-//        Menu {
-//            ForEach(suggestions) {  suggestion in
-//                Button {
-//                    replyText = suggestion.text
-//
-//                    if autoReply {
-//                        print("we should automatically sent it now")
-//                        Task {
-//                            await respondToReview()
-//                        }
-//                    } else {
-//                        showReplyField = true
-//                    }
-//                } label: {
-//                    Text(suggestion.title.capitalized)
-//                        .padding(.vertical, 6)
-//                        .padding(.horizontal, 12)
-//                        .background(Color.blue)
-//                        .foregroundColor(.white)
-//                        .cornerRadius(12)
-//                }
-//                .buttonStyle(.plain)
-//            }
-//        } label: {
-//            Text("Suggestions")
-//        }
+        
+        
+        //        Menu {
+        //            ForEach(suggestions) {  suggestion in
+        //                Button {
+        //                    replyText = suggestion.text
+        //
+        //                    if autoReply {
+        //                        print("we should automatically sent it now")
+        //                        Task {
+        //                            await respondToReview()
+        //                        }
+        //                    } else {
+        //                        showReplyField = true
+        //                    }
+        //                } label: {
+        //                    Text(suggestion.title.capitalized)
+        //                        .padding(.vertical, 6)
+        //                        .padding(.horizontal, 12)
+        //                        .background(Color.blue)
+        //                        .foregroundColor(.white)
+        //                        .cornerRadius(12)
+        //                }
+        //                .buttonStyle(.plain)
+        //            }
+        //        } label: {
+        //            Text("Suggestions")
+        //        }
         .menuStyle(.borderlessButton)
         .frame(width: 110)
         .padding(.vertical, 4)

@@ -102,7 +102,6 @@ class ReviewManager: ObservableObject {
     
     func remove(review: CustomerReview) {
         if let index = retrievedReviews.firstIndex(where: { review.id == $0.id }) {
-            
             pendingPublications.append(review.id)
 //            retrievedReviews.remove(at: index)
         }

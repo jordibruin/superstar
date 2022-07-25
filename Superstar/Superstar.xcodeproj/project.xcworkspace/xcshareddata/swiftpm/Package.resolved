@@ -10,6 +10,24 @@
       }
     },
     {
+      "identity" : "encryptedappstorage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/khuong291/EncryptedAppStorage",
+      "state" : {
+        "branch" : "master",
+        "revision" : "5c3a0e59c9b77b561cfe6eff26828d7050ed6652"
+      }
+    },
+    {
+      "identity" : "keychainaccess",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kishikawakatsumi/KeychainAccess.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "6299daec1d74be12164fec090faf9ed14d0da9d6"
+      }
+    },
+    {
       "identity" : "urlqueryencoder",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CreateAPI/URLQueryEncoder.git",

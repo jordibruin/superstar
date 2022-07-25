@@ -15,13 +15,9 @@ struct SuperstarApp: App {
     var body: some Scene {
         WindowGroup {
             FullAppView()
-                .frame(minWidth: 700, minHeight: 500)
+                .frame(minWidth: 800, minHeight: 500)
         }
-        .windowStyle(.titleBar)
+        .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
-//        .windowToolbarStyle(UnifiedCompactWindowToolbarStyle())
-//        .windowStyle(.automatic)
-//        .windowToolbarStyle(.automatic)
-//        .windowStyle(.titleBar)
     }
 }

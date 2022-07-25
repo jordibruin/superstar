@@ -26,12 +26,7 @@ struct SuggestionsConfigView: View {
                     .width(min: 100, ideal: 120, max: 150)
                 
                 TableColumn("Text", value: \.text)
-                    .width(min: 400, ideal: 450, max: 500)
-                
-                //                    TableColumn("App Id") { suggestion in
-                //                        Text("\(suggestion.appId)")
-                //                    }
-                //                    .width(min: 60, ideal: 70, max: 80)
+                    .width(min: 400, ideal: 450)
                 
                 TableColumn("Delete") { suggestion in
                     Button {
@@ -83,17 +78,15 @@ struct SuggestionsConfigView: View {
                 }
             }
             
-            
-            
-            HStack {
-                Spacer()
-                Button {
-                    dismiss()
-                } label: {
-                    Text("Close")
-                }
-                
-            }
+//            HStack {
+//                Spacer()
+//                Button {
+//                    dismiss()
+//                } label: {
+//                    Text("Close")
+//                }
+//
+//            }
         }
         .toolbar(content: { ToolbarItem(content: {Text("")}) })
         .padding()

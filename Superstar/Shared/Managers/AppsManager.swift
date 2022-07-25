@@ -60,6 +60,10 @@ class AppsManager: ObservableObject {
 
         } catch {
             print(error.localizedDescription)
+            let nsError = error as NSError
+            print(nsError)
+            print(nsError.domain)
+            print(nsError.code)
         }   
     }
     
@@ -102,6 +106,9 @@ class AppsManager: ObservableObject {
         } catch {
             print(error.localizedDescription)
             let nsError = error as NSError
+            print(nsError)
+            print(nsError.domain)
+            print(nsError.code)
         }
                 
         loadingIcons = false

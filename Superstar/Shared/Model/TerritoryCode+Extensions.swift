@@ -20,6 +20,10 @@ extension TerritoryCode {
             return "🇺🇦"
         case .arg:
             return "🇦🇷"
+        case .aus:
+            return "🇦🇺"
+        case .chn:
+            return "🇨🇳"
         default:
             return "🌎"
         }

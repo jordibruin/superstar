@@ -13,40 +13,78 @@ struct AppDetailView: View {
     @ObservedObject var appsManager: AppsManager
     @ObservedObject var reviewManager: ReviewManager
     let app: AppStoreConnect_Swift_SDK.App
-    @Binding var selectMultiple: Bool
     @Binding var autoReply: Bool
     
-    @State var selectedReview: CustomerReview?
+    @Binding var selectedReview: CustomerReview?
     
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
+    @AppStorage("suggestions") var suggestions: [Suggestion] = []
+    
     
     var body: some View {
-//        HStack(spacing: 0) {
-        HSplitView {
-            VStack(spacing: 0) {
-                header
-                if reviewManager.loadingReviews {
-                    loading
-                        .frame(maxWidth: .infinity)
-                } else {
-                    ScrollView {
-                        if reviewManager.retrievedReviews.isEmpty {
-                            noReviews
-                        } else {
-                            
-                            reviewsList
-                                .animation(.default, value: reviewManager.retrievedReviews)
+        VStack(spacing: 0) {
+            if reviewManager.loadingReviews {
+                loading
+                    .frame(maxWidth: .infinity)
+            } else {
+                ScrollView {
+                    if reviewManager.retrievedReviews.isEmpty {
+                        noReviews
+                    } else {
+                        reviewsList
+                            .animation(.default, value: reviewManager.retrievedReviews)
+                            .id(UUID())
+                    }
+                }
+                .background(Color(.controlBackgroundColor))
+            }
+        }
+        .toolbar(id: "list navigation") {
+            ToolbarItem(id: "title", placement: ToolbarItemPlacement.navigation, showsByDefault: true) {
+                HStack {
+                    if let url = appsManager.imageURL(for: app) {
+                        CacheAsyncImage(url: url, scale: 2) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                                    .clipped()
+                            case .failure(let _):
+                                Text("E")
+                            case .empty:
+                                Color.gray.opacity(0.05)
+                            @unknown default:
+                                // AsyncImagePhase is not marked as @frozen.
+                                // We need to support new cases in the future.
+                                Image(systemName: "questionmark")
+                            }
+                        }
+                        .frame(width: 32, height: 32)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .foregroundColor(.blue)
+                            .frame(width: 32, height: 32)
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Text(app.attributes?.name ?? "")
+                            .font(.headline)
+                        if !reviewManager.loadingReviews {
+                            Text("\(unansweredReviewCount) unanswered reviews")
+                                .font(.system(.subheadline, design: .rounded))
+                                .opacity(0.6)
                         }
                     }
-                    .background(Color(.controlBackgroundColor))
                 }
+                .padding(.bottom, -4)
             }
-            .background(Color(.controlBackgroundColor))
-            .onTapGesture {
-                selectedReview = nil
-            }
-            
-            FullReviewSide(review: selectedReview)
+        }
+        .background(Color(.controlBackgroundColor))
+        // there is no title anymore so let's fake it.
+        .onTapGesture {
+            selectedReview = nil
         }
         .toolbar(content: { toolbarItems })
         .onAppear {
@@ -55,15 +93,16 @@ struct AppDetailView: View {
     }
     
     var toolbarItems: some ToolbarContent {
-            Group {
-                ToolbarItem(placement: .primaryAction) {
-                    Toggle(isOn: $autoReply) {
-                        Text("Auto Reply")
-                            .help(Text("Automatically send response when you select a template reply."))
-                    }
-                }
+        Group {
+            ToolbarItem(placement: .primaryAction) {
+                Text("")
+                //                    Toggle(isOn: $autoReply) {
+                //                        Text("Auto Reply")
+                //                            .help(Text("Automatically send response when you select a template reply."))
+                //                    }
             }
         }
+    }
     
     var loading: some View {
         ZStack {
@@ -93,7 +132,7 @@ struct AppDetailView: View {
     }
     
     var columns: [GridItem] = [
-        GridItem(.adaptive(minimum: 270, maximum: 400), spacing: 20)
+        GridItem(.adaptive(minimum: 300, maximum: 480), spacing: 20)
     ]
     
     var reviewsList: some View {
@@ -109,15 +148,15 @@ struct AppDetailView: View {
                     DetailReviewView(
                         review: review,
                         reviewManager: reviewManager,
-                        selectMultiple: $selectMultiple,
-                        autoReply: $autoReply
+                        autoReply: $autoReply,
+                        selectedReview: $selectedReview
                     )
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(12)
-        .padding(.vertical, 40)
+        .padding(.vertical)
     }
     
     var header: some View {
@@ -127,11 +166,11 @@ struct AppDetailView: View {
                     switch phase {
                     case .success(let image):
                         
-                            image
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .clipShape(RoundedRectangle(cornerRadius: 9))
-                                .clipped()
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .clipShape(RoundedRectangle(cornerRadius: 9))
+                            .clipped()
                     case .failure(let _):
                         Text("E")
                     case .empty:

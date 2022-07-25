@@ -10,12 +10,16 @@ import AppStoreConnect_Swift_SDK
 
 struct FullReviewSide: View {
     
-    let review: CustomerReview?
+    @Binding var review: CustomerReview?
     @State var replyText = ""
     @FocusState private var isReplyFocused: Bool
     @State var showReplyField = false
+    @ObservedObject var reviewManager: ReviewManager
     
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
+    
+    @State var isReplying = false
+    @State var succesfullyReplied = false
     
     var body: some View {
         VStack {
@@ -30,9 +34,53 @@ struct FullReviewSide: View {
                     }
                 }
             }
-            .frame(width: 280)
+//            .frame(width: 280)
         }
-        .frame(width: 280)
+        .overlay(
+            ZStack {
+                Color(.controlBackgroundColor)
+                VStack {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                        .font(.system(size: 60))
+                        .opacity(succesfullyReplied ? 1 : 0)
+                        .animation(.default, value: isReplying)
+                    
+                    if isReplying {
+                        ProgressView()
+                    }
+                    
+                    Text(succesfullyReplied ? "Pending Publication" : "Sending Reply...")
+                        .font(.system(.title, design: .rounded))
+                        .bold()
+                }
+            }
+            .opacity(isReplying || succesfullyReplied ? 1 : 0)
+        )
+        .onChange(of: review) { newValue in
+            replyText = ""
+            isReplying = false
+            succesfullyReplied = false
+            isReplyFocused = true
+        }
+        
+    }
+    
+    @AppStorage("pendingPublications") var pendingPublications: [String] = []
+    
+    func getNewReview() {
+        if let currentIndex = reviewManager.retrievedReviews.firstIndex(of: review!) {
+            
+            // volgende index pakken?
+            
+            if let review = reviewManager.retrievedReviews.randomElement() {
+                if !pendingPublications.contains(review.id) {
+                    self.review = review
+                } else {
+                    getNewReview()
+                }
+            }
+        }
     }
     
     func reviewView(review: CustomerReview) -> some View {
@@ -46,10 +94,47 @@ struct FullReviewSide: View {
                 body(for: review)
 
                 replyArea
+                    .padding(.horizontal, -4)
+                    .padding(.top, -8)
+                
+                HStack {
+                    Spacer()
+                    Button {
+                        Task {
+                            await respondToReview()
+                        }
+                    } label: {
+                        Text("Send")
+                    }
+                    .disabled(replyText.isEmpty)
+                }
+                
                 suggestionsPicker
                 Spacer()
             }
             .padding()
+        }
+    }
+    
+    func respondToReview() async {
+        guard let review = review else { return }
+
+        Task {
+            isReplying = true
+            let replied = await reviewManager.replyTo(review: review, with: replyText)
+//            let replied = true
+            isReplying = false
+            if replied {
+                print("replied succesfully")
+                succesfullyReplied = true
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    self.getNewReview()
+                }
+            } else {
+                print("could not reply")
+                succesfullyReplied = false
+            }
         }
     }
     
@@ -65,6 +150,8 @@ struct FullReviewSide: View {
             .textSelection(.enabled)
             .padding(.bottom)
     }
+    
+    @State var hoveringBody = false
     
     func starsFor(review: CustomerReview) -> some View {
         let realRating = review.attributes?.rating ?? 1
@@ -165,28 +252,32 @@ struct FullReviewSide: View {
         ZStack(alignment: .topLeading) {
             Color(.controlBackgroundColor)
                 .frame(height: 200)
+                .onTapGesture {
+                    isReplyFocused = true
+                }
 
             TextEditor(text: $replyText)
                 .focused($isReplyFocused)
-//                .padding(8)
-                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
+                .padding(8)
+//                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
+                .frame(height: 200)
                 .overlay(
                     TextEditor(text: .constant("Custom Reply"))
                         .opacity(0.4)
-//                        .padding(8)
+                        .padding(8)
                         .allowsHitTesting(false)
                         .opacity(replyText.isEmpty ? 1 : 0)
                         .frame(height: 200)
                 )
         }
-//        .padding(8)
+        .font(.system(.title3, design: .rounded))
         .cornerRadius(8)
     }
 }
 
-struct FullReviewSide_Previews: PreviewProvider {
-    static var previews: some View {
-        FullReviewSide(review: CustomerReview(type: .customerReviews, id: "", links: ResourceLinks(this: "")))
-    }
-}
-
+//struct FullReviewSide_Previews: PreviewProvider {
+//    static var previews: some View {
+//        FullReviewSide(review: CustomerReview(type: .customerReviews, id: "", links: ResourceLinks(this: "")), reviewManager: ReviewManager())
+//    }
+//}
+//
