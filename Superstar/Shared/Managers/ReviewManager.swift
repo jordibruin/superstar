@@ -26,18 +26,17 @@ class ReviewManager: ObservableObject {
     func getReviewsFor(id: String) async {
         loadingReviews = true
         do {
-            
             let provider = APIProvider(configuration: CredentialsManager.shared.configuration)
-            
             let request = APIEndpoint
                 .v1
                 .apps
                 .id(id)
                 .customerReviews
-                .get()
+                .get(parameters: .init(
+                    sort: [.minuscreatedDate]
+                ))
             
             let reviews = try await provider.request(request).data
-            
             var reviewsWithoutResponse: [CustomerReview] = []
             
             self.retrievedReviews = reviews

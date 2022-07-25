@@ -24,6 +24,7 @@ struct FullAppView: View {
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     @State var selectedReview: CustomerReview?
+    @State var selectedPage: SettingsPage? = .home
     
     var body: some View {
         NavigationView {
@@ -33,7 +34,8 @@ struct FullAppView: View {
                 appsManager: appsManager,
                 showCredentialsScreen: $showCredentialsScreen,
                 showSuggestionsScreen: $showSuggestionsScreen,
-                selectedReview: $selectedReview
+                selectedReview: $selectedReview,
+                selectedPage: $selectedPage
             )
             
             Color.clear
@@ -51,6 +53,9 @@ struct FullAppView: View {
             
         }
         .onChange(of: reviewManager.retrievedReviews) { newValue in
+            selectedReview = nil
+        }
+        .onChange(of: selectedPage) { newValue in
             selectedReview = nil
         }
         .onChange(of: credentials.savedInKeychain) { saved in

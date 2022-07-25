@@ -61,6 +61,13 @@ struct FullReviewSide: View {
         )
         .toolbar(content: {
             ToolbarItem(placement: .automatic) {
+                Button {
+                    getNewReview()
+                } label: {
+                    Text("Skip")
+                }
+            }
+            ToolbarItem(placement: .automatic) {
                 Spacer()
             }
             
@@ -72,7 +79,6 @@ struct FullReviewSide: View {
                 } label: {
                     Text("Send")
                 }
-                .buttonStyle(.borderedProminent)
                 .opacity(review == nil ? 0 : 1)
                 .disabled(replyText.isEmpty)
             }

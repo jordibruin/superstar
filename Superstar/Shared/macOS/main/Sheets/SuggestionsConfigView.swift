@@ -88,22 +88,47 @@ struct SuggestionsConfigView: View {
             .cornerRadius(8)
             
             if selection != nil {
-                //                    HStack {
-                //                        TextField("Title", text: $suggestions[)
-                //                        TextField("Text", text: $text)
-                //    //                    Text("\(appId)")
-                //                        Button {
-                //                            suggestions.append(Suggestion(title: title, text: text, appId: Int(appId)!))
-                //                            title = ""
-                //                            text = ""
-                //                        } label: {
-                //                            Text("Add")
-                //                        }
-                //
-                //                    }
+                
+                if let index = suggestions.firstIndex(where: { $0.id == selection }) {
+                    HStack(alignment: .top) {
+                        TextField("Title", text: $suggestions[index].title)
+                            .font(.title3)
+                            .frame(width: 150)
+                        
+                        ZStack {
+                            TextEditor(text: $suggestions[index].text)
+                                .font(.title3)
+                                .background(Color(.controlBackgroundColor))
+                                .frame(height: 80)
+                                .overlay(
+                                    TextEditor(text: .constant("Response Text"))
+                                        .font(.title3)
+                                        .background(Color(.controlBackgroundColor))
+                                        .opacity(0.4)
+                                        .allowsHitTesting(false)
+                                        .opacity(suggestions[index].text.isEmpty ? 1 : 0)
+                                        .frame(height: 80)
+                                )
+                        }
+                        
+                        Picker(selection: $suggestions[index].appId) {
+                            Text("None")
+                                .tag("None")
+                            
+                            ForEach(appsManager.foundApps, id: \.id) { app in
+                                Text(app.attributes?.name ?? "No Name")
+                                    .tag(Int(app.id) ?? 0)
+                            }
+                        } label: {
+                            Text("Link to App")
+                        }
+                        .labelsHidden()
+                    }
+                }
             } else {
                 HStack(alignment: .top) {
                     TextField("Title", text: $title)
+                        .font(.title3)
                         .frame(width: 150)
                     
                     textEditors
@@ -222,18 +247,14 @@ struct SuggestionsConfigView: View {
     var textEditors: some View {
         ZStack {
             TextEditor(text: $text)
+                .font(.title3)
                 .background(Color(.controlBackgroundColor))
-            //                .padding(.leading, 12)
-            //                .padding(.trailing)
-            //                .padding(.vertical, 8)
                 .frame(height: 80)
                 .overlay(
                     TextEditor(text: .constant("Response Text"))
+                        .font(.title3)
                         .background(Color(.controlBackgroundColor))
                         .opacity(0.4)
-                    //                        .padding(.leading, 12)
-                    //                        .padding(.trailing)
-                    //                        .padding(.vertical, 8)
                         .allowsHitTesting(false)
                         .opacity(text.isEmpty ? 1 : 0)
                         .frame(height: 80)

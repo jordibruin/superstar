@@ -51,7 +51,7 @@ struct Sidebar: View {
 //        })
     }
     
-    @State var selectedPage: SettingsPage? = .home
+    @Binding var selectedPage: SettingsPage?
     
     var settingsSection: some View {
         Section {

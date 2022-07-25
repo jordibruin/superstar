@@ -22,8 +22,11 @@ struct AddCredentialsView: View {
     var body: some View {
         VStack(alignment: .leading) {
             title
+            Divider()
             keyId
+            Divider()
             issuerId
+            Divider()
             privateKey
             
             Button {
@@ -39,7 +42,7 @@ struct AddCredentialsView: View {
         }
         
         .padding()
-
+        .frame(minWidth: 1000)
         .onDrop(of: [.fileURL], isTargeted: $p8Hovered) { providers in
             handleExternalFileDrop(providers: providers)
         }
@@ -91,11 +94,11 @@ struct AddCredentialsView: View {
     var title: some View {
         VStack(alignment: .leading) {
             Text("You need to add some API stuff")
-            
-                .font(.system(.title3, design: .rounded))
+                .font(.system(.title2, design: .rounded))
                 .bold()
+            
             Text("Go to https://appstoreconnect.apple.com/access/api and create a new API key.\nMake sure to give the key Admin access (I've filed a FB to also allow users to make a Customer Support role. \nOnce you've made the key copy the keyID and the issuerID as well.")
-                .font(.system(.caption, design: .rounded))
+                .font(.system(.body, design: .rounded))
         }
     }
     
