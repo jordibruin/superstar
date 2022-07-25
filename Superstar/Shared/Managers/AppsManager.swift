@@ -16,7 +16,7 @@ class AppsManager: ObservableObject {
     @Published var foundApps: [AppStoreConnect_Swift_SDK.App] = []
     @Published var appsAndImages: [AppIdAndImage] = []
     @Published var foundReviews: [AppStoreConnect_Swift_SDK.CustomerReview] = []
-    @Published var selectedApp: AppStoreConnect_Swift_SDK.App = AppStoreConnect_Swift_SDK.App(type: .apps, id: "", links: .init(this: ""))// .App(id: "Placeholder", links: ResourceLinks(self: ""))
+    @Published var selectedApp: AppStoreConnect_Swift_SDK.App = AppStoreConnect_Swift_SDK.App(type: .apps, id: "Placeholder", links: .init(this: ""))
     
     init() {
         Task {
@@ -114,13 +114,41 @@ class AppsManager: ObservableObject {
         loadingIcons = false
     }
     
+    func imageURLfor(appId: String) -> URL? {
+        if let firstIndex = appsMatchedWithIcons.firstIndex(where: { $0.appId == appId } ) {
+            var imageURLRaw = appsMatchedWithIcons[firstIndex].iconURL ?? ""
+            imageURLRaw = imageURLRaw
+                .replacingOccurrences(of: "{w}", with: "32")
+                .replacingOccurrences(of: "{h}", with: "32")
+                .replacingOccurrences(of: "{f}", with: "png")
+
+            if let url = URL(string: imageURLRaw) {
+                return url
+            } else {
+                return nil
+            }
+        } else {
+            return nil
+        }
+    }
+    
+    func appNameFor(appId: String) -> String {
+        if let app = foundApps.first(where: { $0.id == appId }) {
+            return app.attributes?.name ?? ""
+        } else{
+            return ""
+        }
+    }
+    
+    
+    
     func imageURL(for app: AppStoreConnect_Swift_SDK.App) -> URL? {
         
         if let firstIndex = appsMatchedWithIcons.firstIndex(where: { $0.appId == app.id } ) {
             var imageURLRaw = appsMatchedWithIcons[firstIndex].iconURL ?? ""
             imageURLRaw = imageURLRaw
-                .replacingOccurrences(of: "{w}", with: "200")
-                .replacingOccurrences(of: "{h}", with: "200")
+                .replacingOccurrences(of: "{w}", with: "100")
+                .replacingOccurrences(of: "{h}", with: "100")
                 .replacingOccurrences(of: "{f}", with: "png")
 
             if let url = URL(string: imageURLRaw) {

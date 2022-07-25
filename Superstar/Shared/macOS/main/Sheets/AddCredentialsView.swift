@@ -25,17 +25,26 @@ struct AddCredentialsView: View {
             keyId
             issuerId
             privateKey
+            
+            Button {
+                credentials.saveCredentials()
+            } label: {
+                Text("Save Credentials")
+            }
+            HStack {
+                Spacer()
+            }
             Spacer()
-            footer
+//            footer
         }
+        
         .padding()
-        .background(
-            background
-        )
+
         .onDrop(of: [.fileURL], isTargeted: $p8Hovered) { providers in
             handleExternalFileDrop(providers: providers)
         }
-        .toolbar(content: { ToolbarItem(content: {Text("")}) })
+        .toolbar(content: { toolbarItems })
+        
         .overlay(
             ZStack {
                 Color.white.opacity(0.2)
@@ -46,9 +55,38 @@ struct AddCredentialsView: View {
         )
     }
     
-    var background: some View {
-        Color.gray.opacity(0.2)
-    }
+    var toolbarItems: some ToolbarContent {
+            Group {
+                ToolbarItem(content: {
+                    Text("Credentials")
+                        .font(.title2)
+                        .bold()
+                })
+                
+                ToolbarItem(placement: .automatic) {
+                    Spacer()
+                }
+                
+                ToolbarItem(placement: .automatic) {
+                    Button {
+                        credentials.clearAllCredentials()
+                    } label: {
+                        Text("Clear Credentials")
+                    }
+                }
+                
+                ToolbarItem(placement: .automatic) {
+                    Button {
+                        credentials.saveCredentials()
+                    } label: {
+                        Text("Save Credentials")
+                    }
+                }
+                
+               
+            }
+        }
+    
     
     var title: some View {
         VStack(alignment: .leading) {
@@ -61,24 +99,23 @@ struct AddCredentialsView: View {
         }
     }
     
-    var footer: some View {
-        HStack {
-            Spacer()
-            
-            Button {
-                credentials.clearAllCredentials()
-            } label: {
-                Text("Clear Credentials")
-            }
-            
-            Button {
-                CredentialsManager.shared.saveCredentials()
-//                dismiss()
-            } label: {
-                Text("Save Credentials")
-            }
-        }
-    }
+//    var footer: some View {
+//        HStack {
+//            Spacer()
+//
+//            Button {
+//                credentials.clearAllCredentials()
+//            } label: {
+//                Text("Clear Credentials")
+//            }
+//
+//            Button {
+//                credentials.saveCredentials()
+//            } label: {
+//                Text("Save Credentials")
+//            }
+//        }
+//    }
     
     var keyId: some View {
         VStack(alignment: .leading, spacing: 8) {

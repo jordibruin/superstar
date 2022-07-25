@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct EmptyStateView: View {
-    @Binding var showCredentialsScreen: Bool
     
+    @Binding var selectedPage: SettingsPage?
     @StateObject var credentials = CredentialsManager.shared
     
     var body: some View {
@@ -23,7 +23,7 @@ struct EmptyStateView: View {
                     .font(.system(.largeTitle, design: .rounded))
                     .bold()
                 Button {
-                    showCredentialsScreen = true
+                    selectedPage = .credentials
                 } label: {
                     Text("Add keys")
                 }
@@ -32,11 +32,11 @@ struct EmptyStateView: View {
     }
 }
 
-struct EmptyStateView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyStateView(showCredentialsScreen: .constant(false))
-    }
-}
+//struct EmptyStateView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EmptyStateView(showCredentialsScreen: .constant(false))
+//    }
+//}
 
 extension Color {
     static func random() -> Color {

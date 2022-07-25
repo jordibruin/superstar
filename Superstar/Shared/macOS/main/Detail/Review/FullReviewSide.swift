@@ -30,7 +30,7 @@ struct FullReviewSide: View {
                     reviewView(review: review)
                 } else {
                     VStack {
-                        Text("Select a review to answer")
+                        Text("")
                     }
                 }
             }
@@ -57,6 +57,24 @@ struct FullReviewSide: View {
             }
             .opacity(isReplying || succesfullyReplied ? 1 : 0)
         )
+        .toolbar(content: {
+            ToolbarItem(placement: .primaryAction) {
+                Spacer()
+            }
+            
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    Task {
+                        await respondToReview()
+                    }
+                } label: {
+                    Text("Send")
+                }
+                .buttonStyle(.borderedProminent)
+                .opacity(review == nil ? 0 : 1)
+                .disabled(replyText.isEmpty)
+            }
+        })
         .onChange(of: review) { newValue in
             replyText = ""
             isReplying = false
@@ -89,7 +107,7 @@ struct FullReviewSide: View {
                 VStack(alignment: .leading, spacing: 6) {
                     starsFor(review: review)
                     title(for: review)
-                    metadata
+                    metadata(for: review)
                 }
                 body(for: review)
 
@@ -234,14 +252,14 @@ struct FullReviewSide: View {
         }
     }
     
-    var metadata: some View {
+    func metadata(for review: CustomerReview) -> some View {
         HStack {
-            Text(review!.attributes?.territory?.flag ?? "")
-            Text(review!.attributes?.reviewerNickname ?? "")
+            Text(review.attributes?.territory?.flag ?? "")
+            Text(review.attributes?.reviewerNickname ?? "")
                 .opacity(0.8)
             
             Spacer()
-            Text(review!.attributes?.createdDate?.formatted(.dateTime.day().month().year()) ?? Date().formatted())
+            Text(review.attributes?.createdDate?.formatted(.dateTime.day().month().year()) ?? Date().formatted())
                 .opacity(0.8)
         }
         .font(.system(.caption, design: .rounded))

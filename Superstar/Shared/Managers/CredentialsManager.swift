@@ -22,6 +22,8 @@ class CredentialsManager: ObservableObject {
     @Published var issuerId: String = ""
     @Published var privateKey: String = ""
     
+    @Published var savedInKeychain = false
+    
     func updateInKeychain(key: String, value: String) {
         do  {
             try keychain.set(value, key: key)
@@ -34,31 +36,44 @@ class CredentialsManager: ObservableObject {
         updateInKeychain(key: "keyId", value: keyID)
         updateInKeychain(key: "issuerId", value: issuerId)
         updateInKeychain(key: "privateKey", value: privateKey)
+        
+        let twanKey = privateKey.replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "").replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "").replacingOccurrences(of: "\n", with: "")
+        self.configuration = APIConfiguration(issuerID: issuerId, privateKeyID: keyID, privateKey: twanKey)
+        
+        self.configuration = APIConfiguration(issuerID: issuerId, privateKeyID: keyID, privateKey: twanKey)
+        savedInKeychain = true
     }
     
     
     @Published var configuration = APIConfiguration(issuerID: "", privateKeyID: "", privateKey: "")
     
     init() {
-        self.keyID = keychain["keyId"] ?? ""
-        self.issuerId = keychain["issuerId"] ?? ""
-        self.privateKey = keychain["privateKey"] ?? ""
-    
-        let twanKey = privateKey.replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "").replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "").replacingOccurrences(of: "\n", with: "")
-        self.configuration = APIConfiguration(issuerID: issuerId, privateKeyID: keyID, privateKey: twanKey)
-        
-        
-        guard let key = defaults.string(forKey: "keyId"), let issuer = defaults.string(forKey: "issuerId"), let privateKeyString = defaults.string(forKey: "privateKey") else { return }
+        guard let key = defaults.string(forKey: "keyId"), let issuer = defaults.string(forKey: "issuerId"), let privateKeyString = defaults.string(forKey: "privateKey") else {
+            setupPublishersFromKeychain()
             
+            return
+        }
+        
+        print("keys still in user defaults")
         if !key.isEmpty || !issuer.isEmpty || !privateKeyString.isEmpty {
             print("one of these is not empty")
             self.convertToKeychain()
         }
     }
     
+    func setupPublishersFromKeychain() {
+        self.keyID = keychain["keyId"] ?? ""
+        self.issuerId = keychain["issuerId"] ?? ""
+        self.privateKey = keychain["privateKey"] ?? ""
+        let twanKey = privateKey.replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "").replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "").replacingOccurrences(of: "\n", with: "")
+        self.configuration = APIConfiguration(issuerID: issuerId, privateKeyID: keyID, privateKey: twanKey)
+    }
+    
     func convertToKeychain() {
+        print("convert to keychain")
         saveCredentials()
         removeUserDefaults()
+        setupPublishersFromKeychain()
     }
     
     func removeUserDefaults() {
@@ -73,7 +88,12 @@ class CredentialsManager: ObservableObject {
         //        print(keyID)
         //        print(keyID.isEmpty)
         //        print(!keyID.isEmpty && !issuerId.isEmpty && !privateKey.isEmpty && (privateKey.count == 252 || privateKey.count == 257))
-        return !keyID.isEmpty && !issuerId.isEmpty && !privateKey.isEmpty && (privateKey.count == 252 || privateKey.count == 257)
+        
+        let keychainKeyId = keychain["keyId"] ?? ""
+        let keychainissuerId = keychain["issuerId"] ?? ""
+        let keychainprivateKey = keychain["privateKey"] ?? ""
+        
+        return !keyID.isEmpty && !issuerId.isEmpty && !privateKey.isEmpty && (privateKey.count == 252 || privateKey.count == 257) && !keychainKeyId.isEmpty && !keychainissuerId.isEmpty && !keychainprivateKey.isEmpty
     }
     
     func clearAllCredentials() {

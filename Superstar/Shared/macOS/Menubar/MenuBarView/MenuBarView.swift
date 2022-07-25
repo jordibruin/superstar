@@ -74,6 +74,7 @@ struct MenuBarView: View {
                 .opacity(credentials.allCredentialsAvailable() ? 0 : 1)
         )
         .onAppear {
+            
             if appsManager.selectedApp.id == "Placeholder" {
                 showAppPicker = true
             }

@@ -36,12 +36,10 @@ struct FullAppView: View {
                 selectedReview: $selectedReview
             )
             
-            EmptyStateView(
-                showCredentialsScreen: $showCredentialsScreen
-            )
                
             if showCredentialsScreen || showSuggestionsScreen {
-                
+                Text("")
+                    .toolbar(content: { ToolbarItem(content: {Text("")}) })
             } else {
                 FullReviewSide(
                     review: $selectedReview,
@@ -53,10 +51,9 @@ struct FullAppView: View {
         .onChange(of: reviewManager.retrievedReviews) { newValue in
             selectedReview = nil
         }
-        .onChange(of: credentials.allCredentialsAvailable()) { available in
-            if available {
+        .onChange(of: credentials.savedInKeychain) { saved in
+            if saved {
                 Task {
-                    //                        await appsManager.getApps()
                     await appsManager.getAppsTwan()
                 }
             }

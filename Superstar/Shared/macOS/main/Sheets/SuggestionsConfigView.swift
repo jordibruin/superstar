@@ -6,17 +6,22 @@
 //
 
 import SwiftUI
+import SwiftCSV
+import AppStoreConnect_Swift_SDK
 
 struct SuggestionsConfigView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var showSheet: Bool
     
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
+    
+    @EnvironmentObject var appsManager: AppsManager
     
     @State private var selection: Suggestion.ID?
     
     @State var title = ""
     @State var text = ""
+    
+    @State var tableHovered = false
     
     var body: some View {
         VStack {
@@ -28,10 +33,42 @@ struct SuggestionsConfigView: View {
                 TableColumn("Text", value: \.text)
                     .width(min: 400, ideal: 450)
                 
+                TableColumn("App") { suggestion in
+                    HStack {
+                        if let url = appsManager.imageURLfor(appId: "\(suggestion.appId)") {
+                            CacheAsyncImage(url: url, scale: 2) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .clipShape(RoundedRectangle(cornerRadius: 2))
+                                        .clipped()
+                                case .failure(let _):
+                                    Text("E")
+                                case .empty:
+                                    Color.gray.opacity(0.05)
+                                @unknown default:
+                                    // AsyncImagePhase is not marked as @frozen.
+                                    // We need to support new cases in the future.
+                                    Image(systemName: "questionmark")
+                                }
+                            }
+                            .frame(width: 15, height: 15)
+                        }
+                        
+                        Text(appsManager.appNameFor(appId: "\(suggestion.appId)"))
+                    }
+                }
+                .width(min: 50, ideal:80)
+                
                 TableColumn("Delete") { suggestion in
                     Button {
+                        print("Deleting")
                         if let firstIndex = suggestions.firstIndex(where: { suggestion.id == $0.id }) {
                             suggestions.remove(at: firstIndex)
+                        } else {
+                            print("no match found")
                         }
                         selection = nil
                     } label: {
@@ -44,6 +81,9 @@ struct SuggestionsConfigView: View {
                     .buttonStyle(.plain)
                 }
                 .width(60)
+            }
+            .onDrop(of: [.fileURL], isTargeted: $tableHovered) { providers in
+                handleExternalFileDrop(providers: providers)
             }
             .cornerRadius(8)
             
@@ -68,8 +108,10 @@ struct SuggestionsConfigView: View {
                     
                     textEditors
                     
+                    appDropdown
+                    
                     Button {
-                        suggestions.append(Suggestion(title: title, text: text, appId: 0))
+                        suggestions.append(Suggestion(title: title, text: text, appId: Int(selectedApp) ?? 0))
                         title = ""
                         text = ""
                     } label: {
@@ -77,23 +119,104 @@ struct SuggestionsConfigView: View {
                     }
                 }
             }
-            
-//            HStack {
-//                Spacer()
-//                Button {
-//                    dismiss()
-//                } label: {
-//                    Text("Close")
-//                }
-//
-//            }
         }
-        .toolbar(content: { ToolbarItem(content: {Text("")}) })
+        .toolbar(content: {
+            ToolbarItem(content: {
+                Text("Suggestions")
+                    .font(.title2)
+                    .bold()
+            })
+            
+            ToolbarItem(placement: .primaryAction) {
+                Spacer()
+            }
+            
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    importCSV()
+                } label: {
+                    Text("Import")
+                }
+            }
+            
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    createCSV()
+                } label: {
+                    Text("Export")
+                }
+            }
+        })
         .padding()
-        .background(
-            Color.gray.opacity(0.2)
-        )
+    }
+    
+    func handleExternalFileDrop(providers: [NSItemProvider]) -> Bool {
+        if let provider = providers.first(where: { $0.canLoadObject(ofClass: URL.self) } ) {
+            let _ = provider.loadObject(ofClass: URL.self) { object, error in
+                if let url = object {
+                    importCSVFrom(url: url)
+                }
+            }
+            return true
+        }
+        return false
+    }
+    
+    func importCSVFrom(url: URL){
+        do {
+            let csvFile: CSV = try CSV<Named>(url: url)
+            
+            var newSuggestions: [Suggestion] = []
+            
+            for row in csvFile.rows {
+                suggestions.append(Suggestion(csv: row))
+            }
+            self.suggestions.append(contentsOf: newSuggestions)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    func importCSV() {
         
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        if panel.runModal() == .OK {
+            if let url = panel.url {
+                importCSVFrom(url: url)
+            }
+        }
+    }
+    
+    
+    func createCSV() -> Void {
+        let fileName = "Suggestions.csv"
+//        let path = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
+        var csvText = "Title;Text;AppId;Id\n"
+        
+        for suggestion in suggestions {
+            let newLine = "\(suggestion.title);\(suggestion.text);\(suggestion.appId);\(suggestion.id)\n"
+            csvText.append(newLine)
+        }
+        
+        do {
+            let panel = NSSavePanel()
+            panel.title = "Export Responses"
+            panel.nameFieldStringValue = "Response Suggestions.csv"
+            if panel.runModal() == .OK {
+                if let url = panel.url {
+                    try csvText.write(to: url, atomically: true, encoding: String.Encoding.utf8)
+                }
+//                print(panel.url?.lastPathComponent ?? "<none>")
+    //            self.filename = panel.url?.lastPathComponent ?? "<none>"
+            }
+
+        } catch {
+            print("Failed to create file")
+            print("\(error)")
+        }
+//        print(path ?? "not found")
     }
     
     var textEditors: some View {
@@ -117,7 +240,26 @@ struct SuggestionsConfigView: View {
                 )
         }
     }
+    
+    var appDropdown: some View {
+        Picker(selection: $selectedApp) {
+            Text("None")
+                .tag("None")
+            
+            ForEach(appsManager.foundApps, id: \.id) { app in
+                Text(app.attributes?.name ?? "No Name")
+                    .tag(app.id)
+            }
+                
+        } label: {
+            Text("Link to App")
+        }
+        .labelsHidden()
+    }
+    
+    @State var selectedApp: String = "0"
 }
+
 
 //struct SuggestionsConfigView_Previews: PreviewProvider {
 //    static var previews: some View {

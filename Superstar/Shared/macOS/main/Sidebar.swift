@@ -46,42 +46,26 @@ struct Sidebar: View {
                 selectedReview = nil
             }
         }
-        .sheet(isPresented: $showSettings, content: {
-            SettingsSheet(appsManager: appsManager)
-        })
+//        .sheet(isPresented: $showSettings, content: {
+//            SettingsSheet(appsManager: appsManager)
+//        })
     }
+    
+    @State var selectedPage: SettingsPage? = .home
     
     var settingsSection: some View {
         Section {
-            NavigationLink(isActive: $showHomeScreen) {
-                EmptyStateView(
-                    showCredentialsScreen: $showCredentialsScreen
-                )
-            } label: {
-                Label("Home", systemImage: "house.fill")
-            }
-            
-            Button {
-                showSettings = true
-            } label: {
-                Label("Settings", systemImage: "gearshape.fill")
-            }
-            .buttonStyle(.plain)
-            
-            NavigationLink(isActive: $showCredentialsScreen) {
-                AddCredentialsView()
-            } label: {
-                Label("Credentials", systemImage: "key.fill")
-            }
+            ForEach(SettingsPage.allCases) { page in
+                NavigationLink(tag: page, selection: $selectedPage) {
+                    page.destination(selectedPage: $selectedPage)
+                        .environmentObject(appsManager)
+                } label: {
+                    page.label
+                        .font(.title3)
+                        .padding(.vertical, 4)
+                }
 
-            NavigationLink(isActive: $showSuggestionsScreen) {
-                SuggestionsConfigView(showSheet: .constant(true))
-            } label: {
-                Label("Suggestions", systemImage: "star.bubble")
             }
-        } header: {
-            Text("Settings")
-            
         }
     }
     
@@ -174,3 +158,45 @@ struct Sidebar: View {
 //        Sidebar(
 //    }
 //}
+
+enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
+    case home
+    case credentials
+    case suggestions
+    case support
+    case settings
+    
+    
+    var id: String { self.rawValue }
+    
+    var label: some View {
+        switch self {
+        case .home:
+            return Label("Home", systemImage: "house.fill")
+        case .settings:
+            return Label("Settings", systemImage: "gearshape.fill")
+        case .credentials:
+            return Label("Credentials", systemImage: "key.fill")
+        case .suggestions:
+            return Label("Suggestions", systemImage: "star.bubble")
+        case .support:
+            return Label("Support", systemImage: "questionmark.circle.fill")
+        }
+    }
+    
+    @ViewBuilder
+    func destination(selectedPage: Binding<SettingsPage?>) -> some View {
+        switch self {
+        case .home:
+            EmptyStateView(selectedPage: selectedPage)
+        case .settings:
+            SettingsSheet()
+        case .credentials:
+            AddCredentialsView()
+        case .suggestions:
+            SuggestionsConfigView()
+        case .support:
+            SupportScreen()
+        }
+    }
+}

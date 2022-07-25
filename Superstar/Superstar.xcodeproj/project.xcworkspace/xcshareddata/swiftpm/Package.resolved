@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "swiftcsv",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftcsv/SwiftCSV.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "048a1d3c2950b9c151ef9364b36f91baadc2c28c"
+      }
+    },
+    {
       "identity" : "urlqueryencoder",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CreateAPI/URLQueryEncoder.git",

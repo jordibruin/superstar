@@ -58,9 +58,11 @@ struct DetailReviewView: View {
 //        }
 //        .buttonStyle(.plain)
 //        .disabled(isReplying || succesfullyReplied)
-        .sheet(isPresented: $showSuggestionsSheet, content: {
-            SuggestionsConfigView(showSheet: $showSuggestionsSheet)
-        })
+//        .sheet(isPresented: $showSuggestionsSheet, content: {
+//            SuggestionsConfigView(
+//                showSheet: $showSuggestionsSheet,
+//            )
+//        })
         .frame(height: 260)
         .overlay(
             ZStack {
@@ -83,7 +85,9 @@ struct DetailReviewView: View {
             }
                 .opacity(isReplying || succesfullyReplied ? 1 : 0)
         )
-        .background(Color.gray.opacity(0.1))
+        .background(
+            bgColor
+        )
         .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
         .cornerRadius(16)
         
@@ -91,6 +95,15 @@ struct DetailReviewView: View {
             if pendingPublications.contains(review.id) {
                 succesfullyReplied = true
             }
+        }
+    }
+    
+    @ViewBuilder
+    var bgColor: some View {
+        if selectedReview == review {
+            Color.blue.opacity(0.2)
+        } else {
+            Color.gray.opacity(0.1)
         }
     }
     

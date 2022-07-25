@@ -10,31 +10,28 @@ import SwiftUI
 struct SettingsSheet: View {
     
     @Environment(\.dismiss) var dismiss
-    @ObservedObject var appsManager: AppsManager
+    @EnvironmentObject var appsManager: AppsManager
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     @AppStorage("menuBarVisible") var menuBarVisible: Bool = true
     
     var body: some View {
-        
-        VStack(alignment: .leading) {
-            header
-            
-            VStack(alignment: .leading, spacing: 20) {
-                fetchIcons
-                removeCacheIcons
-                removePending
-                showHiddenApps
-                menuBarToggle
-                Spacer()
-            }
-            
+        VStack(alignment: .leading, spacing: 20) {
+            fetchIcons
+            removeCacheIcons
+            removePending
+            showHiddenApps
+            menuBarToggle
+            Spacer()
         }
         .padding(12)
-        .background(
-            Color.gray.opacity(0.05)
-        )
-        .frame(width: 300, height: 300)
+        .toolbar(content: {
+            ToolbarItem(content: {
+                Text("Settings")
+                .font(.title2)
+                .bold()
+            })
+        })
     }
     
     var header: some View {
@@ -68,7 +65,7 @@ struct SettingsSheet: View {
                     .font(.system(.body, design: .rounded))
             }
             Text("Retrieve the latest icons for your apps")
-                .font(.system(.caption, design: .rounded))
+                .font(.system(.body, design: .rounded))
         }
     }
     
@@ -83,7 +80,7 @@ struct SettingsSheet: View {
                     .font(.system(.body, design: .rounded))
             }
             Text("Remove the cached icons")
-                .font(.system(.caption, design: .rounded))
+                .font(.system(.body, design: .rounded))
         }
     }
     
@@ -110,7 +107,7 @@ struct SettingsSheet: View {
                 .font(.system(.body, design: .rounded))
         }
             Text("When you respond to a review, its ID is saved locally so that it can be hidden while it's being reviewed by Apple. You can reset the cache, but be aware that this will cause you to see reviews that you have already responded to which are in still in review.")
-                .font(.system(.caption, design: .rounded))
+                .font(.system(.body, design: .rounded))
         }
     }
     
@@ -138,8 +135,8 @@ struct SettingsSheet: View {
     
 }
 
-struct SettingsSheet_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsSheet(appsManager: AppsManager())
-    }
-}
+//struct SettingsSheet_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SettingsSheet(appsManager: AppsManager())
+//    }
+//}

@@ -20,6 +20,7 @@ struct AppDetailView: View {
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     
+    @State var hidePending: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -39,7 +40,33 @@ struct AppDetailView: View {
                 .background(Color(.controlBackgroundColor))
             }
         }
-        .toolbar(id: "list navigation") {
+        .toolbar(content: { toolbarItems })
+//        .toolbar(id: "list navigation") {
+//            toolbarItems
+////            Group {
+////
+////
+////
+////            ToolbarItem(placement: .primaryAction) {
+////                Toggle(isOn: $hidePending) {
+////                    Text("Hide Pending")
+////                }
+////            }
+////            }
+//        }
+        .background(Color(.controlBackgroundColor))
+        // there is no title anymore so let's fake it.
+        .onTapGesture {
+            selectedReview = nil
+        }
+        .toolbar(content: { toolbarItems })
+        .onAppear {
+            Task { await reviewManager.getReviewsFor(id: app.id) }
+        }
+    }
+    
+    var toolbarItems: some ToolbarContent {
+        Group {
             ToolbarItem(id: "title", placement: ToolbarItemPlacement.navigation, showsByDefault: true) {
                 HStack {
                     if let url = appsManager.imageURL(for: app) {
@@ -77,29 +104,20 @@ struct AppDetailView: View {
                                 .opacity(0.6)
                         }
                     }
+                    
+                    Spacer()
                 }
                 .padding(.bottom, -4)
             }
-        }
-        .background(Color(.controlBackgroundColor))
-        // there is no title anymore so let's fake it.
-        .onTapGesture {
-            selectedReview = nil
-        }
-        .toolbar(content: { toolbarItems })
-        .onAppear {
-            Task { await reviewManager.getReviewsFor(id: app.id) }
-        }
-    }
-    
-    var toolbarItems: some ToolbarContent {
-        Group {
+            
             ToolbarItem(placement: .primaryAction) {
-                Text("")
-                //                    Toggle(isOn: $autoReply) {
-                //                        Text("Auto Reply")
-                //                            .help(Text("Automatically send response when you select a template reply."))
-                //                    }
+                Spacer()
+            }
+            
+            ToolbarItem(placement: .primaryAction) {
+                Toggle(isOn: $hidePending) {
+                    Text("Hide Pending")
+                }
             }
         }
     }
@@ -142,17 +160,33 @@ struct AppDetailView: View {
             spacing: 12
         ) {
             ForEach(reviewManager.retrievedReviews, id: \.id) { review in
-                Button {
-                    selectedReview = review
-                } label: {
-                    DetailReviewView(
-                        review: review,
-                        reviewManager: reviewManager,
-                        autoReply: $autoReply,
-                        selectedReview: $selectedReview
-                    )
+                if hidePending {
+                    if !pendingPublications.contains(review.id) {
+                        Button {
+                            selectedReview = review
+                        } label: {
+                            DetailReviewView(
+                                review: review,
+                                reviewManager: reviewManager,
+                                autoReply: $autoReply,
+                                selectedReview: $selectedReview
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                } else {
+                    Button {
+                        selectedReview = review
+                    } label: {
+                        DetailReviewView(
+                            review: review,
+                            reviewManager: reviewManager,
+                            autoReply: $autoReply,
+                            selectedReview: $selectedReview
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding(12)
