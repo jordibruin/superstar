@@ -24,8 +24,7 @@ struct FullAppView: View {
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     @State var selectedReview: CustomerReview?
-    @State var selectedPage: SettingsPage? = .home
-    
+        
     var body: some View {
         NavigationView {
             Sidebar(
@@ -34,8 +33,7 @@ struct FullAppView: View {
                 appsManager: appsManager,
                 showCredentialsScreen: $showCredentialsScreen,
                 showSuggestionsScreen: $showSuggestionsScreen,
-                selectedReview: $selectedReview,
-                selectedPage: $selectedPage
+                selectedReview: $selectedReview
             )
             
             Color.clear
@@ -49,13 +47,11 @@ struct FullAppView: View {
                 .environmentObject(appsManager)
                 .environmentObject(reviewManager)
             }
-//            .frame(width: showCredentialsScreen ? 0 : 200)
-            
         }
         .onChange(of: reviewManager.retrievedReviews) { newValue in
             selectedReview = nil
         }
-        .onChange(of: selectedPage) { newValue in
+        .onChange(of: appsManager.selectedPage) { newValue in
             selectedReview = nil
         }
         .onChange(of: credentials.savedInKeychain) { saved in

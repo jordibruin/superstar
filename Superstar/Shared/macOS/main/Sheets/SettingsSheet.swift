@@ -26,11 +26,12 @@ struct SettingsSheet: View {
         }
         .padding(12)
         .toolbar(content: {
-            ToolbarItem(content: {
-                Text("Settings")
-                .font(.title2)
-                .bold()
-            })
+//            ToolbarItem(content: {
+//                Text("Settings")
+//                .font(.title2)
+//                .bold()
+//            })
+            Text("")
         })
     }
     
@@ -72,9 +73,7 @@ struct SettingsSheet: View {
     var removeCacheIcons: some View {
         VStack(alignment: .leading) {
             Button {
-                Task {
-                    await appsManager.removeCachedIcons()
-                }
+                appsManager.removeCachedIcons()
             } label: {
                 Label("Remove Icons Cache", systemImage: "trash.slash.circle.fill")
                     .font(.system(.body, design: .rounded))

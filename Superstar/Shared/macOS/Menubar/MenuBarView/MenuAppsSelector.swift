@@ -95,7 +95,7 @@ struct MenuAppsSelector: View {
                             .frame(width: 44, height: 44)
                         } else {
                             RoundedRectangle(cornerRadius: 8)
-                                .foregroundColor(.blue)
+                                .foregroundColor(.orange)
                                 .frame(width: 44, height: 44)
                         }
                         Text(app.attributes?.name ?? "No Name")

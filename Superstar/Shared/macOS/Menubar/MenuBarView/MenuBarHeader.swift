@@ -45,7 +45,7 @@ struct MenuBarHeader: View {
      
             } else {
                 RoundedRectangle(cornerRadius: 5)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.orange)
                     .frame(width: 28, height: 28)
             }
             

@@ -32,6 +32,7 @@ struct Sidebar: View {
         List {
             settingsSection
             appsSection
+            hiddenApps
         }
         .listStyle(.sidebar)
         .frame(width: 260)
@@ -51,13 +52,13 @@ struct Sidebar: View {
 //        })
     }
     
-    @Binding var selectedPage: SettingsPage?
+//    @Binding var selectedPage: SettingsPage?
     
     var settingsSection: some View {
         Section {
             ForEach(SettingsPage.allCases) { page in
-                NavigationLink(tag: page, selection: $selectedPage) {
-                    page.destination(selectedPage: $selectedPage)
+                NavigationLink(tag: page, selection: $appsManager.selectedPage) {
+                    page.destination
                         .environmentObject(appsManager)
                 } label: {
                     page.label
@@ -118,7 +119,7 @@ struct Sidebar: View {
                             .frame(width: 32, height: 32)
                         } else {
                             RoundedRectangle(cornerRadius: 7)
-                                .foregroundColor(.blue)
+                                .foregroundColor(.orange)
                                 .frame(width: 32, height: 32)
                         }
                         Text(app.attributes?.name ?? "No Name")
@@ -132,6 +133,62 @@ struct Sidebar: View {
                     }
                 }
             }
+        }
+    }
+    
+    var hiddenApps: some View {
+        Section {
+            ForEach(appsManager.foundApps, id: \.id) { app in
+                if hiddenAppIds.contains(app.id) {
+                    NavigationLink(tag: app.id, selection: $appsManager.selectedAppId) {
+                        AppDetailView(
+                            appsManager: appsManager,
+                            reviewManager: reviewManager,
+                            app: app,
+                            autoReply: $autoReply,
+                            selectedReview: $selectedReview
+                        )
+                    } label: {
+                        HStack {
+                            if let url = appsManager.imageURL(for: app) {
+                                CacheAsyncImage(url: url, scale: 2) { phase in
+                                    switch phase {
+                                    case .success(let image):
+                                        image
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .clipShape(RoundedRectangle(cornerRadius: 9))
+                                            .clipped()
+                                    case .failure(let _):
+                                        Text("E")
+                                    case .empty:
+                                        Color.gray.opacity(0.05)
+                                    @unknown default:
+                                        // AsyncImagePhase is not marked as @frozen.
+                                        // We need to support new cases in the future.
+                                        Image(systemName: "questionmark")
+                                    }
+                                }
+                                .frame(width: 32, height: 32)
+                            } else {
+                                RoundedRectangle(cornerRadius: 7)
+                                    .foregroundColor(.orange)
+                                    .frame(width: 32, height: 32)
+                            }
+                            Text(app.attributes?.name ?? "No Name")
+                        }
+                    }
+                    .contextMenu {
+                        Button {
+                            hiddenAppIds.append(app.id)
+                        } label: {
+                            Text("Hide")
+                        }
+                    }
+                }
+            }
+        } header: {
+            Text("Hidden Apps")
         }
         
     }
@@ -185,10 +242,10 @@ enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
     }
     
     @ViewBuilder
-    func destination(selectedPage: Binding<SettingsPage?>) -> some View {
+    var destination: some View {
         switch self {
         case .home:
-            EmptyStateView(selectedPage: selectedPage)
+            EmptyStateView()
         case .settings:
             SettingsSheet()
         case .credentials:

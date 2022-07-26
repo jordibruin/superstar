@@ -119,7 +119,7 @@ struct MenuBarReview: View {
                     Text(suggestion.title.capitalized)
                         .padding(.vertical, 6)
                         .padding(.horizontal, 12)
-                        .background(Color.blue)
+                        .background(Color.orange)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }

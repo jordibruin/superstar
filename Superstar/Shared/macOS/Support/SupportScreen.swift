@@ -70,7 +70,7 @@ struct SupportScreen: View {
                     }
                 }
                 
-                Link(destination: URL(string: "mailto:support@getvivid.app")!) {
+                Link(destination: URL(string: "mailto:jordi@goodsnooze.com")!) {
                     HStack(spacing: 6) {
                         Text("📨")
                         Text("Contact Support")
@@ -81,6 +81,7 @@ struct SupportScreen: View {
                     .padding(.leading, 4)
                 }
             }
+            .clipped()
             .toolbar(content: { ToolbarItem(content: {
                 Text("Support")
                     .font(.title2)

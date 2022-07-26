@@ -101,7 +101,7 @@ struct DetailReviewView: View {
     @ViewBuilder
     var bgColor: some View {
         if selectedReview == review {
-            Color.blue.opacity(0.2)
+            Color.orange.opacity(0.2)
         } else {
             Color.gray.opacity(0.1)
         }
@@ -178,7 +178,7 @@ struct DetailReviewView: View {
                     Text(suggestion.title.capitalized)
                         .padding(.vertical, 6)
                         .padding(.horizontal, 12)
-                        .background(Color.blue)
+                        .background(Color.orange)
                         .foregroundColor(.white)
                         .cornerRadius(12)
                 }

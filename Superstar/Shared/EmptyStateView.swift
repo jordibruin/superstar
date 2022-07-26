@@ -5,11 +5,11 @@
 //  Created by Jordi Bruin on 18/07/2022.
 //
 
+import AVKit
 import SwiftUI
-
 struct EmptyStateView: View {
     
-    @Binding var selectedPage: SettingsPage?
+    @EnvironmentObject var appsManager: AppsManager
     @StateObject var credentials = CredentialsManager.shared
     
     var body: some View {
@@ -18,14 +18,20 @@ struct EmptyStateView: View {
                 .font(.system(.largeTitle, design: .rounded))
                 .bold()
         } else {
-            VStack {
-                Text("Add your App Store Connect Credentials")
-                    .font(.system(.largeTitle, design: .rounded))
-                    .bold()
-                Button {
-                    selectedPage = .credentials
-                } label: {
-                    Text("Add keys")
+            ScrollView {
+                VStack {
+//                    VideoPlayer(player: AVPlayer(url: URL(string: "https://user-images.githubusercontent.com/170948/180226590-9d938a61-ce20-40ae-8813-311f5d2848de.mp4")!))
+//                        .frame(height: 400)
+//                        .padding(.horizontal, 40)
+                    
+                    Text("Add your App Store Connect Credentials")
+                        .font(.system(.largeTitle, design: .rounded))
+                        .bold()
+                    Button {
+                        appsManager.selectedPage = .credentials
+                    } label: {
+                        Text("Add keys")
+                    }
                 }
             }
         }

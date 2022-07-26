@@ -66,6 +66,7 @@ struct FullReviewSide: View {
                 } label: {
                     Text("Skip")
                 }
+                .opacity(review == nil ? 0 : 1)
             }
             ToolbarItem(placement: .automatic) {
                 Spacer()
@@ -246,7 +247,7 @@ struct FullReviewSide: View {
                     }
                     .padding(.vertical, 6)
                     .padding(.horizontal, 8)
-                    .background(Color.blue)
+                    .background(Color.orange)
                     .foregroundColor(.white)
                     .cornerRadius(6)
                 }

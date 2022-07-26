@@ -16,6 +16,7 @@ struct AddCredentialsView: View {
     @State var p8Hovered = false
     
     @StateObject var credentials = CredentialsManager.shared
+    @EnvironmentObject var appsManager: AppsManager
     
 //    @EncryptedAppStorage("keyIDKeychainStorage") var keyID = "abc"
     
@@ -23,11 +24,10 @@ struct AddCredentialsView: View {
         VStack(alignment: .leading) {
             title
             Divider()
-            keyId
-            Divider()
             issuerId
-            Divider()
+            keyId
             privateKey
+            Divider()
             
             Button {
                 credentials.saveCredentials()
@@ -42,7 +42,7 @@ struct AddCredentialsView: View {
         }
         
         .padding()
-        .frame(minWidth: 1000)
+        .frame(minWidth: 700)
         .onDrop(of: [.fileURL], isTargeted: $p8Hovered) { providers in
             handleExternalFileDrop(providers: providers)
         }
@@ -60,11 +60,11 @@ struct AddCredentialsView: View {
     
     var toolbarItems: some ToolbarContent {
             Group {
-                ToolbarItem(content: {
-                    Text("Credentials")
-                        .font(.title2)
-                        .bold()
-                })
+//                ToolbarItem(placement: .automatic) {
+//                    Text("Credentials")
+//                        .font(.title2)
+//                        .bold()
+//                }
                 
                 ToolbarItem(placement: .automatic) {
                     Spacer()
@@ -73,6 +73,7 @@ struct AddCredentialsView: View {
                 ToolbarItem(placement: .automatic) {
                     Button {
                         credentials.clearAllCredentials()
+                        appsManager.foundApps = []
                     } label: {
                         Text("Clear Credentials")
                     }
@@ -122,7 +123,7 @@ struct AddCredentialsView: View {
     
     var keyId: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("keyId")
+            Text("KeyId")
                 .font(.system(.title3, design: .rounded))
                 .bold()
             TextField("keyId", text: $credentials.keyID)
@@ -133,7 +134,7 @@ struct AddCredentialsView: View {
     
     var issuerId: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("issuerId")
+            Text("IssuerId")
                 .font(.system(.title3, design: .rounded))
                 .bold()
             TextField("issuerId", text: $credentials.issuerId)
@@ -147,7 +148,7 @@ struct AddCredentialsView: View {
                 .font(.system(.title3, design: .rounded))
                 .bold()
             Text("After downloading your private key, drag and drop the .p8 file containing the private key onto this window.")
-                .font(.caption)
+                .font(.system(.body, design: .rounded))
             
             Color(.controlBackgroundColor)
                 .frame(width: 450, height: 160)

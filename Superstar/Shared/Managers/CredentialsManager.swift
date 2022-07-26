@@ -18,33 +18,13 @@ class CredentialsManager: ObservableObject {
     
     static let shared = CredentialsManager()
     
+    @Published var configurationReady = false
+    
     @Published var keyID: String = ""
     @Published var issuerId: String = ""
     @Published var privateKey: String = ""
     
     @Published var savedInKeychain = false
-    
-    func updateInKeychain(key: String, value: String) {
-        do  {
-            try keychain.set(value, key: key)
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    func saveCredentials() {
-        updateInKeychain(key: "keyId", value: keyID)
-        updateInKeychain(key: "issuerId", value: issuerId)
-        updateInKeychain(key: "privateKey", value: privateKey)
-        
-        let twanKey = privateKey.replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "").replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "").replacingOccurrences(of: "\n", with: "")
-        self.configuration = APIConfiguration(issuerID: issuerId, privateKeyID: keyID, privateKey: twanKey)
-        
-        self.configuration = APIConfiguration(issuerID: issuerId, privateKeyID: keyID, privateKey: twanKey)
-        savedInKeychain = true
-    }
-    
-    
     @Published var configuration = APIConfiguration(issuerID: "", privateKeyID: "", privateKey: "")
     
     init() {
@@ -61,12 +41,23 @@ class CredentialsManager: ObservableObject {
         }
     }
     
+    func updateInKeychain(key: String, value: String) {
+        do  {
+            try keychain.set(value, key: key)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    
+    
     func setupPublishersFromKeychain() {
         self.keyID = keychain["keyId"] ?? ""
         self.issuerId = keychain["issuerId"] ?? ""
         self.privateKey = keychain["privateKey"] ?? ""
         let twanKey = privateKey.replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "").replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "").replacingOccurrences(of: "\n", with: "")
         self.configuration = APIConfiguration(issuerID: issuerId, privateKeyID: keyID, privateKey: twanKey)
+        configurationReady = true
     }
     
     func convertToKeychain() {
@@ -76,13 +67,21 @@ class CredentialsManager: ObservableObject {
         setupPublishersFromKeychain()
     }
     
+    func saveCredentials() {
+        updateInKeychain(key: "keyId", value: keyID)
+        updateInKeychain(key: "issuerId", value: issuerId)
+        updateInKeychain(key: "privateKey", value: privateKey)
+        
+        savedInKeychain = true
+        setupPublishersFromKeychain()
+    }
+    
     func removeUserDefaults() {
         defaults.removeObject(forKey: "keyId")
         defaults.removeObject(forKey: "issuerId")
         defaults.removeObject(forKey: "privateKey")
     }
     
-    //    let configuration = APIConfiguration(issuerID: "<YOUR ISSUER ID>", privateKeyID: "<YOUR PRIVATE KEY ID>", privateKey: "<YOUR PRIVATE KEY>")
     
     func allCredentialsAvailable() -> Bool {
         //        print(keyID)

@@ -146,11 +146,12 @@ struct SuggestionsConfigView: View {
             }
         }
         .toolbar(content: {
-            ToolbarItem(content: {
-                Text("Suggestions")
-                    .font(.title2)
-                    .bold()
-            })
+            // This crashes on Ventura
+//            ToolbarItem(content: {
+//                Text("Suggestions")
+//                    .font(.title2)
+//                    .bold()
+//            })
             
             ToolbarItem(placement: .primaryAction) {
                 Spacer()
