@@ -53,47 +53,47 @@ struct AppDetailView: View {
     
     var toolbarItems: some ToolbarContent {
         Group {
-//            ToolbarItem(placement: .navigation) {
-//                HStack {
-//                    if let url = appsManager.imageURL(for: app) {
-//                        CacheAsyncImage(url: url, scale: 2) { phase in
-//                            switch phase {
-//                            case .success(let image):
-//                                image
-//                                    .resizable()
-//                                    .aspectRatio(contentMode: .fit)
-//                                    .clipShape(RoundedRectangle(cornerRadius: 9))
-//                                    .clipped()
-//                            case .failure(let _):
-//                                Text("E")
-//                            case .empty:
-//                                Color.gray.opacity(0.05)
-//                            @unknown default:
-//                                // AsyncImagePhase is not marked as @frozen.
-//                                // We need to support new cases in the future.
-//                                Image(systemName: "questionmark")
-//                            }
-//                        }
-//                        .frame(width: 32, height: 32)
-//                    } else {
-//                        RoundedRectangle(cornerRadius: 12)
-//                            .foregroundColor(.blue)
-//                            .frame(width: 32, height: 32)
-//                    }
-//
-//                    VStack(alignment: .leading) {
-//                        Text(app.attributes?.name ?? "")
-//                            .font(.headline)
-//
-//                        Text(reviewManager.loadingReviews ? "" : "\(unansweredReviewCount) unanswered reviews")
-//                            .font(.system(.subheadline, design: .rounded))
-//                            .opacity(0.6)
-//                    }
-//
-//                    Spacer()
-//                }
-//                .padding(.bottom, -4)
-//            }
+            ToolbarItem(placement: .navigation) {
+                HStack {
+                    if let url = appsManager.imageURL(for: app) {
+                        CacheAsyncImage(url: url, scale: 2) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .clipShape(RoundedRectangle(cornerRadius: 9))
+                                    .clipped()
+                            case .failure(let _):
+                                Text("E")
+                            case .empty:
+                                Color.gray.opacity(0.05)
+                            @unknown default:
+                                // AsyncImagePhase is not marked as @frozen.
+                                // We need to support new cases in the future.
+                                Image(systemName: "questionmark")
+                            }
+                        }
+                        .frame(width: 32, height: 32)
+                    } else {
+                        RoundedRectangle(cornerRadius: 12)
+                            .foregroundColor(.blue)
+                            .frame(width: 32, height: 32)
+                    }
+
+                    VStack(alignment: .leading) {
+                        Text(app.attributes?.name ?? "")
+                            .font(.headline)
+
+                        Text(reviewManager.loadingReviews ? "" : "\(unansweredReviewCount) unanswered reviews")
+                            .font(.system(.subheadline, design: .rounded))
+                            .opacity(0.6)
+                    }
+
+                    Spacer()
+                }
+                .padding(.bottom, -4)
+            }
             
             ToolbarItem(placement: .primaryAction) {
                 Spacer()
@@ -109,12 +109,16 @@ struct AppDetailView: View {
     
     var loading: some View {
         ZStack {
-            Color(.controlBackgroundColor)
+
             VStack {
                 Spacer()
                 VStack {
                     ProgressView()
+                        .scaleEffect(0.5)
+                    
                     Text("Loading Reviews")
+                        .font(.system(.title2, design: .rounded))
+                    
                 }
                 Spacer()
             }
@@ -128,6 +132,7 @@ struct AppDetailView: View {
                 Spacer()
                 VStack {
                     Text("No reviews without a response found")
+                        .font(.system(.title2, design: .rounded))
                 }
                 Spacer()
             }

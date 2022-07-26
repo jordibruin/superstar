@@ -17,6 +17,7 @@ struct EmptyStateView: View {
             Text("Select an app to see reviews")
                 .font(.system(.largeTitle, design: .rounded))
                 .bold()
+                .frame(minWidth: 400, maxWidth: 500)
         } else {
             ScrollView {
                 VStack {

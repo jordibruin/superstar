@@ -101,9 +101,12 @@ struct DetailReviewView: View {
     @ViewBuilder
     var bgColor: some View {
         if selectedReview == review {
-            Color.orange.opacity(0.2)
+            ZStack {
+                Color(.controlBackgroundColor)
+                Color.orange.opacity(0.2)
+            }
         } else {
-            Color.gray.opacity(0.1)
+            Color(.controlBackgroundColor)
         }
     }
     

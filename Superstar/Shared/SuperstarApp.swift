@@ -12,10 +12,13 @@ struct SuperstarApp: App {
     
     @NSApplicationDelegateAdaptor(StatusBarDelegate.self) var appDelegate
     
+    @StateObject var iapManager = IAPManager.shared
+    
     var body: some Scene {
         WindowGroup {
             FullAppView()
                 .frame(minWidth: 800, minHeight: 500)
+                .environmentObject(iapManager)
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)

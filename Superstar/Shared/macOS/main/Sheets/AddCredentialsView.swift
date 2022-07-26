@@ -21,7 +21,7 @@ struct AddCredentialsView: View {
 //    @EncryptedAppStorage("keyIDKeychainStorage") var keyID = "abc"
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 16) {
             title
             Divider()
             issuerId
@@ -94,10 +94,6 @@ struct AddCredentialsView: View {
     
     var title: some View {
         VStack(alignment: .leading) {
-            Text("You need to add some API stuff")
-                .font(.system(.title2, design: .rounded))
-                .bold()
-            
             Text("Go to https://appstoreconnect.apple.com/access/api and create a new API key.\nMake sure to give the key Admin access (I've filed a FB to also allow users to make a Customer Support role. \nOnce you've made the key copy the keyID and the issuerID as well.")
                 .font(.system(.body, design: .rounded))
         }
@@ -144,14 +140,16 @@ struct AddCredentialsView: View {
     
     var privateKey: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Private Key")
-                .font(.system(.title3, design: .rounded))
-                .bold()
-            Text("After downloading your private key, drag and drop the .p8 file containing the private key onto this window.")
-                .font(.system(.body, design: .rounded))
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Private Key")
+                    .font(.system(.title3, design: .rounded))
+                    .bold()
+                Text("After downloading your private key, drag and drop the .p8 file containing the private key onto this window.")
+                    .font(.system(.body, design: .rounded))
+            }
             
             Color(.controlBackgroundColor)
-                .frame(width: 450, height: 160)
+                .frame(width: 560, height: 160)
                 .overlay(
                     Text(credentials.privateKey)
                 )

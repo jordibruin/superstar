@@ -28,6 +28,8 @@
 		C23B54B0288F3617006EB4B2 /* FAQItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54A9288F3617006EB4B2 /* FAQItem.swift */; };
 		C23B54B1288F3617006EB4B2 /* SupportScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54AA288F3617006EB4B2 /* SupportScreen.swift */; };
 		C23B54B2288F3617006EB4B2 /* SupportFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54AB288F3617006EB4B2 /* SupportFetcher.swift */; };
+		C23B54B428900023006EB4B2 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54B328900023006EB4B2 /* IAPManager.swift */; };
+		C23B54B62890012D006EB4B2 /* Supernova.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54B52890012D006EB4B2 /* Supernova.swift */; };
 		C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4602884ACF600ABE387 /* SuperstarApp.swift */; };
 		C245B4732884ACF700ABE387 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4612884ACF600ABE387 /* ContentView.swift */; };
 		C245B4752884ACF700ABE387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C245B4622884ACF700ABE387 /* Assets.xcassets */; };
@@ -62,6 +64,8 @@
 		C23B54A9288F3617006EB4B2 /* FAQItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FAQItem.swift; sourceTree = "<group>"; };
 		C23B54AA288F3617006EB4B2 /* SupportScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportScreen.swift; sourceTree = "<group>"; };
 		C23B54AB288F3617006EB4B2 /* SupportFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportFetcher.swift; sourceTree = "<group>"; };
+		C23B54B328900023006EB4B2 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
+		C23B54B52890012D006EB4B2 /* Supernova.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supernova.swift; sourceTree = "<group>"; };
 		C245B4602884ACF600ABE387 /* SuperstarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperstarApp.swift; sourceTree = "<group>"; };
 		C245B4612884ACF600ABE387 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C245B4622884ACF700ABE387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -232,6 +236,7 @@
 			children = (
 				C245B4862884AE0B00ABE387 /* AppsManager.swift */,
 				C245B4852884AE0B00ABE387 /* CredentialsManager.swift */,
+				C23B54B328900023006EB4B2 /* IAPManager.swift */,
 				C245B4872884AE0B00ABE387 /* ReviewManager.swift */,
 			);
 			path = Managers;
@@ -243,6 +248,7 @@
 				C245B48E2884AE8700ABE387 /* AddCredentialsView.swift */,
 				C245B4992884B02100ABE387 /* SettingsSheet.swift */,
 				C245B4912884AE8700ABE387 /* SuggestionsConfigView.swift */,
+				C23B54B52890012D006EB4B2 /* Supernova.swift */,
 			);
 			path = Sheets;
 			sourceTree = "<group>";
@@ -340,6 +346,8 @@
 				C23B54AC288F3617006EB4B2 /* SupportItemable.swift in Sources */,
 				C23B54612889AFB2006EB4B2 /* MenuAppsSelector.swift in Sources */,
 				C245B4892884AE0B00ABE387 /* AppsManager.swift in Sources */,
+				C23B54B428900023006EB4B2 /* IAPManager.swift in Sources */,
+				C23B54B62890012D006EB4B2 /* Supernova.swift in Sources */,
 				C23B54B1288F3617006EB4B2 /* SupportScreen.swift in Sources */,
 				C245B49C2885513600ABE387 /* EmptyStateView.swift in Sources */,
 				C245B4942884AE8700ABE387 /* FullAppView.swift in Sources */,
@@ -481,7 +489,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -510,7 +518,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

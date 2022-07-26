@@ -170,6 +170,7 @@ struct FullReviewSide: View {
         Text(review.attributes?.title ?? "")
             .font(.system(.title3, design: .rounded))
             .bold()
+            .textSelection(.enabled)
     }
     
     func body(for review: CustomerReview) -> some View {
@@ -247,8 +248,8 @@ struct FullReviewSide: View {
                     }
                     .padding(.vertical, 6)
                     .padding(.horizontal, 8)
-                    .background(Color.orange)
-                    .foregroundColor(.white)
+                    .background(Color(.controlBackgroundColor))
+                    .foregroundColor(.primary)
                     .cornerRadius(6)
                 }
                 .buttonStyle(.plain)

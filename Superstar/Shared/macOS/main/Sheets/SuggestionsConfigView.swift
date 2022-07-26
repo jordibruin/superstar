@@ -13,6 +13,8 @@ struct SuggestionsConfigView: View {
     @Environment(\.dismiss) var dismiss
     
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
+    @AppStorage("hiddenAppIds") var hiddenAppIds: [String] = []
+        
     
     @EnvironmentObject var appsManager: AppsManager
     
@@ -28,10 +30,11 @@ struct SuggestionsConfigView: View {
             Spacer()
             Table(suggestions, selection: $selection) {
                 TableColumn("Title", value: \.title)
-                    .width(min: 100, ideal: 120, max: 150)
+                    .width(min: 60, ideal: 80, max: 100)
                 
                 TableColumn("Text", value: \.text)
                     .width(min: 400, ideal: 450)
+                    
                 
                 TableColumn("App") { suggestion in
                     HStack {
@@ -60,9 +63,9 @@ struct SuggestionsConfigView: View {
                         Text(appsManager.appNameFor(appId: "\(suggestion.appId)"))
                     }
                 }
-                .width(min: 50, ideal:80)
+                .width(min: 60, ideal: 80, max: 100)
                 
-                TableColumn("Delete") { suggestion in
+                TableColumn("") { suggestion in
                     Button {
                         print("Deleting")
                         if let firstIndex = suggestions.firstIndex(where: { suggestion.id == $0.id }) {
@@ -80,49 +83,64 @@ struct SuggestionsConfigView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .width(60)
+                .width(30)
             }
             .onDrop(of: [.fileURL], isTargeted: $tableHovered) { providers in
                 handleExternalFileDrop(providers: providers)
             }
             .cornerRadius(8)
             
+            
+            
             if selection != nil {
                 
                 if let index = suggestions.firstIndex(where: { $0.id == selection }) {
-                    HStack(alignment: .top) {
-                        TextField("Title", text: $suggestions[index].title)
-                            .font(.title3)
-                            .frame(width: 150)
-                        
-                        ZStack {
-                            TextEditor(text: $suggestions[index].text)
+                    VStack(alignment: .trailing) {
+                        HStack(alignment: .top) {
+                            TextField("Title", text: $suggestions[index].title)
                                 .font(.title3)
-                                .background(Color(.controlBackgroundColor))
-                                .frame(height: 80)
-                                .overlay(
-                                    TextEditor(text: .constant("Response Text"))
-                                        .font(.title3)
-                                        .background(Color(.controlBackgroundColor))
-                                        .opacity(0.4)
-                                        .allowsHitTesting(false)
-                                        .opacity(suggestions[index].text.isEmpty ? 1 : 0)
-                                        .frame(height: 80)
-                                )
-                        }
-                        
-                        Picker(selection: $suggestions[index].appId) {
-                            Text("None")
-                                .tag("None")
+                                .frame(width: 150)
                             
-                            ForEach(appsManager.foundApps, id: \.id) { app in
-                                Text(app.attributes?.name ?? "No Name")
-                                    .tag(Int(app.id) ?? 0)
+                            ZStack {
+                                TextEditor(text: $suggestions[index].text)
+                                    .font(.title3)
+                                    .background(Color(.controlBackgroundColor))
+                                    .frame(height: 80)
+                                    .overlay(
+                                        TextEditor(text: .constant("Response Text"))
+                                            .font(.title3)
+                                            .background(Color(.controlBackgroundColor))
+                                            .opacity(0.4)
+                                            .allowsHitTesting(false)
+                                            .opacity(suggestions[index].text.isEmpty ? 1 : 0)
+                                            .frame(height: 80)
+                                    )
                             }
-                        } label: {
-                            Text("Link to App")
+                            
+                            Picker(selection: $suggestions[index].appId) {
+                                Text("None")
+                                    .tag(0)
+                                
+                                ForEach(appsManager.foundApps, id: \.id) { app in
+                                    if !hiddenAppIds.contains(app.id) {
+                                        Text(app.attributes?.name ?? "No Name")
+                                            .tag(Int(app.id) ?? 0)
+                                    }
+                                }
+                            } label: {
+                                Text("Link to App")
+                            }
+                            .labelsHidden()
+                            .frame(width: 180)
+                            
+                            
                         }
-                        .labelsHidden()
+                        Button {
+                            suggestions.remove(at: index)
+                        } label: {
+                            Text("Delete")
+                        }
+                        .keyboardShortcut(.delete, modifiers: [])
                     }
                 }
             } else {
@@ -266,17 +284,20 @@ struct SuggestionsConfigView: View {
     var appDropdown: some View {
         Picker(selection: $selectedApp) {
             Text("None")
-                .tag("None")
+                .tag(0)
             
             ForEach(appsManager.foundApps, id: \.id) { app in
-                Text(app.attributes?.name ?? "No Name")
-                    .tag(app.id)
+                if !hiddenAppIds.contains(app.id) {
+                    Text(app.attributes?.name ?? "No Name")
+                        .tag(app.id)
+                }
             }
                 
         } label: {
             Text("Link to App")
         }
         .labelsHidden()
+        .frame(width: 140)
     }
     
     @State var selectedApp: String = "0"

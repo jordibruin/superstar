@@ -32,14 +32,19 @@ class ReviewManager: ObservableObject {
                 .apps
                 .id(id)
                 .customerReviews
-                .get(parameters: .init(
-                    sort: [.minuscreatedDate]
-                ))
+                
+                .get(parameters: .init(isExistsPublishedResponse: false, sort: [.minuscreatedDate]))
             
-            let reviews = try await provider.request(request).data
-            var reviewsWithoutResponse: [CustomerReview] = []
+            let reviews = try await provider.request(request)
+                
+            let reviewsData = reviews.data
             
-            self.retrievedReviews = reviews
+//            let pages = reviews.meta?.paging.total
+//            print(pages)
+//            reviews
+//            var reviewsWithoutResponse: [CustomerReview] = []
+            
+            self.retrievedReviews = reviewsData
             loadingReviews = false
         } catch {
             let nsEr = error as NSError

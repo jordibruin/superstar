@@ -26,13 +26,18 @@ struct Sidebar: View {
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     
+    @EnvironmentObject var iapManager: IAPManager
+    
     @State var autoReply = false
     
     var body: some View {
         List {
             settingsSection
             appsSection
-            hiddenApps
+            
+            if !appsManager.foundApps.isEmpty && !hiddenAppIds.isEmpty {
+                hiddenApps
+            }
         }
         .listStyle(.sidebar)
         .frame(width: 260)
@@ -47,12 +52,7 @@ struct Sidebar: View {
                 selectedReview = nil
             }
         }
-//        .sheet(isPresented: $showSettings, content: {
-//            SettingsSheet(appsManager: appsManager)
-//        })
     }
-    
-//    @Binding var selectedPage: SettingsPage?
     
     var settingsSection: some View {
         Section {
@@ -65,7 +65,6 @@ struct Sidebar: View {
                         .font(.title3)
                         .padding(.vertical, 4)
                 }
-
             }
         }
     }
@@ -125,6 +124,7 @@ struct Sidebar: View {
                         Text(app.attributes?.name ?? "No Name")
                     }
                 }
+//                .disabled(iapManager.proUser ? false : iapManager.freeAppId == app.id ? false : true)
                 .contextMenu {
                     Button {
                         hiddenAppIds.append(app.id)
@@ -178,6 +178,7 @@ struct Sidebar: View {
                             Text(app.attributes?.name ?? "No Name")
                         }
                     }
+//                    .disabled(iapManager.proUser ? false : iapManager.freeAppId == app.id ? false : true)
                     .contextMenu {
                         Button {
                             hiddenAppIds.append(app.id)
@@ -222,7 +223,7 @@ enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
     case suggestions
     case support
     case settings
-    
+//    case iap
     
     var id: String { self.rawValue }
     
@@ -238,6 +239,8 @@ enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
             return Label("Suggestions", systemImage: "star.bubble")
         case .support:
             return Label("Support", systemImage: "questionmark.circle.fill")
+//        case .iap:
+//            return Label("Supernova", systemImage: "star.fill")
         }
     }
     
@@ -254,6 +257,8 @@ enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
             SuggestionsConfigView()
         case .support:
             SupportScreen()
+//        case .iap:
+//            Supernova()
         }
     }
 }
