@@ -30,6 +30,11 @@
 		C23B54B2288F3617006EB4B2 /* SupportFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54AB288F3617006EB4B2 /* SupportFetcher.swift */; };
 		C23B54B428900023006EB4B2 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54B328900023006EB4B2 /* IAPManager.swift */; };
 		C23B54B62890012D006EB4B2 /* Supernova.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54B52890012D006EB4B2 /* Supernova.swift */; };
+		C23B54F028901933006EB4B2 /* SuperstarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54EF28901933006EB4B2 /* SuperstarApp.swift */; };
+		C23B54F228901933006EB4B2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54F128901933006EB4B2 /* ContentView.swift */; };
+		C23B54F428901934006EB4B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C23B54F328901934006EB4B2 /* Assets.xcassets */; };
+		C23B54F728901934006EB4B2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C23B54F628901934006EB4B2 /* Preview Assets.xcassets */; };
+		C23B54FD28901941006EB4B2 /* AppStoreConnect-Swift-SDK in Frameworks */ = {isa = PBXBuildFile; productRef = C23B54FC28901941006EB4B2 /* AppStoreConnect-Swift-SDK */; };
 		C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4602884ACF600ABE387 /* SuperstarApp.swift */; };
 		C245B4732884ACF700ABE387 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4612884ACF600ABE387 /* ContentView.swift */; };
 		C245B4752884ACF700ABE387 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C245B4622884ACF700ABE387 /* Assets.xcassets */; };
@@ -66,6 +71,11 @@
 		C23B54AB288F3617006EB4B2 /* SupportFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportFetcher.swift; sourceTree = "<group>"; };
 		C23B54B328900023006EB4B2 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		C23B54B52890012D006EB4B2 /* Supernova.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supernova.swift; sourceTree = "<group>"; };
+		C23B54ED28901933006EB4B2 /* Superstar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Superstar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C23B54EF28901933006EB4B2 /* SuperstarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperstarApp.swift; sourceTree = "<group>"; };
+		C23B54F128901933006EB4B2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C23B54F328901934006EB4B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C23B54F628901934006EB4B2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C245B4602884ACF600ABE387 /* SuperstarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperstarApp.swift; sourceTree = "<group>"; };
 		C245B4612884ACF600ABE387 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C245B4622884ACF700ABE387 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -85,6 +95,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C23B54EA28901933006EB4B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C23B54FD28901941006EB4B2 /* AppStoreConnect-Swift-SDK in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C245B46A2884ACF700ABE387 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -159,13 +177,41 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
+		C23B54EE28901933006EB4B2 /* Superstar */ = {
+			isa = PBXGroup;
+			children = (
+				C23B54EF28901933006EB4B2 /* SuperstarApp.swift */,
+				C23B54F128901933006EB4B2 /* ContentView.swift */,
+				C23B54F328901934006EB4B2 /* Assets.xcassets */,
+				C23B54F528901934006EB4B2 /* Preview Content */,
+			);
+			path = Superstar;
+			sourceTree = "<group>";
+		};
+		C23B54F528901934006EB4B2 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				C23B54F628901934006EB4B2 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		C23B54FB28901941006EB4B2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C245B45A2884ACF600ABE387 = {
 			isa = PBXGroup;
 			children = (
 				C245B4822884AD7D00ABE387 /* macOS */,
 				C245B45F2884ACF600ABE387 /* Shared */,
 				C245B46E2884ACF700ABE387 /* macOS */,
+				C23B54EE28901933006EB4B2 /* Superstar */,
 				C245B4682884ACF700ABE387 /* Products */,
+				C23B54FB28901941006EB4B2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -188,6 +234,7 @@
 			isa = PBXGroup;
 			children = (
 				C245B46D2884ACF700ABE387 /* Superstar.app */,
+				C23B54ED28901933006EB4B2 /* Superstar.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -256,6 +303,26 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		C23B54EC28901933006EB4B2 /* Superstar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C23B54FA28901934006EB4B2 /* Build configuration list for PBXNativeTarget "Superstar" */;
+			buildPhases = (
+				C23B54E928901933006EB4B2 /* Sources */,
+				C23B54EA28901933006EB4B2 /* Frameworks */,
+				C23B54EB28901933006EB4B2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Superstar;
+			packageProductDependencies = (
+				C23B54FC28901941006EB4B2 /* AppStoreConnect-Swift-SDK */,
+			);
+			productName = Superstar;
+			productReference = C23B54ED28901933006EB4B2 /* Superstar.app */;
+			productType = "com.apple.product-type.application";
+		};
 		C245B46C2884ACF700ABE387 /* Superstar (macOS) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C245B47B2884ACF700ABE387 /* Build configuration list for PBXNativeTarget "Superstar (macOS)" */;
@@ -289,6 +356,9 @@
 				LastSwiftUpdateCheck = 1330;
 				LastUpgradeCheck = 1330;
 				TargetAttributes = {
+					C23B54EC28901933006EB4B2 = {
+						CreatedOnToolsVersion = 13.3;
+					};
 					C245B46C2884ACF700ABE387 = {
 						CreatedOnToolsVersion = 13.3;
 					};
@@ -314,11 +384,21 @@
 			projectRoot = "";
 			targets = (
 				C245B46C2884ACF700ABE387 /* Superstar (macOS) */,
+				C23B54EC28901933006EB4B2 /* Superstar */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C23B54EB28901933006EB4B2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C23B54F728901934006EB4B2 /* Preview Assets.xcassets in Resources */,
+				C23B54F428901934006EB4B2 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C245B46B2884ACF700ABE387 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -330,6 +410,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C23B54E928901933006EB4B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C23B54F228901933006EB4B2 /* ContentView.swift in Sources */,
+				C23B54F028901933006EB4B2 /* SuperstarApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C245B4692884ACF700ABE387 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -372,6 +461,69 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		C23B54F828901934006EB4B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Superstar/Preview Content\"";
+				DEVELOPMENT_TEAM = 8Q7TMPA46J;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.goodsnooze.Superstar;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C23B54F928901934006EB4B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Superstar/Preview Content\"";
+				DEVELOPMENT_TEAM = 8Q7TMPA46J;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.goodsnooze.Superstar;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		C245B4762884ACF700ABE387 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -489,7 +641,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -518,7 +670,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 16;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -542,6 +694,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C23B54FA28901934006EB4B2 /* Build configuration list for PBXNativeTarget "Superstar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C23B54F828901934006EB4B2 /* Debug */,
+				C23B54F928901934006EB4B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C245B45E2884ACF600ABE387 /* Build configuration list for PBXProject "Superstar" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -617,6 +778,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C23B54A1288F1085006EB4B2 /* XCRemoteSwiftPackageReference "SwiftCSV" */;
 			productName = SwiftCSV;
+		};
+		C23B54FC28901941006EB4B2 /* AppStoreConnect-Swift-SDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C23B546E288B0766006EB4B2 /* XCRemoteSwiftPackageReference "appstoreconnect-swift-sdk" */;
+			productName = "AppStoreConnect-Swift-SDK";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

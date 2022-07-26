@@ -11,7 +11,6 @@ import AppStoreConnect_Swift_SDK
 struct FullReviewSide: View {
     
     @Binding var review: CustomerReview?
-    @State var replyText = ""
     @FocusState private var isReplyFocused: Bool
     @State var showReplyField = false
     
@@ -81,11 +80,11 @@ struct FullReviewSide: View {
                     Text("Send")
                 }
                 .opacity(review == nil ? 0 : 1)
-                .disabled(replyText.isEmpty)
+                .disabled(reviewManager.replyText.isEmpty)
             }
         })
         .onChange(of: review) { newValue in
-            replyText = ""
+//            reviewManager.replyText = ""
             isReplying = false
             succesfullyReplied = false
             isReplyFocused = true
@@ -96,17 +95,18 @@ struct FullReviewSide: View {
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     func getNewReview() {
-        if let currentIndex = reviewManager.retrievedReviews.firstIndex(of: review!) {
+        guard let review = review else {
+            return
+        }
+        guard let currentIndex = reviewManager.retrievedReviews.firstIndex(of: review) else {
+            return
             
-            // volgende index pakken?
-            
-            if let review = reviewManager.retrievedReviews.randomElement() {
-                if !pendingPublications.contains(review.id) {
-                    self.review = review
-                } else {
-                    getNewReview()
-                }
-            }
+        }
+                
+        if let review = reviewManager.retrievedReviews.filter { !pendingPublications.contains($0.id ) }.randomElement() {
+            self.review = review
+        } else {
+            print("No new reviews available")
         }
     }
     
@@ -133,8 +133,11 @@ struct FullReviewSide: View {
                     } label: {
                         Text("Send")
                     }
-                    .disabled(replyText.isEmpty)
+                    .disabled(reviewManager.replyText.isEmpty)
                 }
+                
+//                extraOptions
+//                translatorView
                 
                 suggestionsPicker
                 Spacer()
@@ -149,7 +152,7 @@ struct FullReviewSide: View {
 
         Task {
             isReplying = true
-            let replied = await reviewManager.replyTo(review: review, with: replyText)
+            let replied = await reviewManager.replyTo(review: review, with: reviewManager.replyText)
 //            let replied = true
             isReplying = false
             if replied {
@@ -168,14 +171,14 @@ struct FullReviewSide: View {
     
     func title(for review: CustomerReview) -> some View {
         Text(review.attributes?.title ?? "")
-            .font(.system(.title3, design: .rounded))
+            .font(.system(.title2, design: .rounded))
             .bold()
             .textSelection(.enabled)
     }
     
     func body(for review: CustomerReview) -> some View {
         Text(review.attributes?.body ?? "")
-            .font(.system(.body, design: .rounded))
+            .font(.system(.title3, design: .rounded))
             .textSelection(.enabled)
             .padding(.bottom)
     }
@@ -198,16 +201,76 @@ struct FullReviewSide: View {
             }
         }
     }
+    
+    @State var translateString = "https://translate.google.com/?sl=en&tl=zh-CN&text=Thanks%20for%20reaching%20out!%20The%20widget%20sometimes%20takes%20a%20while%20to%20appear.%20Can%20you%20send%20an%20email%20to%20jordi%40goodsnooze.com%3F%20Thanks%2C%20Jordi&op=translate"
+    
+    @State var showTranslate = false
+    
+    var extraOptions: some View {
+        HStack {
+            Button {
+                if !showTranslate {
+                    translateString = "https://translate.google.com/?sl=auto&tl=en&text=\(review?.attributes?.body ?? "")&op=translate"
+                }
+                showTranslate.toggle()
+            } label: {
+                Text(showTranslate ? "Close Translation" : "Open Translation")
+            }
+            
+            Spacer()
+            
+//            Button {
+//                print(appsManager.selectedAppId)
+//                if appsManager.selectedApp.id != "Placeholder" {
+//                    let suggestion = Suggestion(title: "New Suggestion", text: replyText, appId: Int(appsManager.selectedAppId ?? "0") ?? 0)
+//                    suggestions.append(suggestion)
+//                }
+//            } label: {
+//                Text("Save as Suggestion")
+//            }
+
+        }
+    }
+    @ViewBuilder
+    var translatorView: some View {
+        if showTranslate {
+            WebView(urlString: $translateString)
+                .frame(height: 500)
+        }
+    }
 
     var suggestionsPicker: some View {
         VStack(alignment: .leading) {
+            HStack {
+                
             Text("Response Suggestions")
                 .font(.system(.body, design: .rounded))
                 .bold()
             
+                Spacer()
+                
+                Button {
+                    if appsManager.selectedAppId != "Placeholder" {
+                        let suggestion = Suggestion(title: "New Suggestion", text: reviewManager.replyText, appId: Int(appsManager.selectedAppId ?? "0") ?? 0)
+                        suggestions.append(suggestion)
+                    }
+                } label: {
+                    HStack {
+                        Text("Add Suggestion")
+                    }
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 8)
+                    .background(Color(.controlBackgroundColor))
+                    .foregroundColor(.primary)
+                    .cornerRadius(6)
+                }
+                .buttonStyle(.plain)
+            }
+            
+            
             ForEach(suggestions) { suggestion in
                 Button {
-                    replyText = suggestion.text
+                    reviewManager.replyText = suggestion.text
 
                     // TODO: show next review
                     // TODO: auto reply
@@ -298,7 +361,7 @@ struct FullReviewSide: View {
             Text(review.attributes?.createdDate?.formatted(.dateTime.day().month().year()) ?? Date().formatted())
                 .opacity(0.8)
         }
-        .font(.system(.caption, design: .rounded))
+        .font(.system(.body, design: .rounded))
     }
 
     var replyArea: some View {
@@ -310,7 +373,7 @@ struct FullReviewSide: View {
                     isReplyFocused = true
                 }
 
-            TextEditor(text: $replyText)
+            TextEditor(text: $reviewManager.replyText)
                 .focused($isReplyFocused)
                 .padding(8)
 //                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
@@ -320,7 +383,7 @@ struct FullReviewSide: View {
                         .opacity(0.4)
                         .padding(8)
                         .allowsHitTesting(false)
-                        .opacity(replyText.isEmpty ? 1 : 0)
+                        .opacity(reviewManager.replyText.isEmpty ? 1 : 0)
                         .frame(height: 200)
                 )
         }
@@ -329,9 +392,43 @@ struct FullReviewSide: View {
     }
 }
 
-//struct FullReviewSide_Previews: PreviewProvider {
-//    static var previews: some View {
-//        FullReviewSide(review: CustomerReview(type: .customerReviews, id: "", links: ResourceLinks(this: "")), reviewManager: ReviewManager())
+import WebKit
+
+struct WebView: View {
+    
+    @Binding var urlString: String
+    
+    var body: some View {
+        WebViewWrapper(urlString: urlString)
+    }
+}
+
+struct WebViewWrapper: NSViewRepresentable {
+    
+    let urlString: String
+    
+    func makeNSView(context: Context) -> WKWebView {
+        return WKWebView()
+    }
+    
+    func updateNSView(_ nsView: WKWebView, context: Context) {
+//        var newURL = urlString
+        
+        if let encoded = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+            if let url = URL(string: encoded) {
+                let request = URLRequest(url: url)
+                nsView.load(request)
+            }
+        }
+    }
+}
+
+//extension String {
+//    var URLEncoded:String {
+//
+//        let unreservedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
+//        let unreservedCharsSet: CharacterSet = CharacterSet(charactersIn: unreservedChars)
+//        let encodedString = self.addingPercentEncoding(withAllowedCharacters: unreservedCharsSet)!
+//        return encodedString
 //    }
 //}
-//

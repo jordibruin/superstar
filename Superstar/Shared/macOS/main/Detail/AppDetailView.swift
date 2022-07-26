@@ -10,8 +10,9 @@ import AppStoreConnect_Swift_SDK
 
 struct AppDetailView: View {
     
-    @ObservedObject var appsManager: AppsManager
-    @ObservedObject var reviewManager: ReviewManager
+    @EnvironmentObject var appsManager: AppsManager
+    @EnvironmentObject var reviewManager: ReviewManager
+    
     let app: AppStoreConnect_Swift_SDK.App
     @Binding var autoReply: Bool
     
@@ -51,7 +52,25 @@ struct AppDetailView: View {
         }
     }
     
+//    @ViewBuilder
     var toolbarItems: some ToolbarContent {
+        Group {
+            ToolbarItem(placement: .primaryAction) {
+                Spacer()
+            }
+            
+            ToolbarItem(placement: .primaryAction) {
+                Toggle(isOn: $hidePending) {
+                    Text("Hide Pending")
+                }
+            }
+        }
+//        let os = ProcessInfo().operatingSystemVersion
+//        os.majorVersion < 13 ? montereyToolbar : venturaToolbar
+    }
+    
+    
+    var montereyToolbar: some ToolbarContent {
         Group {
             ToolbarItem(placement: .navigation) {
                 HStack {
@@ -80,21 +99,34 @@ struct AppDetailView: View {
                             .foregroundColor(.blue)
                             .frame(width: 32, height: 32)
                     }
-
+                    
                     VStack(alignment: .leading) {
                         Text(app.attributes?.name ?? "")
                             .font(.headline)
-
+                        
                         Text(reviewManager.loadingReviews ? "" : "\(unansweredReviewCount) unanswered reviews")
                             .font(.system(.subheadline, design: .rounded))
                             .opacity(0.6)
                     }
-
+                    
                     Spacer()
                 }
                 .padding(.bottom, -4)
             }
+            ToolbarItem(placement: .primaryAction) {
+                Spacer()
+            }
             
+            ToolbarItem(placement: .primaryAction) {
+                Toggle(isOn: $hidePending) {
+                    Text("Hide Pending")
+                }
+            }
+        }
+    }
+    
+    var venturaToolbar: some ToolbarContent {
+        Group {
             ToolbarItem(placement: .primaryAction) {
                 Spacer()
             }
@@ -109,7 +141,7 @@ struct AppDetailView: View {
     
     var loading: some View {
         ZStack {
-
+            
             VStack {
                 Spacer()
                 VStack {
@@ -154,10 +186,10 @@ struct AppDetailView: View {
                     if !pendingPublications.contains(review.id) {
                         Button {
                             selectedReview = review
+                            reviewManager.replyText = ""
                         } label: {
                             DetailReviewView(
                                 review: review,
-                                reviewManager: reviewManager,
                                 autoReply: $autoReply,
                                 selectedReview: $selectedReview
                             )
@@ -167,10 +199,10 @@ struct AppDetailView: View {
                 } else {
                     Button {
                         selectedReview = review
+                        reviewManager.replyText = ""
                     } label: {
                         DetailReviewView(
                             review: review,
-                            reviewManager: reviewManager,
                             autoReply: $autoReply,
                             selectedReview: $selectedReview
                         )

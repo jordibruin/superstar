@@ -21,6 +21,7 @@ class ReviewManager: ObservableObject {
     @Published var retrievedReviews: [AppStoreConnect_Swift_SDK.CustomerReview] = []
     @Published var loadingReviews = false
     
+    @Published var replyText = ""
     
     @MainActor
     func getReviewsFor(id: String) async {

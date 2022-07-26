@@ -11,7 +11,8 @@ import AppStoreConnect_Swift_SDK
 struct DetailReviewView: View {
     
     let review: CustomerReview
-    @ObservedObject var reviewManager: ReviewManager
+    @EnvironmentObject var reviewManager: ReviewManager
+    @EnvironmentObject var appsManager: AppsManager
     
     @State var showReplyField = false
     @State var replyText = ""
@@ -38,24 +39,24 @@ struct DetailReviewView: View {
                 VStack(alignment: .leading) {
                     header
                     
-                    ScrollView {
+//                    ScrollView {
                         Text(review.attributes?.body ?? "")
                             .font(.system(.body, design: .rounded))
                             .padding(.bottom)
                             .minimumScaleFactor(0.7)
                         //                        .textSelection(.enabled)
-                    }
+//                    }
                     Spacer()
                     //                suggestionsAndReply
                 }
                 .padding([.top, .horizontal])
                 .padding(.bottom, showReplyField ? 4 : 20)
                 
-                if showReplyField {
-                    replyArea
-                }
+//                if showReplyField {
+//                    replyArea
+//                }
             }
-//        }
+            
 //        .buttonStyle(.plain)
 //        .disabled(isReplying || succesfullyReplied)
 //        .sheet(isPresented: $showSuggestionsSheet, content: {
@@ -90,6 +91,31 @@ struct DetailReviewView: View {
         )
         .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
         .cornerRadius(16)
+        .contextMenu(menuItems: {
+            Text("Suggestions")
+            Section {
+                ForEach(suggestions.filter { $0.appId == (Int(appsManager.selectedAppId ?? "0") ?? 0)}) { suggestion in
+                    Button {
+                        reviewManager.replyText = suggestion.text
+                        selectedReview = review
+                    } label: {
+                        Text(suggestion.title)
+                    }
+                }
+            }
+            
+            Section {
+                ForEach(suggestions.filter { $0.appId == 0 }) { suggestion in
+                    Button {
+                        reviewManager.replyText = suggestion.text
+                        selectedReview = review
+                    } label: {
+                        Text(suggestion.title)
+                    }
+                }
+            }
+        })
+//        }
         
         .onAppear {
             if pendingPublications.contains(review.id) {
@@ -128,7 +154,7 @@ struct DetailReviewView: View {
                 
                 Button {
                     showReplyField = false
-                    replyText = ""
+                    reviewManager.replyText = ""
                 } label: {
                     Text("Cancel")
                 }
@@ -167,7 +193,7 @@ struct DetailReviewView: View {
         Menu {
             ForEach(suggestions) {  suggestion in
                 Button {
-                    replyText = suggestion.text
+                    reviewManager.replyText = suggestion.text
                     
                     if autoReply {
                         print("we should automatically sent it now")
@@ -310,18 +336,6 @@ struct DetailReviewView: View {
     }
     
 }
-
-//struct DetailReviewView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        DetailReviewView(
-//            review: CustomerReview(
-//                id: "",
-//                links: ResourceLinks(self: "")
-//            ),
-//            reviewManager: ReviewManager()
-//        )
-//    }
-//}
 
 extension NSTextView {
     open override var frame: CGRect {

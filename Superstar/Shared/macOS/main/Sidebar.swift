@@ -76,6 +76,17 @@ struct Sidebar: View {
                     loadingApps
                 } else {
                     appsList
+                    Button {
+                        
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Text("Reload apps")
+                            Spacer()
+                        }
+                    }
+                    .buttonStyle(.plain)
+
                 }
             }
         } header: {
@@ -88,12 +99,12 @@ struct Sidebar: View {
             if !hiddenAppIds.contains(app.id) {
                 NavigationLink(tag: app.id, selection: $appsManager.selectedAppId) {
                     AppDetailView(
-                        appsManager: appsManager,
-                        reviewManager: reviewManager,
                         app: app,
                         autoReply: $autoReply,
                         selectedReview: $selectedReview
                     )
+                    .environmentObject(appsManager)
+                    .environmentObject(reviewManager)
                 } label: {
                     HStack {
                         if let url = appsManager.imageURL(for: app) {
@@ -142,12 +153,12 @@ struct Sidebar: View {
                 if hiddenAppIds.contains(app.id) {
                     NavigationLink(tag: app.id, selection: $appsManager.selectedAppId) {
                         AppDetailView(
-                            appsManager: appsManager,
-                            reviewManager: reviewManager,
                             app: app,
                             autoReply: $autoReply,
                             selectedReview: $selectedReview
                         )
+                        .environmentObject(appsManager)
+                        .environmentObject(reviewManager)
                     } label: {
                         HStack {
                             if let url = appsManager.imageURL(for: app) {
