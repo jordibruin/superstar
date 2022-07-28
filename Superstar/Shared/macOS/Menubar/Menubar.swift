@@ -23,7 +23,6 @@ class StatusBarDelegate: NSObject, NSApplicationDelegate {
         
         // Create the popover
         let popover = NSPopover()
-//        popover.contentSize = NSSize(width: 250)
         popover.behavior = .transient
         popover.contentViewController = NSHostingController(rootView: contentView)
         popover.becomeFirstResponder()
@@ -39,23 +38,12 @@ class StatusBarDelegate: NSObject, NSApplicationDelegate {
     
     func createMenuBarItem() {
         self.statusBarItem = NSStatusBar.system.statusItem(withLength: CGFloat(NSStatusItem.variableLength))
-        
         if let button = self.statusBarItem.button {
-//            button.image = NSImage(systemSymbolName: "star.bubble", accessibilityDescription: "")
-            
-            if let image = NSImage(
-                systemSymbolName: "star.bubble",
-                accessibilityDescription: "Superstar"
-            ) {
-
-                let config = NSImage.SymbolConfiguration(
-                    textStyle: .title3,
-                    scale: .medium
-                )
-                
-//                config = config.applying(.init(paletteColors: [.yellow, .white]))
-                
-                button.image = image.withSymbolConfiguration(config)
+            if let image = NSImage(named: "menubar") {
+                image.isTemplate = true
+                button.image = image//.withSymbolConfiguration(config)
+//                button.image.symbolRenderingMode(.template)
+                    
             }
                                    
             button.action = #selector(togglePopover(_:))
@@ -92,8 +80,4 @@ class StatusBarDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
-    
-    
 }
-
-

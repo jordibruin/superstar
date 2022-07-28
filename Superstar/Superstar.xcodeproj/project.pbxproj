@@ -44,6 +44,9 @@
 		C245B4972884AE8700ABE387 /* DetailReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4922884AE8700ABE387 /* DetailReviewView.swift */; };
 		C245B49A2884B02100ABE387 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4992884B02100ABE387 /* SettingsSheet.swift */; };
 		C245B49C2885513600ABE387 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B49B2885513600ABE387 /* EmptyStateView.swift */; };
+		C290EACB289142A30001358C /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACA289142A30001358C /* SettingsPage.swift */; };
+		C290EACD289142E20001358C /* AppReviewsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACC289142E20001358C /* AppReviewsList.swift */; };
+		C290EAEC289153400001358C /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EAEB289153400001358C /* PreferencesView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -82,6 +85,9 @@
 		C245B4922884AE8700ABE387 /* DetailReviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailReviewView.swift; sourceTree = "<group>"; };
 		C245B4992884B02100ABE387 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
 		C245B49B2885513600ABE387 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		C290EACA289142A30001358C /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
+		C290EACC289142E20001358C /* AppReviewsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReviewsList.swift; sourceTree = "<group>"; };
+		C290EAEB289153400001358C /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				C245B4902884AE8700ABE387 /* AppDetailView.swift */,
+				C290EACC289142E20001358C /* AppReviewsList.swift */,
 				C23B545C28899F2F006EB4B2 /* Review */,
 			);
 			path = Detail;
@@ -133,6 +140,7 @@
 			children = (
 				C23B5469288B017D006EB4B2 /* TerritoryCode+Extensions.swift */,
 				C23B546B288B01C1006EB4B2 /* Suggestion.swift */,
+				C290EACA289142A30001358C /* SettingsPage.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -246,6 +254,7 @@
 			isa = PBXGroup;
 			children = (
 				C245B48E2884AE8700ABE387 /* AddCredentialsView.swift */,
+				C290EAEB289153400001358C /* PreferencesView.swift */,
 				C245B4992884B02100ABE387 /* SettingsSheet.swift */,
 				C245B4912884AE8700ABE387 /* SuggestionsConfigView.swift */,
 				C23B54B52890012D006EB4B2 /* Supernova.swift */,
@@ -345,6 +354,8 @@
 				C23B54652889B601006EB4B2 /* MenuBarReview.swift in Sources */,
 				C23B54AC288F3617006EB4B2 /* SupportItemable.swift in Sources */,
 				C23B54612889AFB2006EB4B2 /* MenuAppsSelector.swift in Sources */,
+				C290EACD289142E20001358C /* AppReviewsList.swift in Sources */,
+				C290EAEC289153400001358C /* PreferencesView.swift in Sources */,
 				C245B4892884AE0B00ABE387 /* AppsManager.swift in Sources */,
 				C23B54B428900023006EB4B2 /* IAPManager.swift in Sources */,
 				C23B54B62890012D006EB4B2 /* Supernova.swift in Sources */,
@@ -361,6 +372,7 @@
 				C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */,
 				C245B4932884AE8700ABE387 /* AddCredentialsView.swift in Sources */,
 				C245B4812884AD7100ABE387 /* Menubar.swift in Sources */,
+				C290EACB289142A30001358C /* SettingsPage.swift in Sources */,
 				C23B54672889FBDF006EB4B2 /* FullReviewSide.swift in Sources */,
 				C23B54AF288F3617006EB4B2 /* SupportSectionDetailView.swift in Sources */,
 				C23B549B288EBA78006EB4B2 /* Sidebar.swift in Sources */,
@@ -489,7 +501,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -501,7 +513,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.goodsnooze.Superstar;
 				PRODUCT_NAME = Superstar;
 				SDKROOT = macosx;
@@ -518,7 +530,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -530,7 +542,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.goodsnooze.Superstar;
 				PRODUCT_NAME = Superstar;
 				SDKROOT = macosx;

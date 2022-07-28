@@ -11,13 +11,12 @@ import AppStoreConnect_Swift_SDK
 struct FullAppView: View {
     
     @StateObject var reviewManager = ReviewManager()
-    @StateObject var appsManager = AppsManager()
+    @EnvironmentObject var appsManager: AppsManager
+    @EnvironmentObject var settingsManager: SettingsManager
     
     @State var showCredentialsScreen = false
     @State var showSuggestionsScreen = false
-//    @State var showSettings = false
-//    @State var showHomeScreen = false
-    
+
     @StateObject var credentials = CredentialsManager.shared
     
     @AppStorage("hiddenAppIds") var hiddenAppIds: [String] = []
@@ -36,11 +35,13 @@ struct FullAppView: View {
                 selectedReview: $selectedReview
             )
             
-            Color.clear
+            
+            EmptyStateView()
+//                .toolbar(content: { toolbarItems })
             
                
             if showCredentialsScreen || showSuggestionsScreen {
-                Text("")
+                Text("test")
                     .toolbar(content: { ToolbarItem(content: {Text("")}) })
             } else {
                 FullReviewSide(review: $selectedReview)
@@ -48,10 +49,10 @@ struct FullAppView: View {
                 .environmentObject(reviewManager)
             }
         }
-        .onChange(of: reviewManager.retrievedReviews) { newValue in
-            selectedReview = nil
-        }
-        .onChange(of: appsManager.selectedPage) { newValue in
+//        .onChange(of: reviewManager.retrievedReviews) { newValue in
+//            selectedReview = nil
+//        }
+        .onChange(of: appsManager.selectedAppId) { newValue in
             selectedReview = nil
         }
         .onChange(of: credentials.savedInKeychain) { saved in
@@ -60,6 +61,39 @@ struct FullAppView: View {
                     await appsManager.getAppsTwan()
                 }
             }
+        }
+    }
+    
+    var toolbarItems: some ToolbarContent {
+        Group {
+            ToolbarItem(content: {Spacer()})
+            
+            ToolbarItem(placement: .automatic) {
+                Button {
+                    settingsManager.selectedPage = .suggestions
+                    NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+                } label: {
+                    SettingsPage.suggestions.label.labelStyle(.iconOnly)
+                }
+            }
+
+            ToolbarItem(content: {
+                Button {
+                    settingsManager.selectedPage = .credentials
+                    NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+                } label: {
+                    SettingsPage.credentials.label.labelStyle(.iconOnly)
+                }
+            })
+
+            ToolbarItem(content: {
+                Button {
+                    settingsManager.selectedPage = .settings
+                    NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+                } label: {
+                    SettingsPage.settings.label.labelStyle(.iconOnly)
+                }
+            })
         }
     }
 }

@@ -15,6 +15,8 @@ struct SettingsSheet: View {
     
     @AppStorage("menuBarVisible") var menuBarVisible: Bool = true
     
+    @AppStorage("venturaMode") var venturaMode: Bool = true
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             fetchIcons
@@ -22,6 +24,7 @@ struct SettingsSheet: View {
             removePending
             showHiddenApps
             menuBarToggle
+//            venturaModeView
             Spacer()
         }
         .padding(12)
@@ -94,6 +97,16 @@ struct SettingsSheet: View {
                     .font(.system(.body, design: .rounded))
             }
         
+        }
+    }
+    
+    var venturaModeView: some View {
+        VStack(alignment: .leading) {
+            Toggle(isOn: $venturaMode) {
+                Text("Ventura Mode")
+                    .font(.system(.body, design: .rounded))
+            }
+            Text("Turn this on if you're on Ventura/")
         }
     }
     

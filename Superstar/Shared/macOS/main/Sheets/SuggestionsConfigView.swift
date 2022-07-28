@@ -15,7 +15,6 @@ struct SuggestionsConfigView: View {
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     @AppStorage("hiddenAppIds") var hiddenAppIds: [String] = []
         
-    
     @EnvironmentObject var appsManager: AppsManager
     
     @State private var selection: Suggestion.ID?
@@ -28,6 +27,11 @@ struct SuggestionsConfigView: View {
     var body: some View {
         VStack {
             Spacer()
+            HStack {
+                Spacer()
+                importButton
+                exportButton
+            }
             Table(suggestions, selection: $selection) {
                 TableColumn("Title", value: \.title)
                     .width(min: 60, ideal: 80, max: 100)
@@ -85,6 +89,7 @@ struct SuggestionsConfigView: View {
                 }
                 .width(30)
             }
+            .frame(height: 400)
             .onDrop(of: [.fileURL], isTargeted: $tableHovered) { providers in
                 handleExternalFileDrop(providers: providers)
             }
@@ -163,35 +168,24 @@ struct SuggestionsConfigView: View {
                 }
             }
         }
-        .toolbar(content: {
-            // This crashes on Ventura
-//            ToolbarItem(content: {
-//                Text("Suggestions")
-//                    .font(.title2)
-//                    .bold()
-//            })
-            
-            ToolbarItem(placement: .primaryAction) {
-                Spacer()
-            }
-            
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    importCSV()
-                } label: {
-                    Text("Import")
-                }
-            }
-            
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    createCSV()
-                } label: {
-                    Text("Export")
-                }
-            }
-        })
         .padding()
+    }
+    
+    var importButton: some View {
+        Button {
+            importCSV()
+        } label: {
+            Text("Import")
+        }
+    }
+    
+    var exportButton: some View {
+        Button {
+            createCSV()
+        } label: {
+            Text("Export")
+        }
+
     }
     
     func handleExternalFileDrop(providers: [NSItemProvider]) -> Bool {

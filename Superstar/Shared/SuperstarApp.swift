@@ -13,14 +13,28 @@ struct SuperstarApp: App {
     @NSApplicationDelegateAdaptor(StatusBarDelegate.self) var appDelegate
     
     @StateObject var iapManager = IAPManager.shared
+    @StateObject var appsManager = AppsManager()
+    @StateObject var settingsManager = SettingsManager()
     
     var body: some Scene {
         WindowGroup {
             FullAppView()
                 .frame(minWidth: 800, minHeight: 500)
                 .environmentObject(iapManager)
+                .environmentObject(appsManager)
+                .environmentObject(settingsManager)
         }
         .windowStyle(.hiddenTitleBar)
         .windowToolbarStyle(.unified)
+        
+        Settings {
+            PreferencesView()
+                .environmentObject(appsManager)
+                .environmentObject(settingsManager)
+        }
     }
+}
+
+class SettingsManager: ObservableObject {
+    @Published var selectedPage: SettingsPage = .settings
 }

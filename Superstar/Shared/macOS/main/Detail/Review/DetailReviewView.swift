@@ -25,44 +25,33 @@ struct DetailReviewView: View {
     
     @State var isReplying = false
     
+    @State var isError = false
+    @State var errorString = ""
+    
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
-    @Binding var autoReply: Bool
+//    @Binding var autoReply: Bool
     @Binding var selectedReview: CustomerReview?
     
     var body: some View {
-//        Button {
-//            selectedReview = review
-//        } label: {
+        VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                VStack(alignment: .leading) {
-                    header
-                    
-                    ScrollView {
-                        Text(review.attributes?.body ?? "")
-                            .font(.system(.body, design: .rounded))
-                            .padding(.bottom)
-                            .minimumScaleFactor(0.7)
-                        //                        .textSelection(.enabled)
-                    }
-                    Spacer()
-                    //                suggestionsAndReply
-                }
-                .padding([.top, .horizontal])
-                .padding(.bottom, showReplyField ? 4 : 20)
-                
-                if showReplyField {
-                    replyArea
-                }
+                header
+
+                Text(review.attributes?.body ?? "")
+                    .font(.system(.body, design: .rounded))
+                    .padding(.bottom)
+                    .minimumScaleFactor(0.7)
+                                        
+                Spacer()
             }
-//        }
-//        .buttonStyle(.plain)
-//        .disabled(isReplying || succesfullyReplied)
-//        .sheet(isPresented: $showSuggestionsSheet, content: {
-//            SuggestionsConfigView(
-//                showSheet: $showSuggestionsSheet,
-//            )
-//        })
+            .padding([.top, .horizontal])
+            .padding(.bottom, showReplyField ? 4 : 20)
+            
+            if showReplyField {
+                replyArea
+            }
+        }
         .frame(height: 260)
         .overlay(
             ZStack {
@@ -148,16 +137,24 @@ struct DetailReviewView: View {
     func respondToReview() async {
         Task {
             isReplying = true
-            let replied = await reviewManager.replyTo(review: review, with: replyText)
-            
-            isReplying = false
-            if replied {
-                print("replied succesfully")
-                succesfullyReplied = true
-            } else {
-                print("could not reply")
-                succesfullyReplied = false
+            do  {
+                let replied = try await reviewManager.replyTo(review: review, with: replyText)
+                
+                isReplying = false
+                
+                if replied {
+                    print("replied succesfully")
+                    succesfullyReplied = true
+                } else {
+                    print("could not reply")
+                    succesfullyReplied = false
+                }
+            } catch {
+                print(error.localizedDescription)
+                errorString = error.localizedDescription
+                isError = true
             }
+            
         }
     }
     
@@ -169,14 +166,14 @@ struct DetailReviewView: View {
                 Button {
                     replyText = suggestion.text
                     
-                    if autoReply {
-                        print("we should automatically sent it now")
-                        Task {
-                            await respondToReview()
-                        }
-                    } else {
-                        showReplyField = true
-                    }
+//                    if autoReply {
+//                        print("we should automatically sent it now")
+//                        Task {
+//                            await respondToReview()
+//                        }
+//                    } else {
+//                    }
+                    showReplyField = true
                 } label: {
                     Text(suggestion.title.capitalized)
                         .padding(.vertical, 6)

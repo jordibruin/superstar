@@ -91,21 +91,26 @@ struct MenuBarReview: View {
     func respondToReview() async {
         Task {
             isReplying = true
-            let replied = await reviewManager.replyTo(review: review, with: replyText)
-            
-            isReplying = false
-            if replied {
-                print("replied succesfully")
-                succesfullyReplied = true
-//                getNewRandomReview()
-                getNewReview()
-                replyText = ""
-                showReplyField = false
+            do {
+                let replied = try  await reviewManager.replyTo(review: review, with: replyText)
                 
-            } else {
-                print("could not reply")
-                succesfullyReplied = false
+                isReplying = false
+                if replied {
+                    print("replied succesfully")
+                    succesfullyReplied = true
+                    //                getNewRandomReview()
+                    getNewReview()
+                    replyText = ""
+                    showReplyField = false
+                    
+                } else {
+                    print("could not reply")
+                    succesfullyReplied = false
+                }
+            } catch {
+                print(error.localizedDescription)
             }
+            
         }
     }
     
