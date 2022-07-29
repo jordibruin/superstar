@@ -266,7 +266,6 @@ struct DetailReviewView: View {
         }
     }
     
-    
     var metadata: some View {
         VStack(alignment: .trailing) {
             HStack(spacing: 2) {

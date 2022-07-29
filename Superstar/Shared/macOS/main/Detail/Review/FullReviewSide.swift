@@ -86,6 +86,10 @@ struct FullReviewSide: View {
             succesfullyReplied = false
             replyText = ""
             isReplyFocused = true
+            
+            if showTranslate {
+                translateString = "https://translate.google.com/?sl=auto&tl=en&text=\(review?.attributes?.title ?? "")\n\(review?.attributes?.body ?? "")&op=translate"
+            }
         }
         
     }
@@ -314,7 +318,7 @@ struct FullReviewSide: View {
             Spacer()
             Button {
                 if !showTranslate {
-                    translateString = "https://translate.google.com/?sl=auto&tl=en&text=\(review?.attributes?.body ?? "")&op=translate"
+                    translateString = "https://translate.google.com/?sl=auto&tl=en&text=\(review?.attributes?.title ?? "")\n\(review?.attributes?.body ?? "")&op=translate"
                 }
                 showTranslate.toggle()
             } label: {
