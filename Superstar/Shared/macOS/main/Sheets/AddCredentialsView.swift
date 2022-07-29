@@ -29,10 +29,17 @@ struct AddCredentialsView: View {
             privateKey
             Divider()
             
-            Button {
-                credentials.saveCredentials()
-            } label: {
-                Text("Save Credentials")
+            HStack {
+                Button {
+                    credentials.saveCredentials()
+                } label: {
+                    Text("Save Credentials")
+                }
+                
+                if credentials.allCredentialsAvailable() && credentials.savedInKeychain {
+                    Label("Credentials saved", systemImage: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                }
             }
             HStack {
                 Spacer()
@@ -40,6 +47,25 @@ struct AddCredentialsView: View {
             Spacer()
 //            footer
         }
+        
+        .onChange(of: credentials.keyID, perform: { newValue in
+            if newValue.isEmpty {
+                print("key id empty!")
+                credentials.oneValueIsEmpty()
+            }
+        })
+        .onChange(of: credentials.issuerId, perform: { newValue in
+            if newValue.isEmpty {
+                print("issuer empty!")
+                credentials.oneValueIsEmpty()
+            }
+        })
+        .onChange(of: credentials.privateKey, perform: { newValue in
+            if newValue.isEmpty {
+                print("private key empty!")
+                credentials.oneValueIsEmpty()
+            }
+        })
         
         .padding()
         .frame(minWidth: 700)

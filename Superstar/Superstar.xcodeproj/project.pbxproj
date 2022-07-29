@@ -44,6 +44,7 @@
 		C245B4972884AE8700ABE387 /* DetailReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4922884AE8700ABE387 /* DetailReviewView.swift */; };
 		C245B49A2884B02100ABE387 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4992884B02100ABE387 /* SettingsSheet.swift */; };
 		C245B49C2885513600ABE387 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B49B2885513600ABE387 /* EmptyStateView.swift */; };
+		C279A0AB2894297D00B62A87 /* SuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C279A0AA2894297D00B62A87 /* SuggestionView.swift */; };
 		C290EACB289142A30001358C /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACA289142A30001358C /* SettingsPage.swift */; };
 		C290EACD289142E20001358C /* AppReviewsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACC289142E20001358C /* AppReviewsList.swift */; };
 		C290EAEC289153400001358C /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EAEB289153400001358C /* PreferencesView.swift */; };
@@ -85,6 +86,7 @@
 		C245B4922884AE8700ABE387 /* DetailReviewView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailReviewView.swift; sourceTree = "<group>"; };
 		C245B4992884B02100ABE387 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
 		C245B49B2885513600ABE387 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
+		C279A0AA2894297D00B62A87 /* SuggestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionView.swift; sourceTree = "<group>"; };
 		C290EACA289142A30001358C /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
 		C290EACC289142E20001358C /* AppReviewsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReviewsList.swift; sourceTree = "<group>"; };
 		C290EAEB289153400001358C /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 			children = (
 				C245B4922884AE8700ABE387 /* DetailReviewView.swift */,
 				C23B54662889FBDF006EB4B2 /* FullReviewSide.swift */,
+				C279A0AA2894297D00B62A87 /* SuggestionView.swift */,
 			);
 			path = Review;
 			sourceTree = "<group>";
@@ -353,6 +356,7 @@
 				C23B5475288C77B6006EB4B2 /* CachedAsyncImage.swift in Sources */,
 				C23B54652889B601006EB4B2 /* MenuBarReview.swift in Sources */,
 				C23B54AC288F3617006EB4B2 /* SupportItemable.swift in Sources */,
+				C279A0AB2894297D00B62A87 /* SuggestionView.swift in Sources */,
 				C23B54612889AFB2006EB4B2 /* MenuAppsSelector.swift in Sources */,
 				C290EACD289142E20001358C /* AppReviewsList.swift in Sources */,
 				C290EAEC289153400001358C /* PreferencesView.swift in Sources */,

@@ -41,6 +41,10 @@ class CredentialsManager: ObservableObject {
         }
     }
     
+    func oneValueIsEmpty() {
+        self.savedInKeychain = false
+    }
+    
     func updateInKeychain(key: String, value: String) {
         do  {
             try keychain.set(value, key: key)
@@ -56,6 +60,11 @@ class CredentialsManager: ObservableObject {
         self.issuerId = keychain["issuerId"] ?? ""
         self.privateKey = keychain["privateKey"] ?? ""
         let twanKey = privateKey.replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "").replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "").replacingOccurrences(of: "\n", with: "")
+        
+        if !keyID.isEmpty || !issuerId.isEmpty || !privateKey.isEmpty {
+            savedInKeychain = true
+        }
+        
         self.configuration = APIConfiguration(issuerID: issuerId, privateKeyID: keyID, privateKey: twanKey)
         configurationReady = true
     }

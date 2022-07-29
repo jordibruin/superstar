@@ -43,9 +43,27 @@ struct DetailReviewView: View {
                     .padding(.bottom)
                                         
                 Spacer()
-                Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
-                    .font(.caption)
-                    .opacity(0.8)
+                HStack {
+                    Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
+                        .font(.caption)
+                        .opacity(0.8)
+                    
+                    Spacer()
+                    if succesfullyReplied {
+                        HStack {
+                            Image(systemName: "checkmark")
+//                                .foregroundColor(.green)
+                            
+                            Text("Response Pending")
+                                .bold()
+                        }
+                        .foregroundColor(.white)
+                        .padding(4)
+                        .background(Color.green.opacity(0.5))
+                        .cornerRadius(4, antialiased: true)
+                        .font(.system(.subheadline, design: .rounded))
+                    }
+                }
             }
             .padding([.top, .horizontal])
             .padding(.bottom, showReplyField ? 4 : 20)
@@ -55,33 +73,32 @@ struct DetailReviewView: View {
             }
         }
         .frame(height: 260)
-        .overlay(
-            ZStack {
-                Color(.controlBackgroundColor)
-                VStack {
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.green)
-                        .font(.system(size: 60))
-                        .opacity(succesfullyReplied ? 1 : 0)
-                        .animation(.default, value: isReplying)
-                    
-                    if isReplying {
-                        ProgressView()
-                    }
-                    
-                    Text(succesfullyReplied ? "Pending Publication" : "Sending Reply...")
-                        .font(.system(.title, design: .rounded))
-                        .bold()
-                }
-            }
-                .opacity(isReplying || succesfullyReplied ? 1 : 0)
-        )
+//        .overlay(
+//            ZStack {
+//                Color(.controlBackgroundColor)
+//                VStack {
+//                    Image(systemName: "checkmark")
+//                        .foregroundColor(.green)
+//                        .font(.system(size: 60))
+//                        .opacity(succesfullyReplied ? 1 : 0)
+//                        .animation(.default, value: isReplying)
+//
+//                    if isReplying {
+//                        ProgressView()
+//                    }
+//
+//                    Text(succesfullyReplied ? "Pending Publication" : "Sending Reply...")
+//                        .font(.system(.title, design: .rounded))
+//                        .bold()
+//                }
+//            }
+//                .opacity(isReplying || succesfullyReplied ? 1 : 0)
+//        )
         .background(
             bgColor
         )
         .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
         .cornerRadius(16)
-        
         .onAppear {
             if pendingPublications.contains(review.id) {
                 succesfullyReplied = true

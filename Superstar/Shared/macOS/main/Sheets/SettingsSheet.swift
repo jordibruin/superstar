@@ -14,6 +14,7 @@ struct SettingsSheet: View {
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     @AppStorage("menuBarVisible") var menuBarVisible: Bool = true
+    @AppStorage("onlyShowSuggestionsPerApp") var onlyShowSuggestionsPerApp: Bool = true
     
     @AppStorage("venturaMode") var venturaMode: Bool = true
     
@@ -24,6 +25,7 @@ struct SettingsSheet: View {
             removePending
             showHiddenApps
             menuBarToggle
+            onlyShowSuggestionsPerAppView
             favoriteAppPicker
             //            venturaModeView
             Spacer()
@@ -133,6 +135,17 @@ struct SettingsSheet: View {
             .onChange(of: menuBarVisible) { menuBarVisible in
                 updateMenuBar()
             }
+        }
+    }
+    
+    var onlyShowSuggestionsPerAppView: some View {
+        VStack(alignment: .leading) {
+            Toggle(isOn: $onlyShowSuggestionsPerApp) {
+                Text("Only show suggestions for selected app")
+                    .font(.system(.body, design: .rounded))
+            }
+            Text("Only show suggestions for the app that you currently have selected. This will also show response suggestions that are not linked to an app.")
+                .font(.system(.body, design: .rounded))
         }
     }
     

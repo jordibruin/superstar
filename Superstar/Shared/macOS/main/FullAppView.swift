@@ -49,7 +49,7 @@ struct FullAppView: View {
             }
         }
         .onAppear(perform: {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 fadeOut = true
             }
         })
@@ -85,11 +85,12 @@ struct FullAppView: View {
                 .font(.system(size: 150))
                 .foregroundColor(.white)
                 .opacity(fadeOut ? 0 : 1)
-                .scaleEffect(fadeOut ? 2 : 1)
+                .scaleEffect(fadeOut ? 5 : 1)
+                .animation(.easeOut(duration: 0.3), value: fadeOut)
         }
         .edgesIgnoringSafeArea(.top)
         .opacity(fadeOut ? 0 : 1)
-        .animation(.easeOut(duration: 0.5), value: fadeOut)
+        .animation(.easeOut(duration: 0.3).delay(0.5), value: fadeOut)
     }
     
     var toolbarItems: some ToolbarContent {
