@@ -22,6 +22,15 @@ struct FullReviewSide: View {
     @State var isReplying = false
     @State var succesfullyReplied = false
     
+    @State var isError = false
+    @State var errorString = ""
+    
+    @State var showError = false
+    
+    @State var replyText = ""
+    
+    @AppStorage("onlyShowSuggestionsPerApp") var onlyShowSuggestionsPerApp: Bool = true
+    
     var body: some View {
         VStack {
             ZStack {
@@ -35,7 +44,6 @@ struct FullReviewSide: View {
                     }
                 }
             }
-//            .frame(width: 280)
         }
         .overlay(
             ZStack {
@@ -56,37 +64,27 @@ struct FullReviewSide: View {
                         .bold()
                 }
             }
-            .opacity(isReplying || succesfullyReplied ? 1 : 0)
+                .opacity(isReplying || succesfullyReplied ? 1 : 0)
         )
         .toolbar(content: {
+            ToolbarItem(content: {Spacer()})
             ToolbarItem(placement: .automatic) {
                 Button {
                     getNewReview()
                 } label: {
                     Text("Skip")
+                    
                 }
+                .help(Text("Skip to another unanswered review (⌘S)"))
                 .opacity(review == nil ? 0 : 1)
-            }
-            ToolbarItem(placement: .automatic) {
-                Spacer()
-            }
-            
-            ToolbarItem(placement: .automatic) {
-                Button {
-                    Task {
-                        await respondToReview()
-                    }
-                } label: {
-                    Text("Send")
-                }
-                .opacity(review == nil ? 0 : 1)
-                .disabled(reviewManager.replyText.isEmpty)
+                .keyboardShortcut("s", modifiers: .command)
             }
         })
         .onChange(of: review) { newValue in
-//            reviewManager.replyText = ""
+            //            reviewManager.replyText = ""
             isReplying = false
             succesfullyReplied = false
+            replyText = ""
             isReplyFocused = true
         }
         
@@ -98,11 +96,11 @@ struct FullReviewSide: View {
         guard let review = review else {
             return
         }
+        
         guard let currentIndex = reviewManager.retrievedReviews.firstIndex(of: review) else {
             return
-            
         }
-                
+        
         if let review = reviewManager.retrievedReviews.filter { !pendingPublications.contains($0.id ) }.randomElement() {
             self.review = review
         } else {
@@ -119,7 +117,11 @@ struct FullReviewSide: View {
                     metadata(for: review)
                 }
                 body(for: review)
-
+                VStack {
+                    extraOptions
+                    translatorView
+                }
+                
                 replyArea
                     .padding(.horizontal, -4)
                     .padding(.top, -8)
@@ -133,11 +135,26 @@ struct FullReviewSide: View {
                     } label: {
                         Text("Send")
                     }
-                    .disabled(reviewManager.replyText.isEmpty)
+                    .disabled(replyText.isEmpty)
+                    .help(Text("Send the response (⌘-Return)"))
+                    .keyboardShortcut(.return, modifiers: .command)
                 }
                 
-//                extraOptions
-//                translatorView
+                if showError {
+                    VStack {
+                        Text("Could not send response. Double check that your App Store Connect credentials have the 'Admin' rights attached to it.")
+                        Text(errorString)
+                        Button {
+                            errorString = ""
+                            showError = false
+                        } label: {
+                            Text("hide error")
+                        }
+                        
+                    }
+                }
+                
+                Divider()
                 
                 suggestionsPicker
                 Spacer()
@@ -149,23 +166,40 @@ struct FullReviewSide: View {
     
     func respondToReview() async {
         guard let review = review else { return }
-
+        
         Task {
             isReplying = true
-            let replied = await reviewManager.replyTo(review: review, with: reviewManager.replyText)
-//            let replied = true
-            isReplying = false
-            if replied {
-                print("replied succesfully")
-                succesfullyReplied = true
+            
+            do {
+                let replied = try await reviewManager.replyTo(review: review, with: replyText)
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    self.getNewReview()
+                isReplying = false
+                if replied {
+                    print("replied succesfully")
+                    succesfullyReplied = true
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        self.getNewReview()
+                    }
+                } else {
+                    print("could not reply")
+                    succesfullyReplied = false
                 }
-            } else {
-                print("could not reply")
-                succesfullyReplied = false
+            } catch {
+                print(error.localizedDescription)
+                
+                let errorCode = (error as NSError).description
+                if errorCode.contains("This request is forbidden for security reasons") {
+                    errorString = "This request is forbidden for security reasons"
+                } else {
+                    errorString = "Could not send reply. Not sure why, sorry!"
+                }
+                
+                showError = true
+                isError = true
+                isReplying = false
             }
+            
         }
     }
     
@@ -187,7 +221,7 @@ struct FullReviewSide: View {
     
     func starsFor(review: CustomerReview) -> some View {
         let realRating = review.attributes?.rating ?? 1
-
+        
         return HStack(spacing: 2) {
             ForEach(0..<realRating, id: \.self) { star in
                 Image(systemName: "star.fill")
@@ -202,152 +236,57 @@ struct FullReviewSide: View {
         }
     }
     
-    @State var translateString = "https://translate.google.com/?sl=en&tl=zh-CN&text=Thanks%20for%20reaching%20out!%20The%20widget%20sometimes%20takes%20a%20while%20to%20appear.%20Can%20you%20send%20an%20email%20to%20jordi%40goodsnooze.com%3F%20Thanks%2C%20Jordi&op=translate"
-    
-    @State var showTranslate = false
-    
-    var extraOptions: some View {
-        HStack {
-            Button {
-                if !showTranslate {
-                    translateString = "https://translate.google.com/?sl=auto&tl=en&text=\(review?.attributes?.body ?? "")&op=translate"
-                }
-                showTranslate.toggle()
-            } label: {
-                Text(showTranslate ? "Close Translation" : "Open Translation")
-            }
-            
-            Spacer()
-            
-//            Button {
-//                print(appsManager.selectedAppId)
-//                if appsManager.selectedApp.id != "Placeholder" {
-//                    let suggestion = Suggestion(title: "New Suggestion", text: replyText, appId: Int(appsManager.selectedAppId ?? "0") ?? 0)
-//                    suggestions.append(suggestion)
-//                }
-//            } label: {
-//                Text("Save as Suggestion")
-//            }
-
-        }
-    }
-    @ViewBuilder
-    var translatorView: some View {
-        if showTranslate {
-            WebView(urlString: $translateString)
-                .frame(height: 500)
-        }
-    }
-
     var suggestionsPicker: some View {
         VStack(alignment: .leading) {
             HStack {
+                Text("Response Suggestions")
+                    .font(.system(.body, design: .rounded))
+                    .bold()
                 
-            Text("Response Suggestions")
-                .font(.system(.body, design: .rounded))
-                .bold()
-            
                 Spacer()
                 
                 Button {
                     if appsManager.selectedAppId != "Placeholder" {
-                        let suggestion = Suggestion(title: "New Suggestion", text: reviewManager.replyText, appId: Int(appsManager.selectedAppId ?? "0") ?? 0)
+                        let suggestion = Suggestion(
+                            title: replyText.components(separatedBy: ".").first ?? "New Suggestion",
+                            text: replyText,
+                            appId: Int(appsManager.selectedAppId ?? "0") ?? 0
+                        )
                         suggestions.append(suggestion)
                     }
                 } label: {
-                    HStack {
-                        Text("Add Suggestion")
-                    }
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 8)
-                    .background(Color(.controlBackgroundColor))
-                    .foregroundColor(.primary)
-                    .cornerRadius(6)
+                    Text("Add Suggestion")
+                        .font(.caption)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .background(Color(.controlBackgroundColor))
+                        .foregroundColor(.primary)
+                        .cornerRadius(4)
                 }
                 .buttonStyle(.plain)
+                .opacity(replyText.isEmpty ? 0 : 1)
             }
-            
             
             ForEach(suggestions) { suggestion in
-                Button {
-                    reviewManager.replyText = suggestion.text
-
-                    // TODO: show next review
-                    // TODO: auto reply
-//                    if autoReply {
-//                        print("we should automatically sent it now")
-//                        Task {
-//                            await respondToReview()
-//                        }
-//                    } else {
-//                        showReplyField = true
-//                    }
-                } label: {
-                    HStack {
-                        if let url = appsManager.imageURLfor(appId: "\(suggestion.appId)") {
-                            CacheAsyncImage(url: url, scale: 2) { phase in
-                                switch phase {
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .clipShape(RoundedRectangle(cornerRadius: 3))
-                                        .clipped()
-                                case .failure(let _):
-                                    Text("E")
-                                case .empty:
-                                    Color.gray.opacity(0.05)
-                                @unknown default:
-                                    // AsyncImagePhase is not marked as @frozen.
-                                    // We need to support new cases in the future.
-                                    Image(systemName: "questionmark")
-                                }
-                            }
-                            .frame(width: 18, height: 18)
-                        }
-                        
-//                        Text(appsManager.appNameFor(appId: "\(suggestion.appId)"))
-                        Text(suggestion.title.capitalized)
+                if onlyShowSuggestionsPerApp {
+                    if suggestion.appId == Int(appsManager.selectedAppId ?? "") ?? 0 || suggestion.appId == 0 {
+                        SuggestionView(
+                            suggestion: suggestion,
+                            replyText: $replyText,
+                            hoveringOnSuggestion: $hoveringOnSuggestion,
+                            suggestions: $suggestions
+                        )
                     }
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 8)
-                    .background(Color(.controlBackgroundColor))
-                    .foregroundColor(.primary)
-                    .cornerRadius(6)
+                } else {
+                    SuggestionView(
+                        suggestion: suggestion,
+                        replyText: $replyText,
+                        hoveringOnSuggestion: $hoveringOnSuggestion,
+                        suggestions: $suggestions
+                    )
                 }
-                .buttonStyle(.plain)
             }
-//            Menu {
-//                ForEach(suggestions) {  suggestion in
-//                    Button {
-//                        replyText = suggestion.text
-//
-//    //                    if autoReply {
-//    //                        print("we should automatically sent it now")
-//    //                        Task {
-//    //                            await respondToReview()
-//    //                        }
-//    //                    } else {
-//                            showReplyField = true
-//    //                    }
-//                    } label: {
-//                        Text(suggestion.title.capitalized)
-//                            .padding(.vertical, 6)
-//                            .padding(.horizontal, 12)
-//                            .background(Color.blue)
-//                            .foregroundColor(.white)
-//                            .cornerRadius(12)
-//                    }
-//                    .buttonStyle(.plain)
-//                }
-//            } label: {
-//                Text("Suggestions")
-//            }
-//            .menuStyle(.borderlessButton)
-//            .frame(width: 110)
-//            .padding(.vertical, 4)
-//            .padding(.horizontal, 6)
-//            .background(RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Color.secondary.opacity(0.1)))
+            
         }
     }
     
@@ -363,27 +302,59 @@ struct FullReviewSide: View {
         }
         .font(.system(.body, design: .rounded))
     }
-
+    
+    
+    @State var hoveringOnSuggestion: Suggestion?
+    
+        
+    @State var showTranslate = false
+    
+    var extraOptions: some View {
+        HStack {
+            Spacer()
+            Button {
+                if !showTranslate {
+                    translateString = "https://translate.google.com/?sl=auto&tl=en&text=\(review?.attributes?.body ?? "")&op=translate"
+                }
+                showTranslate.toggle()
+            } label: {
+                Label(showTranslate ? "Close" : "Translate", systemImage: "globe")
+                    .font(.caption)
+            }
+            
+        }
+    }
+    @ViewBuilder
+    var translatorView: some View {
+        if showTranslate {
+            WebView(urlString: $translateString)
+                .frame(height: 500)
+        }
+    }
+    
+    @State var translateString = "https://translate.google.com/?sl=en&tl=zh-CN&text=Thanks%20for%20reaching%20out!%20The%20widget%20sometimes%20takes%20a%20while%20to%20appear.%20Can%20you%20send%20an%20email%20to%20jordi%40goodsnooze.com%3F%20Thanks%2C%20Jordi&op=translate"
+    
+    
     var replyArea: some View {
-
+        
         ZStack(alignment: .topLeading) {
             Color(.controlBackgroundColor)
                 .frame(height: 200)
                 .onTapGesture {
                     isReplyFocused = true
                 }
-
-            TextEditor(text: $reviewManager.replyText)
+            
+            TextEditor(text: $replyText)
                 .focused($isReplyFocused)
                 .padding(8)
-//                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
+            //                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
                 .frame(height: 200)
                 .overlay(
-                    TextEditor(text: .constant("Custom Reply"))
-                        .opacity(0.4)
+                    TextEditor(text: .constant(hoveringOnSuggestion != nil ? hoveringOnSuggestion?.text ?? "" : "Custom Reply"))
+                        .foregroundColor(.secondary)
                         .padding(8)
                         .allowsHitTesting(false)
-                        .opacity(reviewManager.replyText.isEmpty ? 1 : 0)
+                        .opacity(replyText.isEmpty ? 1 : 0)
                         .frame(height: 200)
                 )
         }
@@ -391,6 +362,7 @@ struct FullReviewSide: View {
         .cornerRadius(8)
     }
 }
+
 
 import WebKit
 
@@ -412,7 +384,7 @@ struct WebViewWrapper: NSViewRepresentable {
     }
     
     func updateNSView(_ nsView: WKWebView, context: Context) {
-//        var newURL = urlString
+        //        var newURL = urlString
         
         if let encoded = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
             if let url = URL(string: encoded) {
@@ -422,13 +394,3 @@ struct WebViewWrapper: NSViewRepresentable {
         }
     }
 }
-
-//extension String {
-//    var URLEncoded:String {
-//
-//        let unreservedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
-//        let unreservedCharsSet: CharacterSet = CharacterSet(charactersIn: unreservedChars)
-//        let encodedString = self.addingPercentEncoding(withAllowedCharacters: unreservedCharsSet)!
-//        return encodedString
-//    }
-//}

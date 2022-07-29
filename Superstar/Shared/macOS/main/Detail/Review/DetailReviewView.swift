@@ -26,97 +26,80 @@ struct DetailReviewView: View {
     
     @State var isReplying = false
     
+    @State var isError = false
+    @State var errorString = ""
+    
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
-    @Binding var autoReply: Bool
+//    @Binding var autoReply: Bool
     @Binding var selectedReview: CustomerReview?
     
     var body: some View {
-//        Button {
-//            selectedReview = review
-//        } label: {
+        VStack(alignment: .leading) {
             VStack(alignment: .leading) {
-                VStack(alignment: .leading) {
-                    header
+                header
+
+                Text(review.attributes?.body ?? "")
+                    .font(.system(.body, design: .rounded))
+                    .padding(.bottom)
+                                        
+                Spacer()
+                HStack {
+                    Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
+                        .font(.caption)
+                        .opacity(0.8)
                     
-//                    ScrollView {
-                        Text(review.attributes?.body ?? "")
-                            .font(.system(.body, design: .rounded))
-                            .padding(.bottom)
-                            .minimumScaleFactor(0.7)
-                        //                        .textSelection(.enabled)
-//                    }
                     Spacer()
-                    //                suggestionsAndReply
-                }
-                .padding([.top, .horizontal])
-                .padding(.bottom, showReplyField ? 4 : 20)
-                
-//                if showReplyField {
-//                    replyArea
-//                }
-            }
-            
-//        .buttonStyle(.plain)
-//        .disabled(isReplying || succesfullyReplied)
-//        .sheet(isPresented: $showSuggestionsSheet, content: {
-//            SuggestionsConfigView(
-//                showSheet: $showSuggestionsSheet,
-//            )
-//        })
-        .frame(height: 260)
-        .overlay(
-            ZStack {
-                Color(.controlBackgroundColor)
-                VStack {
-                    Image(systemName: "checkmark")
-                        .foregroundColor(.green)
-                        .font(.system(size: 60))
-                        .opacity(succesfullyReplied ? 1 : 0)
-                        .animation(.default, value: isReplying)
-                    
-                    if isReplying {
-                        ProgressView()
+                    if succesfullyReplied {
+                        HStack {
+                            Image(systemName: "checkmark")
+//                                .foregroundColor(.green)
+                            
+                            Text("Response Pending")
+                                .bold()
+                        }
+                        .foregroundColor(.white)
+                        .padding(4)
+                        .background(Color.green.opacity(0.5))
+                        .cornerRadius(4, antialiased: true)
+                        .font(.system(.subheadline, design: .rounded))
                     }
-                    
-                    Text(succesfullyReplied ? "Pending Publication" : "Sending Reply...")
-                        .font(.system(.title, design: .rounded))
-                        .bold()
                 }
             }
-                .opacity(isReplying || succesfullyReplied ? 1 : 0)
-        )
+            .padding([.top, .horizontal])
+            .padding(.bottom, showReplyField ? 4 : 20)
+            
+            if showReplyField {
+                replyArea
+            }
+        }
+        .frame(height: 260)
+//        .overlay(
+//            ZStack {
+//                Color(.controlBackgroundColor)
+//                VStack {
+//                    Image(systemName: "checkmark")
+//                        .foregroundColor(.green)
+//                        .font(.system(size: 60))
+//                        .opacity(succesfullyReplied ? 1 : 0)
+//                        .animation(.default, value: isReplying)
+//
+//                    if isReplying {
+//                        ProgressView()
+//                    }
+//
+//                    Text(succesfullyReplied ? "Pending Publication" : "Sending Reply...")
+//                        .font(.system(.title, design: .rounded))
+//                        .bold()
+//                }
+//            }
+//                .opacity(isReplying || succesfullyReplied ? 1 : 0)
+//        )
         .background(
             bgColor
         )
         .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
         .cornerRadius(16)
-        .contextMenu(menuItems: {
-            Text("Suggestions")
-            Section {
-                ForEach(suggestions.filter { $0.appId == (Int(appsManager.selectedAppId ?? "0") ?? 0)}) { suggestion in
-                    Button {
-                        reviewManager.replyText = suggestion.text
-                        selectedReview = review
-                    } label: {
-                        Text(suggestion.title)
-                    }
-                }
-            }
-            
-            Section {
-                ForEach(suggestions.filter { $0.appId == 0 }) { suggestion in
-                    Button {
-                        reviewManager.replyText = suggestion.text
-                        selectedReview = review
-                    } label: {
-                        Text(suggestion.title)
-                    }
-                }
-            }
-        })
-//        }
-        
         .onAppear {
             if pendingPublications.contains(review.id) {
                 succesfullyReplied = true
@@ -174,16 +157,24 @@ struct DetailReviewView: View {
     func respondToReview() async {
         Task {
             isReplying = true
-            let replied = await reviewManager.replyTo(review: review, with: replyText)
-            
-            isReplying = false
-            if replied {
-                print("replied succesfully")
-                succesfullyReplied = true
-            } else {
-                print("could not reply")
-                succesfullyReplied = false
+            do  {
+                let replied = try await reviewManager.replyTo(review: review, with: replyText)
+                
+                isReplying = false
+                
+                if replied {
+                    print("replied succesfully")
+                    succesfullyReplied = true
+                } else {
+                    print("could not reply")
+                    succesfullyReplied = false
+                }
+            } catch {
+                print(error.localizedDescription)
+                errorString = error.localizedDescription
+                isError = true
             }
+            
         }
     }
     
@@ -195,14 +186,14 @@ struct DetailReviewView: View {
                 Button {
                     reviewManager.replyText = suggestion.text
                     
-                    if autoReply {
-                        print("we should automatically sent it now")
-                        Task {
-                            await respondToReview()
-                        }
-                    } else {
-                        showReplyField = true
-                    }
+//                    if autoReply {
+//                        print("we should automatically sent it now")
+//                        Task {
+//                            await respondToReview()
+//                        }
+//                    } else {
+//                    }
+                    showReplyField = true
                 } label: {
                     Text(suggestion.title.capitalized)
                         .padding(.vertical, 6)
@@ -267,7 +258,7 @@ struct DetailReviewView: View {
                 }
                 
                 Text(review.attributes?.title ?? "")
-                    .font(.system(.body, design: .rounded))
+                    .font(.system(.headline, design: .rounded))
                     .bold()
                     .padding(.leading, 2)
             }
@@ -278,12 +269,11 @@ struct DetailReviewView: View {
     
     var metadata: some View {
         VStack(alignment: .trailing) {
-            HStack {
+            HStack(spacing: 2) {
                 Text(review.attributes?.territory?.flag ?? "")
-                Text(review.attributes?.reviewerNickname ?? "")
-                    .opacity(0.8)
+                Text(review.attributes?.territory?.name ?? "")
             }
-            Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
+            Text(review.attributes?.reviewerNickname ?? "")
                 .opacity(0.8)
         }
         .font(.system(.subheadline, design: .rounded))

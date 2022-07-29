@@ -60,6 +60,8 @@ struct MenuAppsSelector: View {
         }
     }
     
+    @AppStorage("selectedSortOrder") var selectedSortOrder: ReviewSortOrder = .dateDescending
+    
     var appsList: some View {
         VStack(alignment: .leading) {
             ForEach(appsManager.foundApps, id: \.id) { app in
@@ -67,7 +69,7 @@ struct MenuAppsSelector: View {
                     showAppPicker = false
                     Task {
                         appsManager.makeActive(app: app)
-                        await reviewManager.getReviewsFor(id: app.id)
+                        await reviewManager.getReviewsFor(id: app.id, sort: selectedSortOrder)
                     }
                 } label: {
                     HStack {

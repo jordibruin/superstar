@@ -10,6 +10,8 @@ import SwiftUI
 struct EmptyStateView: View {
     
     @EnvironmentObject var appsManager: AppsManager
+    @EnvironmentObject var settingsManager: SettingsManager
+    
     @StateObject var credentials = CredentialsManager.shared
     
     var body: some View {
@@ -29,7 +31,9 @@ struct EmptyStateView: View {
                         .font(.system(.largeTitle, design: .rounded))
                         .bold()
                     Button {
-                        appsManager.selectedPage = .credentials
+                        settingsManager.selectedPage = .settings
+                        NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+//                        appsManager.selectedPage = .credentials
                     } label: {
                         Text("Add keys")
                     }

@@ -15,7 +15,6 @@ struct SuggestionsConfigView: View {
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     @AppStorage("hiddenAppIds") var hiddenAppIds: [String] = []
         
-    
     @EnvironmentObject var appsManager: AppsManager
     
     @State private var selection: Suggestion.ID?
@@ -27,7 +26,11 @@ struct SuggestionsConfigView: View {
     
     var body: some View {
         VStack {
-            Spacer()
+            HStack {
+                Spacer()
+                importButton
+                exportButton
+            }
             Table(suggestions, selection: $selection) {
                 TableColumn("Title", value: \.title)
                     .width(min: 60, ideal: 80, max: 100)
@@ -65,26 +68,27 @@ struct SuggestionsConfigView: View {
                 }
                 .width(min: 60, ideal: 80, max: 100)
                 
-                TableColumn("") { suggestion in
-                    Button {
-                        print("Deleting")
-                        if let firstIndex = suggestions.firstIndex(where: { suggestion.id == $0.id }) {
-                            suggestions.remove(at: firstIndex)
-                        } else {
-                            print("no match found")
-                        }
-                        selection = nil
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "trash.fill")
-                            Spacer()
-                        }
-                    }
-                    .buttonStyle(.plain)
-                }
-                .width(30)
+//                TableColumn("") { suggestion in
+//                    Button {
+//                        print("Deleting")
+//                        if let firstIndex = suggestions.firstIndex(where: { suggestion.id == $0.id }) {
+//                            suggestions.remove(at: firstIndex)
+//                        } else {
+//                            print("no match found")
+//                        }
+//                        selection = nil
+//                    } label: {
+//                        HStack {
+//                            Spacer()
+//                            Image(systemName: "trash.fill")
+//                            Spacer()
+//                        }
+//                    }
+//                    .buttonStyle(.plain)
+//                }
+//                .width(30)
             }
+            .frame(minHeight: 400)
             .onDrop(of: [.fileURL], isTargeted: $tableHovered) { providers in
                 handleExternalFileDrop(providers: providers)
             }
@@ -163,35 +167,24 @@ struct SuggestionsConfigView: View {
                 }
             }
         }
-        .toolbar(content: {
-            // This crashes on Ventura
-//            ToolbarItem(content: {
-//                Text("Suggestions")
-//                    .font(.title2)
-//                    .bold()
-//            })
-            
-            ToolbarItem(placement: .primaryAction) {
-                Spacer()
-            }
-            
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    importCSV()
-                } label: {
-                    Text("Import")
-                }
-            }
-            
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    createCSV()
-                } label: {
-                    Text("Export")
-                }
-            }
-        })
         .padding()
+    }
+    
+    var importButton: some View {
+        Button {
+            importCSV()
+        } label: {
+            Text("Import")
+        }
+    }
+    
+    var exportButton: some View {
+        Button {
+            createCSV()
+        } label: {
+            Text("Export")
+        }
+
     }
     
     func handleExternalFileDrop(providers: [NSItemProvider]) -> Bool {

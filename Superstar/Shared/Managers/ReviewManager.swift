@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import AppStoreConnect_Swift_SDK
+import os.log
+
 
 extension AppStoreConnect_Swift_SDK.CustomerReview: Equatable {
     public static func == (lhs: AppStoreConnect_Swift_SDK.CustomerReview, rhs: AppStoreConnect_Swift_SDK.CustomerReview) -> Bool {
@@ -24,7 +26,7 @@ class ReviewManager: ObservableObject {
     @Published var replyText = ""
     
     @MainActor
-    func getReviewsFor(id: String) async {
+    func getReviewsFor(id: String, sort: ReviewSortOrder) async {
         loadingReviews = true
         do {
             let provider = APIProvider(configuration: CredentialsManager.shared.configuration)
@@ -34,7 +36,7 @@ class ReviewManager: ObservableObject {
                 .id(id)
                 .customerReviews
                 
-                .get(parameters: .init(isExistsPublishedResponse: false, sort: [.minuscreatedDate]))
+                .get(parameters: .init(isExistsPublishedResponse: false, sort: [sort.apiSort]))
             
             let reviews = try await provider.request(request)
                 
@@ -55,9 +57,11 @@ class ReviewManager: ObservableObject {
         }
     }
     
+    @State var showError = false
+    @State var errorString = ""
+    
     @MainActor
-    func replyTo(review: CustomerReview, with response: String) async -> Bool {
-        
+    func replyTo(review: CustomerReview, with response: String) async throws -> Bool {
             do {
                 let provider = APIProvider(configuration: CredentialsManager.shared.configuration)
                 
@@ -71,36 +75,50 @@ class ReviewManager: ObservableObject {
                 
                 let replyRequest = APIEndpoint.v1.customerReviewResponses
                     .post(CustomerReviewResponseV1CreateRequest(
-                        data:
-                                .init(
-                                    type: .customerReviewResponses,
-                                    attributes: .init(responseBody: replyBody),
-                                    relationships: .init(review: reviewResponse)
-                                )
+                        data:.init(
+                            type: .customerReviewResponses,
+                            attributes: .init(responseBody: replyBody),
+                            relationships: .init(review: reviewResponse)
+                        )
                     )
                     )
-                        let responseState = try! await provider.request(replyRequest)
                 
-//                let requestBody = CustomerReviewResponseV1CreateRequest.init(
-//                    data: CustomerReviewResponseV1CreateRequest.Data.init(attributes: .init(responseBody: response), relationships: .init(review: .init(data: .init(id: review.id)))))
-//
-//                let response = try await service.request(
-//                    .createCustomerReviewResponseV1(requestBody: requestBody)
-//                )
-
-                if let state = responseState.data.attributes?.state {
-                    if state == .pendingPublish {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            self.remove(review: review)
+                    let responseState = try await provider.request(replyRequest)
+                
+                    if let state = responseState.data.attributes?.state {
+                        if state == .pendingPublish {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                self.remove(review: review)
+                            }
                         }
                     }
-                }
-                return true
+                
+                    return true
+                
             } catch {
-                print(error.localizedDescription)
+                // HOE KAN IK HIER DE ERROR DOORGEVEN? ☢️
+//                print(error.localizedDescription)
+                print(error)
+//                print(error
+                let headerInfoKeys = (error as NSError).attributeKeys
+                
+                print(headerInfoKeys)
+                print((error as NSError).description)
+                
+                let errorCode = (error as NSError).description
+                if errorCode.contains("This request is forbidden for security reasons") {
+                    print("Not enough rights")
+                }
+                    
+                showError = true
+                errorString = error.localizedDescription
+                
+                let nsError = error as NSError
+                print(nsError.code)
+                print(nsError.domain)
+                throw error
                 return false
             }
-        
     }
     
     @AppStorage("pendingPublications") var pendingPublications: [String] = []

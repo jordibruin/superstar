@@ -19,7 +19,7 @@ class AppsManager: ObservableObject {
     @Published var selectedApp: AppStoreConnect_Swift_SDK.App = AppStoreConnect_Swift_SDK.App(type: .apps, id: "Placeholder", links: .init(this: ""))
     
     @Published var selectedAppId: String? = "Placeholder"
-    @Published var selectedPage: SettingsPage? = .home
+//    @Published var selectedPage: SettingsPage? = .home
     
     init() {
         Task {

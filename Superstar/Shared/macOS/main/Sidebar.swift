@@ -13,6 +13,7 @@ struct Sidebar: View {
     @ObservedObject var credentials: CredentialsManager
     @ObservedObject var reviewManager: ReviewManager
     @ObservedObject var appsManager: AppsManager
+    @EnvironmentObject var settingsManager: SettingsManager
     
     @State var showSettings = false
     @Binding var showCredentialsScreen: Bool
@@ -25,10 +26,7 @@ struct Sidebar: View {
     @AppStorage("hiddenAppIds") var hiddenAppIds: [String] = []
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
-    
     @EnvironmentObject var iapManager: IAPManager
-    
-    @State var autoReply = false
     
     var body: some View {
         List {
@@ -42,6 +40,13 @@ struct Sidebar: View {
         .listStyle(.sidebar)
         .frame(width: 260)
         .toolbar(content: { ToolbarItem(content: {Text("")}) })
+
+        .onChange(of: appsManager.foundApps, perform: { foundApps in
+            if let favoriteAppIndex = foundApps.firstIndex(where: { $0.id == favoriteAppId} ) {
+                showFavoriteApp = true
+                appsManager.selectedAppId = favoriteAppId
+            }
+        })
         .onChange(of: showCredentialsScreen ) { newValue in
             if newValue {
                 selectedReview = nil
@@ -53,18 +58,20 @@ struct Sidebar: View {
             }
         }
     }
-    
+ 
     var settingsSection: some View {
         Section {
             ForEach(SettingsPage.allCases) { page in
-                NavigationLink(tag: page, selection: $appsManager.selectedPage) {
-                    page.destination
-                        .environmentObject(appsManager)
+                Button {
+//                    print("We should open something")
+                    settingsManager.selectedPage = page
+                    NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
                 } label: {
                     page.label
                         .font(.title3)
                         .padding(.vertical, 4)
                 }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -76,23 +83,29 @@ struct Sidebar: View {
                     loadingApps
                 } else {
                     appsList
-                    Button {
-                        
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("Reload apps")
-                            Spacer()
-                        }
-                    }
-                    .buttonStyle(.plain)
-
                 }
             }
         } header: {
-            Text("Apps")
+            HStack {
+                Text("Apps")
+                Spacer()
+                Button {
+                    appsManager.foundApps = []
+                    Task {
+                        await appsManager.getAppsTwan()
+                    }
+                } label: {
+                    Text("Reload")
+                        .font(.subheadline)
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
+    
+    @State var showFavoriteApp = false
+    
+    @AppStorage("favoriteAppId") var favoriteAppId: String = ""
     
     var appsList: some View {
         ForEach(appsManager.foundApps, id: \.id) { app in
@@ -100,7 +113,6 @@ struct Sidebar: View {
                 NavigationLink(tag: app.id, selection: $appsManager.selectedAppId) {
                     AppDetailView(
                         app: app,
-                        autoReply: $autoReply,
                         selectedReview: $selectedReview
                     )
                     .environmentObject(appsManager)
@@ -154,7 +166,6 @@ struct Sidebar: View {
                     NavigationLink(tag: app.id, selection: $appsManager.selectedAppId) {
                         AppDetailView(
                             app: app,
-                            autoReply: $autoReply,
                             selectedReview: $selectedReview
                         )
                         .environmentObject(appsManager)
@@ -228,48 +239,3 @@ struct Sidebar: View {
 //    }
 //}
 
-enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
-    case home
-    case credentials
-    case suggestions
-    case support
-    case settings
-//    case iap
-    
-    var id: String { self.rawValue }
-    
-    var label: some View {
-        switch self {
-        case .home:
-            return Label("Home", systemImage: "house.fill")
-        case .settings:
-            return Label("Settings", systemImage: "gearshape.fill")
-        case .credentials:
-            return Label("Credentials", systemImage: "key.fill")
-        case .suggestions:
-            return Label("Suggestions", systemImage: "star.bubble")
-        case .support:
-            return Label("Support", systemImage: "questionmark.circle.fill")
-//        case .iap:
-//            return Label("Supernova", systemImage: "star.fill")
-        }
-    }
-    
-    @ViewBuilder
-    var destination: some View {
-        switch self {
-        case .home:
-            EmptyStateView()
-        case .settings:
-            SettingsSheet()
-        case .credentials:
-            AddCredentialsView()
-        case .suggestions:
-            SuggestionsConfigView()
-        case .support:
-            SupportScreen()
-//        case .iap:
-//            Supernova()
-        }
-    }
-}

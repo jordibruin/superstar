@@ -29,10 +29,17 @@ struct AddCredentialsView: View {
             privateKey
             Divider()
             
-            Button {
-                credentials.saveCredentials()
-            } label: {
-                Text("Save Credentials")
+            HStack {
+                Button {
+                    credentials.saveCredentials()
+                } label: {
+                    Text("Save Credentials")
+                }
+                
+                if credentials.allCredentialsAvailable() && credentials.savedInKeychain {
+                    Label("Credentials saved", systemImage: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                }
             }
             HStack {
                 Spacer()
@@ -41,8 +48,28 @@ struct AddCredentialsView: View {
 //            footer
         }
         
+        .onChange(of: credentials.keyID, perform: { newValue in
+            if newValue.isEmpty {
+                print("key id empty!")
+                credentials.oneValueIsEmpty()
+            }
+        })
+        .onChange(of: credentials.issuerId, perform: { newValue in
+            if newValue.isEmpty {
+                print("issuer empty!")
+                credentials.oneValueIsEmpty()
+            }
+        })
+        .onChange(of: credentials.privateKey, perform: { newValue in
+            if newValue.isEmpty {
+                print("private key empty!")
+                credentials.oneValueIsEmpty()
+            }
+        })
+        
         .padding()
         .frame(minWidth: 700)
+        .frame(height: 600)
         .onDrop(of: [.fileURL], isTargeted: $p8Hovered) { providers in
             handleExternalFileDrop(providers: providers)
         }
@@ -94,7 +121,7 @@ struct AddCredentialsView: View {
     
     var title: some View {
         VStack(alignment: .leading) {
-            Text("Go to https://appstoreconnect.apple.com/access/api and create a new API key.\nMake sure to give the key Admin access (I've filed a FB to also allow users to make a Customer Support role. \nOnce you've made the key copy the keyID and the issuerID as well.")
+            Text("Go to https://appstoreconnect.apple.com/access/api and create a new API key. Make sure to give the key Admin access. Once you've made the key copy the keyID and the issuerID as well. Your credentials are saved in the Keychain so other apps on your system don't have access to them.")
                 .font(.system(.body, design: .rounded))
         }
     }

@@ -7,7 +7,8 @@
 
 import Foundation
 import SwiftCSV
-struct Suggestion: Identifiable, Codable {
+
+struct Suggestion: Identifiable, Codable, Equatable {
     
     let id: UUID
     var title: String
