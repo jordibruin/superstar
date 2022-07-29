@@ -12,8 +12,8 @@ enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
 
     case settings
     case suggestions
-    case support
     case credentials
+    case support
 //    case iap
     
     var id: String { self.rawValue }

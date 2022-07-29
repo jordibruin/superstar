@@ -25,7 +25,7 @@ class ReviewManager: ObservableObject {
     
     
     @MainActor
-    func getReviewsFor(id: String) async {
+    func getReviewsFor(id: String, sort: ReviewSortOrder) async {
         loadingReviews = true
         do {
             let provider = APIProvider(configuration: CredentialsManager.shared.configuration)
@@ -35,7 +35,7 @@ class ReviewManager: ObservableObject {
                 .id(id)
                 .customerReviews
                 
-                .get(parameters: .init(isExistsPublishedResponse: false, sort: [.minuscreatedDate]))
+                .get(parameters: .init(isExistsPublishedResponse: false, sort: [sort.apiSort]))
             
             let reviews = try await provider.request(request)
                 

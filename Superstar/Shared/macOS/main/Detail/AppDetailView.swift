@@ -8,6 +8,41 @@
 import SwiftUI
 import AppStoreConnect_Swift_SDK
 
+enum ReviewSortOrder: String, Identifiable, CaseIterable, Codable {
+    case ratingAscending
+    case ratingDescending
+    case dateAscending
+    case dateDescending
+    
+    var id: String { self.rawValue }
+    
+    var title: String {
+        switch self {
+        case .ratingAscending:
+            return "Rating (High)"
+        case .ratingDescending:
+            return "Rating (Low)"
+        case .dateAscending:
+            return "Date (Old-New)"
+        case .dateDescending:
+            return "Date (New-Old)"
+        }
+    }
+    
+    var apiSort: AppStoreConnect_Swift_SDK.APIEndpoint.V1.Apps.WithID.CustomerReviews.GetParameters.Sort {
+        switch self {
+        case .ratingAscending:
+            return .minusrating
+        case .ratingDescending:
+            return .rating
+        case .dateAscending:
+            return .createdDate
+        case .dateDescending:
+            return .minusrating
+        }
+    }
+}
+
 struct AppDetailView: View {
     
     @ObservedObject var appsManager: AppsManager
@@ -15,7 +50,6 @@ struct AppDetailView: View {
     @EnvironmentObject var settingsManager: SettingsManager
     
     let app: AppStoreConnect_Swift_SDK.App
-    
     
     @Binding var selectedReview: CustomerReview?
     
@@ -52,9 +86,15 @@ struct AppDetailView: View {
             selectedReview = nil
         }
         .onAppear {
-            Task { await reviewManager.getReviewsFor(id: app.id) }
+            Task {
+                await reviewManager.getReviewsFor(
+                    id: app.id,
+                    sort: selectedSortOrder
+                )
+            }
         }
     }
+    
     
 //    @ToolbarContentBuilder
 //    var toolbarContent: some View {
@@ -64,6 +104,8 @@ struct AppDetailView: View {
 //            toolbarItems
 //        }
 //    }
+    
+    @AppStorage("selectedSortOrder") var selectedSortOrder: ReviewSortOrder = .dateDescending
     
     var toolbarItems: some ToolbarContent {
         Group {
@@ -114,9 +156,32 @@ struct AppDetailView: View {
             }
             
             ToolbarItem(placement: .primaryAction) {
+                
+                Picker(selection: $selectedSortOrder) {
+                    ForEach(ReviewSortOrder.allCases) { order in
+                        Text(order.title)
+                            .tag(order)
+                    }
+                } label: {
+                    Text(selectedSortOrder.rawValue.capitalized)
+                }
+                .onChange(of: selectedSortOrder) { _ in
+                    Task {
+                        await reviewManager.getReviewsFor(id: app.id, sort: selectedSortOrder)
+                    }
+                }
+
                 Toggle(isOn: $hidePending) {
                     Text("Hide Pending")
                 }
+                .help(Text("Hide reviews that you have responded to but are still pending publication"))
+            }
+            
+            ToolbarItem(placement: .primaryAction) {
+                Toggle(isOn: $hidePending) {
+                    Text("Hide Pending")
+                }
+                .help(Text("Hide reviews that you have responded to but are still pending publication"))
             }
         }
     }

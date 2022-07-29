@@ -41,9 +41,11 @@ struct DetailReviewView: View {
                 Text(review.attributes?.body ?? "")
                     .font(.system(.body, design: .rounded))
                     .padding(.bottom)
-                    .minimumScaleFactor(0.7)
                                         
                 Spacer()
+                Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
+                    .font(.caption)
+                    .opacity(0.8)
             }
             .padding([.top, .horizontal])
             .padding(.bottom, showReplyField ? 4 : 20)
@@ -249,12 +251,11 @@ struct DetailReviewView: View {
     
     var metadata: some View {
         VStack(alignment: .trailing) {
-            HStack {
+            HStack(spacing: 2) {
                 Text(review.attributes?.territory?.flag ?? "")
-                Text(review.attributes?.reviewerNickname ?? "")
-                    .opacity(0.8)
+                Text(review.attributes?.territory?.name ?? "")
             }
-            Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
+            Text(review.attributes?.reviewerNickname ?? "")
                 .opacity(0.8)
         }
         .font(.system(.subheadline, design: .rounded))

@@ -40,7 +40,13 @@ struct Sidebar: View {
         .listStyle(.sidebar)
         .frame(width: 260)
         .toolbar(content: { ToolbarItem(content: {Text("")}) })
-        
+
+        .onChange(of: appsManager.foundApps, perform: { foundApps in
+            if let favoriteAppIndex = foundApps.firstIndex(where: { $0.id == favoriteAppId} ) {
+                showFavoriteApp = true
+                appsManager.selectedAppId = favoriteAppId
+            }
+        })
         .onChange(of: showCredentialsScreen ) { newValue in
             if newValue {
                 selectedReview = nil
@@ -77,25 +83,39 @@ struct Sidebar: View {
                     loadingApps
                 } else {
                     appsList
-                    Button {
-                        Task {
-                            await appsManager.getAppsTwan()
-                        }
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Text("Reload apps")
-                            Spacer()
-                        }
-                    }
-                    .buttonStyle(.plain)
+//                    NavigationLink(destination: AppDetailView(
+//                        appsManager: appsManager,
+//                        reviewManager: reviewManager,
+//                        app: appsManager.foundApps.first(where: { $0.id == favoriteAppId })!,
+//                        selectedReview: $selectedReview
+//                    ), isActive: $showFavoriteApp) {
+//                        EmptyView()
+//                    }
+                    
 
                 }
             }
         } header: {
-            Text("Apps")
+            HStack {
+                Text("Apps")
+                Spacer()
+                Button {
+                    appsManager.foundApps = []
+                    Task {
+                        await appsManager.getAppsTwan()
+                    }
+                } label: {
+                    Text("Reload")
+                        .font(.subheadline)
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
+    
+    @State var showFavoriteApp = false
+    
+    @AppStorage("favoriteAppId") var favoriteAppId: String = ""
     
     var appsList: some View {
         ForEach(appsManager.foundApps, id: \.id) { app in

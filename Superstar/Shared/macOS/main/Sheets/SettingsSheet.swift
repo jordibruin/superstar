@@ -24,16 +24,17 @@ struct SettingsSheet: View {
             removePending
             showHiddenApps
             menuBarToggle
-//            venturaModeView
+            favoriteAppPicker
+            //            venturaModeView
             Spacer()
         }
         .padding(12)
         .toolbar(content: {
-//            ToolbarItem(content: {
-//                Text("Settings")
-//                .font(.title2)
-//                .bold()
-//            })
+            //            ToolbarItem(content: {
+            //                Text("Settings")
+            //                .font(.title2)
+            //                .bold()
+            //            })
             Text("")
         })
     }
@@ -96,7 +97,7 @@ struct SettingsSheet: View {
                 Label("Show hidden apps", systemImage: "eye.slash.fill")
                     .font(.system(.body, design: .rounded))
             }
-        
+            
         }
     }
     
@@ -112,13 +113,13 @@ struct SettingsSheet: View {
     
     var removePending: some View {
         VStack(alignment: .leading) {
-        Button {
-            pendingPublications.removeAll()
-        } label: {
-            Label("Clear pending responses", systemImage: "arrowshape.turn.up.left.2.circle.fill")
-                .font(.system(.body, design: .rounded))
-        }
-            Text("When you respond to a review, its ID is saved locally so that it can be hidden while it's being reviewed by Apple. You can reset the cache, but be aware that this will cause you to see reviews that you have already responded to which are in still in review.")
+            Button {
+                pendingPublications.removeAll()
+            } label: {
+                Label("Clear pending responses", systemImage: "arrowshape.turn.up.left.2.circle.fill")
+                    .font(.system(.body, design: .rounded))
+            }
+            Text("When you respond to a review, its ID is saved locally so that it can be hidden while it's being reviewed by Apple. You can reset the cache, but be aware that this will cause you to see reviews that you have already responded to which are still in review.")
                 .font(.system(.body, design: .rounded))
         }
     }
@@ -132,8 +133,31 @@ struct SettingsSheet: View {
             .onChange(of: menuBarVisible) { menuBarVisible in
                 updateMenuBar()
             }
-//            Text("When you respond to a review, its ID is saved locally so that it can be hidden while it's being reviewed by Apple. You can reset the cache, but be aware that this will cause you to see reviews that you have already responded to which are in still in review.")
-//                .font(.system(.caption, design: .rounded))
+        }
+    }
+    
+    @AppStorage("favoriteAppId") var favoriteAppId: String = ""
+    
+    var favoriteAppPicker: some View {
+        VStack(alignment: .leading) {
+            Picker(selection: $favoriteAppId) {
+                Text("None")
+                    .tag("")
+                
+                ForEach(appsManager.foundApps, id: \.id) { app in
+                    if !hiddenAppIds.contains(app.id) {
+                        Text(app.attributes?.name ?? "No Name")
+                            .tag(app.id)
+                    }
+                }
+            } label: {
+                Text("Link to App")
+            }
+            .labelsHidden()
+            .frame(width: 250)
+            
+            Text("Automatically show reviews for your favorite app once apps are loaded")
+                .font(.system(.body, design: .rounded))
         }
     }
     

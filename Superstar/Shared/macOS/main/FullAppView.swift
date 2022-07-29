@@ -35,7 +35,6 @@ struct FullAppView: View {
                 selectedReview: $selectedReview
             )
             
-            
             EmptyStateView()
 //                .toolbar(content: { toolbarItems })
             
@@ -49,12 +48,20 @@ struct FullAppView: View {
                 .environmentObject(reviewManager)
             }
         }
+        .onAppear(perform: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                fadeOut = true
+            }
+        })
 //        .onChange(of: reviewManager.retrievedReviews) { newValue in
 //            selectedReview = nil
 //        }
         .onChange(of: appsManager.selectedAppId) { newValue in
             selectedReview = nil
         }
+        .overlay(
+            introScreen
+        )
         .onChange(of: credentials.savedInKeychain) { saved in
             if saved {
                 Task {
@@ -62,6 +69,27 @@ struct FullAppView: View {
                 }
             }
         }
+    }
+    
+    
+    @State var fadeOut = false
+    
+    var introScreen: some View {
+        ZStack {
+            LinearGradient(
+                colors: [Color.yellow, Color.orange],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            Image(systemName: "star.fill")
+                .font(.system(size: 150))
+                .foregroundColor(.white)
+                .opacity(fadeOut ? 0 : 1)
+                .scaleEffect(fadeOut ? 2 : 1)
+        }
+        .edgesIgnoringSafeArea(.top)
+        .opacity(fadeOut ? 0 : 1)
+        .animation(.easeOut(duration: 0.5), value: fadeOut)
     }
     
     var toolbarItems: some ToolbarContent {

@@ -26,7 +26,6 @@ struct SuggestionsConfigView: View {
     
     var body: some View {
         VStack {
-            Spacer()
             HStack {
                 Spacer()
                 importButton
@@ -69,27 +68,27 @@ struct SuggestionsConfigView: View {
                 }
                 .width(min: 60, ideal: 80, max: 100)
                 
-                TableColumn("") { suggestion in
-                    Button {
-                        print("Deleting")
-                        if let firstIndex = suggestions.firstIndex(where: { suggestion.id == $0.id }) {
-                            suggestions.remove(at: firstIndex)
-                        } else {
-                            print("no match found")
-                        }
-                        selection = nil
-                    } label: {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "trash.fill")
-                            Spacer()
-                        }
-                    }
-                    .buttonStyle(.plain)
-                }
-                .width(30)
+//                TableColumn("") { suggestion in
+//                    Button {
+//                        print("Deleting")
+//                        if let firstIndex = suggestions.firstIndex(where: { suggestion.id == $0.id }) {
+//                            suggestions.remove(at: firstIndex)
+//                        } else {
+//                            print("no match found")
+//                        }
+//                        selection = nil
+//                    } label: {
+//                        HStack {
+//                            Spacer()
+//                            Image(systemName: "trash.fill")
+//                            Spacer()
+//                        }
+//                    }
+//                    .buttonStyle(.plain)
+//                }
+//                .width(30)
             }
-            .frame(height: 400)
+            .frame(minHeight: 400)
             .onDrop(of: [.fileURL], isTargeted: $tableHovered) { providers in
                 handleExternalFileDrop(providers: providers)
             }
