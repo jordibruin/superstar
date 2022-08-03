@@ -31,7 +31,6 @@ struct DetailReviewView: View {
     
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
-//    @Binding var autoReply: Bool
     @Binding var selectedReview: CustomerReview?
     
     var body: some View {
@@ -74,32 +73,11 @@ struct DetailReviewView: View {
             }
         }
         .frame(height: 260)
-//        .overlay(
-//            ZStack {
-//                Color(.controlBackgroundColor)
-//                VStack {
-//                    Image(systemName: "checkmark")
-//                        .foregroundColor(.green)
-//                        .font(.system(size: 60))
-//                        .opacity(succesfullyReplied ? 1 : 0)
-//                        .animation(.default, value: isReplying)
-//
-//                    if isReplying {
-//                        ProgressView()
-//                    }
-//
-//                    Text(succesfullyReplied ? "Pending Publication" : "Sending Reply...")
-//                        .font(.system(.title, design: .rounded))
-//                        .bold()
-//                }
-//            }
-//                .opacity(isReplying || succesfullyReplied ? 1 : 0)
-//        )
         .background(
             bgColor
         )
         .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
-        .cornerRadius(16)
+        .cornerRadius(12)
         .onAppear {
             if pendingPublications.contains(review.id) {
                 succesfullyReplied = true
@@ -112,7 +90,7 @@ struct DetailReviewView: View {
         if selectedReview == review {
             ZStack {
                 Color(.controlBackgroundColor)
-                Color.orange.opacity(0.2)
+                Color.orange.opacity(0.1)
             }
         } else {
             Color(.controlBackgroundColor)

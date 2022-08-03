@@ -59,7 +59,7 @@ struct SuggestionView: View {
             }
             .padding(.vertical, 6)
             .padding(.horizontal, 8)
-            .background(Color(.controlBackgroundColor))
+            .background(hoveringOnSuggestion != nil && hoveringOnSuggestion! == suggestion ? Color.secondary.opacity(0.3) : Color(.controlBackgroundColor))
             .foregroundColor(.primary)
             .cornerRadius(6)
         }

@@ -165,6 +165,8 @@ struct AddCredentialsView: View {
         }
     }
     
+//    @State var showPrivateKey = false
+    
     var privateKey: some View {
         VStack(alignment: .leading, spacing: 8) {
             VStack(alignment: .leading, spacing: 4) {
@@ -184,6 +186,22 @@ struct AddCredentialsView: View {
                     Text("Drop p8 file here")
                         .opacity(credentials.privateKey.isEmpty ? 1 : 0)
                 )
+//                .overlay(
+//                    Blur
+//                    Color(.controlBackgroundColor)
+//                        .opacity(showPrivateKey ? 0 : 0.9)
+//                        .blur(radius: 20)
+//                        .overlay(
+//                            Button(action: {
+//                                showPrivateKey = true
+//                            }, label: {
+//                                Text("Show key")
+//                            })
+//                            .buttonStyle(.plain)
+//                        )
+//                )
+            
+            
         }
     }
     

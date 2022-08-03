@@ -122,7 +122,7 @@ struct SuggestionsConfigView: View {
                             }
                             
                             Picker(selection: $suggestions[index].appId) {
-                                Text("None")
+                                Text("Suggest for all apps")
                                     .tag(0)
                                 
                                 ForEach(appsManager.foundApps, id: \.id) { app in
@@ -276,7 +276,7 @@ struct SuggestionsConfigView: View {
     
     var appDropdown: some View {
         Picker(selection: $selectedApp) {
-            Text("None")
+            Text("Suggest for all apps")
                 .tag(0)
             
             ForEach(appsManager.foundApps, id: \.id) { app in

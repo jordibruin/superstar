@@ -50,6 +50,7 @@
 		C245B49A2884B02100ABE387 /* SettingsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B4992884B02100ABE387 /* SettingsSheet.swift */; };
 		C245B49C2885513600ABE387 /* EmptyStateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C245B49B2885513600ABE387 /* EmptyStateView.swift */; };
 		C279A0AB2894297D00B62A87 /* SuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C279A0AA2894297D00B62A87 /* SuggestionView.swift */; };
+		C279A0AD2895571600B62A87 /* ReviewSortOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C279A0AC2895571600B62A87 /* ReviewSortOrder.swift */; };
 		C290EACB289142A30001358C /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACA289142A30001358C /* SettingsPage.swift */; };
 		C290EACD289142E20001358C /* AppReviewsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACC289142E20001358C /* AppReviewsList.swift */; };
 		C290EAEC289153400001358C /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EAEB289153400001358C /* PreferencesView.swift */; };
@@ -97,6 +98,7 @@
 		C245B4992884B02100ABE387 /* SettingsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSheet.swift; sourceTree = "<group>"; };
 		C245B49B2885513600ABE387 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		C279A0AA2894297D00B62A87 /* SuggestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionView.swift; sourceTree = "<group>"; };
+		C279A0AC2895571600B62A87 /* ReviewSortOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSortOrder.swift; sourceTree = "<group>"; };
 		C290EACA289142A30001358C /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
 		C290EACC289142E20001358C /* AppReviewsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReviewsList.swift; sourceTree = "<group>"; };
 		C290EAEB289153400001358C /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
@@ -160,6 +162,7 @@
 			isa = PBXGroup;
 			children = (
 				C23B5469288B017D006EB4B2 /* TerritoryCode+Extensions.swift */,
+				C279A0AC2895571600B62A87 /* ReviewSortOrder.swift */,
 				C23B546B288B01C1006EB4B2 /* Suggestion.swift */,
 				C290EACA289142A30001358C /* SettingsPage.swift */,
 			);
@@ -460,6 +463,7 @@
 				C23B54B2288F3617006EB4B2 /* SupportFetcher.swift in Sources */,
 				C245B48A2884AE0B00ABE387 /* ReviewManager.swift in Sources */,
 				C23B545E2889AC0D006EB4B2 /* MenuBarView.swift in Sources */,
+				C279A0AD2895571600B62A87 /* ReviewSortOrder.swift in Sources */,
 				C23B54AE288F3617006EB4B2 /* SupportLanding.swift in Sources */,
 				C245B4962884AE8700ABE387 /* SuggestionsConfigView.swift in Sources */,
 				C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */,
@@ -657,7 +661,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -686,7 +690,7 @@
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_TEAM = 8Q7TMPA46J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

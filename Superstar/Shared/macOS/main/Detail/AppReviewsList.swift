@@ -18,14 +18,17 @@ struct AppReviewsList: View {
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     var columns: [GridItem] = [
-        GridItem(.adaptive(minimum: 300, maximum: 480), spacing: 20)
+        GridItem(.adaptive(minimum: 300, maximum: 480), spacing: 12)
     ]
+    
+    @State var spacing: CGFloat = 12
+    @State var padding: CGFloat = 12
     
     var body: some View {
         LazyVGrid(
             columns: columns,
             alignment: .center,
-            spacing: 12
+            spacing: spacing
         ) {
             ForEach(reviewManager.retrievedReviews, id: \.id) { review in
                 if hidePending {
@@ -34,11 +37,6 @@ struct AppReviewsList: View {
                             selectedReview = review
                         } label: {
                             DetailReviewView(review: review, selectedReview: $selectedReview)
-//                            DetailReviewView(
-//                                review: review,
-//                                reviewManager: reviewManager,
-//                                selectedReview: $selectedReview
-//                            )
                         }
                         .buttonStyle(.plain)
                     }
@@ -47,18 +45,12 @@ struct AppReviewsList: View {
                         selectedReview = review
                     } label: {
                         DetailReviewView(review: review, selectedReview: $selectedReview)
-//                        DetailReviewView(
-//                            review: review,
-//                            reviewManager: reviewManager,
-//                            
-//                            selectedReview: $selectedReview
-//                        )
                     }
                     .buttonStyle(.plain)
                 }
             }
         }
-        .padding(12)
+        .padding(padding)
         .padding(.vertical)
         .animation(.default,
             value: reviewManager.retrievedReviews
