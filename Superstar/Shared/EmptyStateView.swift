@@ -30,6 +30,7 @@ struct EmptyStateView: View {
                     Text("Add your App Store Connect Credentials")
                         .font(.system(.largeTitle, design: .rounded))
                         .bold()
+                    
                     Button {
                         settingsManager.selectedPage = .settings
                         NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)

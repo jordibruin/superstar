@@ -14,6 +14,7 @@ struct AppReviewsList: View {
     
     let hidePending: Bool
     @Binding var selectedReview: CustomerReview?
+    let searchText: String
     
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
@@ -30,7 +31,13 @@ struct AppReviewsList: View {
             alignment: .center,
             spacing: spacing
         ) {
-            ForEach(reviewManager.retrievedReviews, id: \.id) { review in
+            ForEach(reviewManager.retrievedReviews.filter { review in
+                if searchText == "" {
+                    return true
+                } else {
+                    return review.attributes!.body!.contains(searchText)
+                }
+            }, id: \.id) { review in
                 if hidePending {
                     if !pendingPublications.contains(review.id) {
                         Button {
@@ -65,7 +72,8 @@ struct AppReviewsList_Previews: PreviewProvider {
         AppReviewsList(
             reviewManager: ReviewManager(),
             hidePending: false,
-            selectedReview: .constant(nil)
+            selectedReview: .constant(nil),
+            searchText: ""
         )
     }
 }

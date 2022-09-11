@@ -59,9 +59,9 @@ struct FullAppView: View {
         .onChange(of: appsManager.selectedAppId) { newValue in
             selectedReview = nil
         }
-        .overlay(
-            introScreen
-        )
+//        .overlay(
+//            introScreen
+//        )
         .onChange(of: credentials.savedInKeychain) { saved in
             if saved {
                 Task {

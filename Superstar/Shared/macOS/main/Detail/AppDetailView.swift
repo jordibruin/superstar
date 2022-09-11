@@ -38,7 +38,8 @@ struct AppDetailView: View {
                         AppReviewsList(
                             reviewManager: reviewManager,
                             hidePending: hidePending,
-                            selectedReview: $selectedReview
+                            selectedReview: $selectedReview,
+                            searchText: searchText
                         )
                     }
                     .clipped()
@@ -113,6 +114,13 @@ struct AppDetailView: View {
             }
             
             ToolbarItem(placement: .primaryAction) {
+                TextField("Search", text: $searchText)
+                    .textFieldStyle(.squareBorder)
+                    .frame(width: 120)
+            }
+            
+            
+            ToolbarItem(placement: .primaryAction) {
                 Picker(selection: $selectedSortOrder) {
                     ForEach(ReviewSortOrder.allCases) { order in
                         Text(order.title)
@@ -127,10 +135,10 @@ struct AppDetailView: View {
                     }
                 }
 
-                Toggle(isOn: $hidePending) {
-                    Text("Hide Pending")
-                }
-                .help(Text("Hide reviews that you have responded to but are still pending publication"))
+//                Toggle(isOn: $hidePending) {
+//                    Text("Hide Pending")
+//                }
+//                .help(Text("Hide reviews that you have responded to but are still pending publication"))
             }
             
             ToolbarItem(placement: .primaryAction) {
@@ -141,6 +149,8 @@ struct AppDetailView: View {
             }
         }
     }
+    
+    @State var searchText = ""
     
     var loading: some View {
         ZStack {
