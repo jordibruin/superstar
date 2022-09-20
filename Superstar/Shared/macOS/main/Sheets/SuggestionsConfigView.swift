@@ -258,11 +258,13 @@ struct SuggestionsConfigView: View {
     
     var textEditors: some View {
         ZStack {
+//            TextEditor(text: .constant("Response Text"))
             TextEditor(text: $text)
                 .font(.title3)
-                .background(Color(.controlBackgroundColor))
+//                .background(Color(.controlBackgroundColor))
                 .frame(height: 80)
-                .overlay(
+                .background(
+//                    TextEditor(text: $text)
                     TextEditor(text: .constant("Response Text"))
                         .font(.title3)
                         .background(Color(.controlBackgroundColor))
@@ -270,6 +272,7 @@ struct SuggestionsConfigView: View {
                         .allowsHitTesting(false)
                         .opacity(text.isEmpty ? 1 : 0)
                         .frame(height: 80)
+                        .focusable(false)
                 )
         }
     }
