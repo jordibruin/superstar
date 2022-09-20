@@ -70,6 +70,7 @@ struct MenuAppsSelector: View {
                     Task {
                         appsManager.makeActive(app: app)
                         await reviewManager.getReviewsFor(id: app.id, sort: selectedSortOrder)
+//                        await reviewManager.getSales()
                     }
                 } label: {
                     HStack {

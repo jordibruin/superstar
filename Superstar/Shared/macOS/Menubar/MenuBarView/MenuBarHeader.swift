@@ -54,11 +54,11 @@ struct MenuBarHeader: View {
 //                .bold()
             Spacer()
             
-            Button {
-                getNewRandomReview()
-            } label: {
-                Text("Skip")
-            }
+//            Button {
+//                getNewRandomReview()
+//            } label: {
+//                Text("Skip")
+//            }
             
             Button {
                 showAppPicker = true

@@ -45,6 +45,7 @@ struct FullReviewSide: View {
                 }
             }
         }
+        .frame(minWidth: 500)
         .overlay(
             ZStack {
                 Color(.controlBackgroundColor)
@@ -66,21 +67,25 @@ struct FullReviewSide: View {
             }
                 .opacity(isReplying || succesfullyReplied ? 1 : 0)
         )
-        .toolbar(content: {
-            ToolbarItem(content: {Spacer()})
-            ToolbarItem(placement: .automatic) {
-                Button {
-                    getNewReview()
-                } label: {
-                    Text("Skip")
-                    
-                }
-                .help(Text("Skip to another unanswered review (⌘S)"))
-                .opacity(review == nil ? 0 : 1)
-                .keyboardShortcut("s", modifiers: .command)
-            }
-        })
+        //        .toolbar(content: {
+        //            ToolbarItem(content: {Spacer()})
+        //            ToolbarItem(placement: .automatic) {
+        //                Button {
+        //                    getNewReview()
+        //                } label: {
+        //                    Text("Skip")
+        //
+        //                }
+        //                .help(Text("Skip to another unanswered review (⌘S)"))
+        //                .opacity(review == nil ? 0 : 1)
+        //                .keyboardShortcut("s", modifiers: .command)
+        //            }
+        //        })
         .onChange(of: review) { newValue in
+        
+            // Clean the translated strings
+            translator.translatedTitle = ""
+            translator.translatedBody = ""
             //            reviewManager.replyText = ""
             isReplying = false
             succesfullyReplied = false
@@ -112,6 +117,7 @@ struct FullReviewSide: View {
         }
     }
     
+    @State var showTranslation = false
     func reviewView(review: CustomerReview) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -121,14 +127,43 @@ struct FullReviewSide: View {
                     metadata(for: review)
                 }
                 body(for: review)
+                
+                HStack {
+                    if !translator.translatedTitle.isEmpty {
+                        Button {
+                            translator.translatedBody = ""
+                            translator.translatedTitle = ""
+                        } label: {
+                            Text("Show Original")
+                        }
+                    } else {
+                        Button {
+                            Task {
+                                await deepLReview()
+                            }
+                        } label: {
+                            Text("Translate")
+                        }
+                    }
+                }
+                
+                if translator.detectedSourceLanguage != nil {
+                    Text(translator.detectedSourceLanguage?.name ?? "No language found")
+                }
+
                 VStack {
                     extraOptions
                     translatorView
+                    
+                    if !translator.translatedReply.isEmpty {
+                        Text(translator.translatedReply)
+                    }
+                    
+                    replyArea
+                        .padding(.horizontal, -4)
+                        .padding(.top, -8)
                 }
                 
-                replyArea
-                    .padding(.horizontal, -4)
-                    .padding(.top, -8)
                 
                 HStack {
                     Spacer()
@@ -168,6 +203,15 @@ struct FullReviewSide: View {
         .clipped()
     }
     
+    @StateObject private var translator = DeepL()
+    
+    func deepLReview() async {
+        translator.translate(
+            title: review?.attributes?.title ?? "No title",
+            body: review?.attributes?.body ?? "No body"
+        )
+    }
+    
     func respondToReview() async {
         guard let review = review else { return }
         
@@ -191,7 +235,7 @@ struct FullReviewSide: View {
                 }
             } catch {
                 print(error.localizedDescription)
-                
+                print(error.localizedDescription)
                 let errorCode = (error as NSError).description
                 if errorCode.contains("This request is forbidden for security reasons") {
                     errorString = "This request is forbidden for security reasons"
@@ -208,14 +252,14 @@ struct FullReviewSide: View {
     }
     
     func title(for review: CustomerReview) -> some View {
-        Text(review.attributes?.title ?? "")
+        Text(!translator.translatedTitle.isEmpty ? translator.translatedTitle : review.attributes?.title ?? "")
             .font(.system(.title2, design: .rounded))
             .bold()
             .textSelection(.enabled)
     }
     
     func body(for review: CustomerReview) -> some View {
-        Text(review.attributes?.body ?? "")
+        Text(!translator.translatedBody.isEmpty ? translator.translatedBody : review.attributes?.body ?? "")
             .font(.system(.title3, design: .rounded))
             .textSelection(.enabled)
             .padding(.bottom)
@@ -310,7 +354,7 @@ struct FullReviewSide: View {
     
     @State var hoveringOnSuggestion: Suggestion?
     
-        
+    
     @State var showTranslate = false
     
     var extraOptions: some View {
@@ -361,6 +405,17 @@ struct FullReviewSide: View {
                         .opacity(replyText.isEmpty ? 1 : 0)
                         .frame(height: 200)
                 )
+                .overlay(
+                    HStack {
+                        Spacer()
+                        Button {
+                            translator.translateReply(text: replyText)
+                        } label: {
+                            Text("Translate")
+                        }
+
+                    }
+                )
         }
         .font(.system(.title3, design: .rounded))
         .cornerRadius(8)
@@ -396,5 +451,266 @@ struct WebViewWrapper: NSViewRepresentable {
                 nsView.load(request)
             }
         }
+    }
+}
+
+import Combine
+
+class DeepL: ObservableObject {
+    @Published var sourceLanguages = [Language(name: "-", language: "-")]
+    @Published var targetLanguages = [Language(name: "-", language: "-")]
+    
+    @Published var sourceLanguage: Language?
+    @Published var targetLanguage: Language?
+    
+    @Published var detectedSourceLanguage: Language?
+    
+    @Published var sourceText = ""
+    @Published var targetText = ""
+    
+    @Published var translatedTitle = ""
+    @Published var translatedBody = ""
+    @Published var translatedReply = ""
+    
+    @Published var formality = FormalityType.default;
+    
+    struct Language: Codable, Identifiable, Equatable {
+        let id = UUID()
+        let name: String
+        let language: String
+    }
+    
+    enum LanguagesType: String {
+        case source
+        case target
+    }
+    
+    enum FormalityType: String {
+        case `default`
+        case more
+        case less
+    }
+    
+    private var subscriptions = Set<AnyCancellable>()
+    
+    init() {
+        print("init deepl")
+        self.getLanguages(target: LanguagesType.source, handler: { languages, error in
+            guard error == nil && languages != nil else {
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.sourceLanguages = languages!
+                self.sourceLanguage = self.findLanguage(array: languages!, language: "EN")  // TODO: Default
+            }
+        })
+        
+        self.getLanguages(target: LanguagesType.target, handler: { languages, error in
+            guard error == nil && languages != nil else {
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.targetLanguages = languages!
+                self.targetLanguage = self.findLanguage(array: languages!, language: "NL") // TODO: Default
+            }
+        })
+        
+//        $sourceText
+//            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+//            .sink(receiveValue: { value in
+//                self.translate(text: value)
+//            })
+//            .store(in: &subscriptions)
+    }
+    
+    private func getLanguages(target: LanguagesType, handler: @escaping ([Language]?, Error?) -> Void) {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api-free.deepl.com"
+        components.path = "/v2/languages"
+        components.queryItems = [
+            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            URLQueryItem(name: "type", value: target.rawValue),
+        ]
+        
+        URLSession.shared.dataTask(with: components.url!, completionHandler: { data, _, _ in
+            guard data != nil else {
+                return
+            }
+            
+            do {
+                if let response = try JSONDecoder().decode([Language]?.self, from: data!) {
+                    handler(response, nil)
+                }
+            } catch let error {
+                handler(nil, error)
+            }
+        }).resume()
+    }
+    
+    private func findLanguage(array: [Language], language: String) -> Language? {
+        if let index = array.firstIndex(where: { $0.language == language }) {
+            return array[index]
+        }
+        return nil
+    }
+    
+    func translate(title: String, body: String) {
+        translateTitle(text: title)
+        translateBody(text: body)
+    }
+    
+    func translateTitle(text: String) {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api-free.deepl.com"
+        components.path = "/v2/translate"
+        components.queryItems = [
+            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            // TODO: What is these are nil
+//            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
+            URLQueryItem(name: "target_lang", value: "EN"), // TODO: Default
+            URLQueryItem(name: "formality", value: self.formality.rawValue),
+            URLQueryItem(name: "text", value: text)
+        ]
+        
+        URLSession.shared.dataTask(with: components.url!, completionHandler: { data, _, _ in
+            guard data != nil else {
+                return
+            }
+            
+            struct Response: Codable {
+                let translations: [Translation]
+            }
+            
+            struct Translation: Codable {
+                let detectedSourceLanguage: String?
+                let text: String
+                
+                enum CodingKeys: String, CodingKey {
+                    case detectedSourceLanguage = "detected_source_language"
+                    case text
+                }
+            }
+            
+            if let response = try? JSONDecoder().decode(Response?.self, from: data!) {
+                DispatchQueue.main.async {
+                    if let language = response.translations[0].detectedSourceLanguage {
+                        
+                        if let foundLanguage = self.findLanguage(array: self.sourceLanguages, language: language) {
+                            if foundLanguage.language != self.sourceLanguage!.language {
+                                self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
+                            }
+                        }
+                    }
+                    
+                    self.translatedTitle = response.translations[0].text
+                    
+                }
+            }
+        }).resume()
+    }
+    
+    func translateBody(text: String) {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api-free.deepl.com"
+        components.path = "/v2/translate"
+        components.queryItems = [
+            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            // TODO: What is these are nil
+//            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
+            URLQueryItem(name: "target_lang", value: "EN"), // TODO: Default
+            URLQueryItem(name: "formality", value: self.formality.rawValue),
+            URLQueryItem(name: "text", value: text)
+        ]
+        
+        URLSession.shared.dataTask(with: components.url!, completionHandler: { data, _, _ in
+            guard data != nil else {
+                return
+            }
+            
+            struct Response: Codable {
+                let translations: [Translation]
+            }
+            
+            struct Translation: Codable {
+                let detectedSourceLanguage: String?
+                let text: String
+                
+                enum CodingKeys: String, CodingKey {
+                    case detectedSourceLanguage = "detected_source_language"
+                    case text
+                }
+            }
+            
+            if let response = try? JSONDecoder().decode(Response?.self, from: data!) {
+                DispatchQueue.main.async {
+                    if let language = response.translations[0].detectedSourceLanguage {
+                        if let foundLanguage = self.findLanguage(array: self.sourceLanguages, language: language) {
+                            if foundLanguage.language != self.sourceLanguage!.language {
+                                self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
+                            }
+                            self.detectedSourceLanguage = foundLanguage
+                            
+                        }
+                    }
+                    
+                    self.translatedBody = response.translations[0].text
+                }
+            }
+        }).resume()
+    }
+    
+    func translateReply(text: String) {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api-free.deepl.com"
+        components.path = "/v2/translate"
+        components.queryItems = [
+            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            // TODO: What is these are nil
+//            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
+            URLQueryItem(name: "target_lang", value: detectedSourceLanguage?.language ?? "EN"), // TODO: Default
+            URLQueryItem(name: "formality", value: self.formality.rawValue),
+            URLQueryItem(name: "text", value: text)
+        ]
+        
+        URLSession.shared.dataTask(with: components.url!, completionHandler: { data, _, _ in
+            guard data != nil else {
+                return
+            }
+            
+            struct Response: Codable {
+                let translations: [Translation]
+            }
+            
+            struct Translation: Codable {
+                let detectedSourceLanguage: String?
+                let text: String
+                
+                enum CodingKeys: String, CodingKey {
+                    case detectedSourceLanguage = "detected_source_language"
+                    case text
+                }
+            }
+            
+            if let response = try? JSONDecoder().decode(Response?.self, from: data!) {
+                DispatchQueue.main.async {
+                    if let language = response.translations[0].detectedSourceLanguage {
+                        if let foundLanguage = self.findLanguage(array: self.sourceLanguages, language: language) {
+                            if foundLanguage.language != self.sourceLanguage!.language {
+                                self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
+                            }
+//                            self.detectedSourceLanguage = foundLanguage
+                        }
+                    }
+                    
+                    self.translatedReply = response.translations[0].text
+                }
+            }
+        }).resume()
     }
 }

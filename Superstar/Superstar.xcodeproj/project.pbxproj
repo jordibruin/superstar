@@ -393,6 +393,7 @@
 				C23B5478288D57DC006EB4B2 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				C23B547B288D5FBD006EB4B2 /* XCRemoteSwiftPackageReference "EncryptedAppStorage" */,
 				C23B54A1288F1085006EB4B2 /* XCRemoteSwiftPackageReference "SwiftCSV" */,
+				C2F6076628D928E9003380A9 /* XCRemoteSwiftPackageReference "DeepL-Swift" */,
 			);
 			productRefGroup = C245B4682884ACF700ABE387 /* Products */;
 			projectDirPath = "";
@@ -774,6 +775,14 @@
 			requirement = {
 				branch = master;
 				kind = branch;
+			};
+		};
+		C2F6076628D928E9003380A9 /* XCRemoteSwiftPackageReference "DeepL-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hoyelam/DeepL-Swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.0.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

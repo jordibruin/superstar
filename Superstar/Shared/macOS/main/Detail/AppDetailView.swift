@@ -8,8 +8,6 @@
 import SwiftUI
 import AppStoreConnect_Swift_SDK
 
-
-
 struct AppDetailView: View {
     
     @EnvironmentObject var appsManager: AppsManager
@@ -34,7 +32,10 @@ struct AppDetailView: View {
                 if reviewManager.retrievedReviews.isEmpty {
                     noReviews
                 } else {
-                    ScrollView {
+                    
+//                    ScrollView {
+                    ZStack {
+                        Color(.controlBackgroundColor)
                         AppReviewsList(
                             reviewManager: reviewManager,
                             hidePending: hidePending,
@@ -42,12 +43,17 @@ struct AppDetailView: View {
                             searchText: searchText
                         )
                     }
-                    .clipped()
+//                    }
+                    
+//                    .frame(width: 300)
+//                    .frame(maxWidth: 350)
+//                    .clipped()
                 }
             }
         }
-        .toolbar(content: { toolbarItems })
         
+        .toolbar(content: { toolbarItems })
+        .searchable(text: $searchText)
         
         // there is no title anymore so let's fake it.
         .onTapGesture {
@@ -55,6 +61,8 @@ struct AppDetailView: View {
         }
         .onAppear {
             Task {
+//                await reviewManager.getSales()
+                
                 await reviewManager.getReviewsFor(
                     id: app.id,
                     sort: selectedSortOrder
@@ -113,11 +121,11 @@ struct AppDetailView: View {
                 Spacer()
             }
             
-            ToolbarItem(placement: .primaryAction) {
-                TextField("Search", text: $searchText)
-                    .textFieldStyle(.squareBorder)
-                    .frame(width: 120)
-            }
+//            ToolbarItem(placement: .primaryAction) {
+//                TextField("Search", text: $searchText)
+//                    .textFieldStyle(.squareBorder)
+//                    .frame(width: 120)
+//            }
             
             
             ToolbarItem(placement: .primaryAction) {
@@ -131,10 +139,10 @@ struct AppDetailView: View {
                 }
                 .onChange(of: selectedSortOrder) { _ in
                     Task {
+//                        await reviewManager.getSales()
                         await reviewManager.getReviewsFor(id: app.id, sort: selectedSortOrder)
                     }
                 }
-
 //                Toggle(isOn: $hidePending) {
 //                    Text("Hide Pending")
 //                }
@@ -143,7 +151,7 @@ struct AppDetailView: View {
             
             ToolbarItem(placement: .primaryAction) {
                 Toggle(isOn: $hidePending) {
-                    Text("Hide Pending")
+                    Image(systemName: "clock.arrow.circlepath")
                 }
                 .help(Text("Hide reviews that you have responded to but are still pending publication"))
             }

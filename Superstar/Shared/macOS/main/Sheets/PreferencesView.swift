@@ -13,7 +13,6 @@ struct PreferencesView: View {
     
     @EnvironmentObject var settingsManager: SettingsManager
     
-    
     @State var width: CGFloat = 400
     @State var height: CGFloat = 400
     

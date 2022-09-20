@@ -56,6 +56,36 @@ class ReviewManager: ObservableObject {
             print(error.localizedDescription)
         }
     }
+
+    func getSales() async {
+        do {
+            let provider = APIProvider(configuration: CredentialsManager.shared.configuration)
+            let request = APIEndpoint
+                .v1
+                .salesReports
+                .get(parameters: .init(filterFrequency: [.daily], filterReportSubType: [.summary], filterReportType: [.sales], filterVendorNumber: ["89141975"]))
+            
+            let sales = try await provider.request(request)
+                
+            print(sales)
+            
+            
+//            let reviewsData = reviews.data
+            
+//            let pages = reviews.meta?.paging.total
+//            print(pages)
+//            reviews
+//            var reviewsWithoutResponse: [CustomerReview] = []
+            
+//            self.retrievedReviews = reviewsData
+//            loadingReviews = false
+        } catch {
+            let nsEr = error as NSError
+            print(nsEr)
+            print(nsEr.domain)
+            print(error.localizedDescription)
+        }
+    }
     
     @State var showError = false
     @State var errorString = ""

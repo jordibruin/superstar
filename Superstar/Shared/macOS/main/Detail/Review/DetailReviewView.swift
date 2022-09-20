@@ -14,7 +14,7 @@ struct DetailReviewView: View {
     @EnvironmentObject var reviewManager: ReviewManager
     @EnvironmentObject var appsManager: AppsManager
     
-    @State var showReplyField = false
+//    @State var showReplyField = false
     @State var replyText = ""
     @FocusState private var isReplyFocused: Bool
     
@@ -34,26 +34,30 @@ struct DetailReviewView: View {
     @Binding var selectedReview: CustomerReview?
     
     var body: some View {
-        VStack(alignment: .leading) {
+        
+//        VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading) {
                 header
+                    .padding(.top, 4)
+                    
 
                 Text(review.attributes?.body ?? "")
                     .font(.system(.body, design: .rounded))
                     .padding(.bottom)
-                                        
+                    .foregroundColor(selectedReview == review ? .white : .primary)
+
                 Spacer()
                 HStack {
-                    Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
-                        .font(.caption)
-                        .opacity(0.8)
-                    
+//                    Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
+//                        .font(.caption)
+//                        .opacity(0.8)
+
                     Spacer()
                     if succesfullyReplied {
                         HStack {
                             Image(systemName: "checkmark")
 //                                .foregroundColor(.green)
-                            
+
                             Text("Response Pending")
                                 .bold()
                         }
@@ -64,20 +68,19 @@ struct DetailReviewView: View {
                         .font(.system(.subheadline, design: .rounded))
                     }
                 }
+                
+                Divider()
+                    .padding(.horizontal, -20)
             }
-            .padding([.top, .horizontal])
-            .padding(.bottom, showReplyField ? 4 : 20)
-            
-            if showReplyField {
-                replyArea
-            }
-        }
-        .frame(height: 260)
+//        }
+//        .frame(height: 180)
+        .frame(maxHeight: 180)
+        .padding(.horizontal)
         .background(
             bgColor
+                .padding(.top, -24)
+//                .padding(.horizontal, -20)
         )
-        .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 0)
-        .cornerRadius(12)
         .onAppear {
             if pendingPublications.contains(review.id) {
                 succesfullyReplied = true
@@ -88,50 +91,50 @@ struct DetailReviewView: View {
     @ViewBuilder
     var bgColor: some View {
         if selectedReview == review {
-            ZStack {
-                Color(.controlBackgroundColor)
-                Color.orange.opacity(0.1)
-            }
+//            ZStack {
+//                Color(.controlBackgroundColor)
+                Color.orange
+//            }
         } else {
             Color(.controlBackgroundColor)
         }
     }
     
-    var suggestionsAndReply: some View {
-        HStack {
-            suggestionsPicker
-            
-            Spacer()
-            
-            if !showReplyField {
-                Button {
-                    
-                    showReplyField = true
-                    isReplyFocused = true
-                } label: {
-                    Label("Reply", systemImage: "arrowshape.turn.up.left.fill")
-                }
-            } else {
-                
-                Button {
-                    showReplyField = false
-                    reviewManager.replyText = ""
-                } label: {
-                    Text("Cancel")
-                }
-                
-                Button {
-                    Task {
-                        await respondToReview()
-                    }
-                } label: {
-                    Text("Send")
-                }
-                .disabled(replyText.isEmpty)
-            }
-        }
-    }
-    
+//    var suggestionsAndReply: some View {
+//        HStack {
+//            suggestionsPicker
+//
+//            Spacer()
+//
+//            if !showReplyField {
+//                Button {
+//
+//                    showReplyField = true
+//                    isReplyFocused = true
+//                } label: {
+//                    Label("Reply", systemImage: "arrowshape.turn.up.left.fill")
+//                }
+//            } else {
+//
+//                Button {
+//                    showReplyField = false
+//                    reviewManager.replyText = ""
+//                } label: {
+//                    Text("Cancel")
+//                }
+//
+//                Button {
+//                    Task {
+//                        await respondToReview()
+//                    }
+//                } label: {
+//                    Text("Send")
+//                }
+//                .disabled(replyText.isEmpty)
+//            }
+//        }
+//    }
+//
     func respondToReview() async {
         Task {
             isReplying = true
@@ -158,72 +161,72 @@ struct DetailReviewView: View {
     
     @State var showSuggestionsSheet = false
     
-    var suggestionsPicker: some View {
-        Menu {
-            ForEach(suggestions) {  suggestion in
-                Button {
-                    reviewManager.replyText = suggestion.text
-                    
-//                    if autoReply {
-//                        print("we should automatically sent it now")
-//                        Task {
-//                            await respondToReview()
-//                        }
-//                    } else {
-//                    }
-                    showReplyField = true
-                } label: {
-                    Text(suggestion.title.capitalized)
-                        .padding(.vertical, 6)
-                        .padding(.horizontal, 12)
-                        .background(Color.orange)
-                        .foregroundColor(.white)
-                        .cornerRadius(12)
-                }
-                .buttonStyle(.plain)
-            }
-        } label: {
-            Text("Suggestions")
-        }
-        .onTapGesture {
-            if suggestions.isEmpty {
-                showSuggestionsSheet = true
-            }
-        }
-        
-        
-        //        Menu {
-        //            ForEach(suggestions) {  suggestion in
-        //                Button {
-        //                    replyText = suggestion.text
-        //
-        //                    if autoReply {
-        //                        print("we should automatically sent it now")
-        //                        Task {
-        //                            await respondToReview()
-        //                        }
-        //                    } else {
-        //                        showReplyField = true
-        //                    }
-        //                } label: {
-        //                    Text(suggestion.title.capitalized)
-        //                        .padding(.vertical, 6)
-        //                        .padding(.horizontal, 12)
-        //                        .background(Color.blue)
-        //                        .foregroundColor(.white)
-        //                        .cornerRadius(12)
-        //                }
-        //                .buttonStyle(.plain)
-        //            }
-        //        } label: {
-        //            Text("Suggestions")
-        //        }
-        .menuStyle(.borderlessButton)
-        .frame(width: 110)
-        .padding(.vertical, 4)
-        .padding(.horizontal, 6)
-        .background(RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Color.secondary.opacity(0.1)))
-    }
+//    var suggestionsPicker: some View {
+//        Menu {
+//            ForEach(suggestions) {  suggestion in
+//                Button {
+//                    reviewManager.replyText = suggestion.text
+//
+////                    if autoReply {
+////                        print("we should automatically sent it now")
+////                        Task {
+////                            await respondToReview()
+////                        }
+////                    } else {
+////                    }
+////                    showReplyField = true
+//                } label: {
+//                    Text(suggestion.title.capitalized)
+//                        .padding(.vertical, 6)
+//                        .padding(.horizontal, 12)
+//                        .background(Color.orange)
+//                        .foregroundColor(.white)
+//                        .cornerRadius(12)
+//                }
+//                .buttonStyle(.plain)
+//            }
+//        } label: {
+//            Text("Suggestions")
+//        }
+//        .onTapGesture {
+//            if suggestions.isEmpty {
+//                showSuggestionsSheet = true
+//            }
+//        }
+//
+//
+//        //        Menu {
+//        //            ForEach(suggestions) {  suggestion in
+//        //                Button {
+//        //                    replyText = suggestion.text
+//        //
+//        //                    if autoReply {
+//        //                        print("we should automatically sent it now")
+//        //                        Task {
+//        //                            await respondToReview()
+//        //                        }
+//        //                    } else {
+//        //                        showReplyField = true
+//        //                    }
+//        //                } label: {
+//        //                    Text(suggestion.title.capitalized)
+//        //                        .padding(.vertical, 6)
+//        //                        .padding(.horizontal, 12)
+//        //                        .background(Color.blue)
+//        //                        .foregroundColor(.white)
+//        //                        .cornerRadius(12)
+//        //                }
+//        //                .buttonStyle(.plain)
+//        //            }
+//        //        } label: {
+//        //            Text("Suggestions")
+//        //        }
+//        .menuStyle(.borderlessButton)
+//        .frame(width: 110)
+//        .padding(.vertical, 4)
+//        .padding(.horizontal, 6)
+//        .background(RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Color.secondary.opacity(0.1)))
+//    }
     
     var header: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -232,13 +235,20 @@ struct DetailReviewView: View {
                     starsFor(review: review)
                         .font(.system(.body, design: .rounded))
                     Spacer()
-                    metadata
+                    
+                    Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
+                        .font(.caption)
+                        .opacity(0.8)
+                        .foregroundColor(selectedReview == review ? .white : .primary)
+//                    metadata
                 }
+                
                 
                 Text(review.attributes?.title ?? "")
                     .font(.system(.headline, design: .rounded))
                     .bold()
                     .padding(.leading, 2)
+                    .foregroundColor(selectedReview == review ? .white : .primary)
             }
             
         }
@@ -293,11 +303,13 @@ struct DetailReviewView: View {
         return HStack(spacing: 2) {
             ForEach(0..<realRating, id: \.self) { star in
                 Image(systemName: "star.fill")
-                    .foregroundColor(.orange)
+//                    .foregroundColor(.orange)
+                    .foregroundColor(selectedReview == review ? .white : .orange)
             }
             ForEach(realRating..<5, id: \.self) { star in
                 Image(systemName: "star")
-                    .foregroundColor(.orange)
+//                    .foregroundColor(.orange)
+                    .foregroundColor(selectedReview == review ? .white : .orange)
             }
         }
     }

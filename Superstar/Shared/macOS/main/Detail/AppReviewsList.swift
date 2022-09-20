@@ -26,43 +26,38 @@ struct AppReviewsList: View {
     @State var padding: CGFloat = 12
     
     var body: some View {
-        LazyVGrid(
-            columns: columns,
-            alignment: .center,
-            spacing: spacing
-        ) {
-            ForEach(reviewManager.retrievedReviews.filter { review in
-                if searchText == "" {
-                    return true
-                } else {
-                    return review.attributes!.body!.contains(searchText)
-                }
-            }, id: \.id) { review in
-                if hidePending {
-                    if !pendingPublications.contains(review.id) {
+            List {
+                ForEach(reviewManager.retrievedReviews.filter { review in
+                    if searchText == "" {
+                        return true
+                    } else {
+                        return review.attributes!.body!.contains(searchText)
+                    }
+                }, id: \.id) { review in
+                    if hidePending {
+                        if !pendingPublications.contains(review.id) {
+                            Button {
+                                selectedReview = review
+                            } label: {
+                                DetailReviewView(review: review, selectedReview: $selectedReview)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    } else {
                         Button {
                             selectedReview = review
                         } label: {
                             DetailReviewView(review: review, selectedReview: $selectedReview)
                         }
+                        
                         .buttonStyle(.plain)
                     }
-                } else {
-                    Button {
-                        selectedReview = review
-                    } label: {
-                        DetailReviewView(review: review, selectedReview: $selectedReview)
-                    }
-                    .buttonStyle(.plain)
                 }
             }
-        }
-        .padding(padding)
-        .padding(.vertical)
-        .animation(.default,
-            value: reviewManager.retrievedReviews
-        )
-        .id(UUID())
+            .padding(.horizontal, -16)
+            .padding(.vertical)
+            .animation(.default,value: reviewManager.retrievedReviews)
+            .id(UUID())
     }
      
 }

@@ -6,7 +6,16 @@
       "location" : "https://github.com/AvdLee/appstoreconnect-swift-sdk.git",
       "state" : {
         "branch" : "master",
-        "revision" : "d222a57b5a67ff73fa83dadb4f5ce6c3ce0046e0"
+        "revision" : "39241b4f7a95489cd1cbcf8594c76e127e81970c"
+      }
+    },
+    {
+      "identity" : "deepl-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hoyelam/DeepL-Swift",
+      "state" : {
+        "revision" : "8362681ce26d751f5bde01ee902ab1aea3e2dd10",
+        "version" : "0.0.1"
       }
     },
     {
@@ -33,7 +42,7 @@
       "location" : "https://github.com/swiftcsv/SwiftCSV.git",
       "state" : {
         "branch" : "master",
-        "revision" : "048a1d3c2950b9c151ef9364b36f91baadc2c28c"
+        "revision" : "96fa14b92e88e0befdbc8bc31c7c2c9594a30060"
       }
     },
     {
