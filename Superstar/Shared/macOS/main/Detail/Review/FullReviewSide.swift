@@ -12,25 +12,25 @@ struct FullReviewSide: View {
     
     @Binding var review: CustomerReview?
     @FocusState private var isReplyFocused: Bool
-    @State var showReplyField = false
-    
+    @State private var showReplyField = false
+    @StateObject private var translator = DeepL()
     @EnvironmentObject var reviewManager: ReviewManager
     @EnvironmentObject var appsManager: AppsManager
     
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     
-    @State var isReplying = false
-    @State var succesfullyReplied = false
+    @State private var isReplying = false
+    @State private var succesfullyReplied = false
     
-    @State var isError = false
-    @State var errorString = ""
-    
-    @State var showError = false
-    
-    @State var replyText = ""
-    
-    @AppStorage("onlyShowSuggestionsPerApp") var onlyShowSuggestionsPerApp: Bool = true
-    
+    @State private var isError = false
+    @State private var errorString = ""
+    @State private var showError = false
+    @State private var replyText = ""
+    @State private var hoveringOnSuggestion: Suggestion?
+    @State private var showTranslate = false
+    @State private var showTranslation = false
+
+    @AppStorage("pendingPublications") var pendingPublications: [String] = []
     var body: some View {
         VStack {
             ZStack {
@@ -99,32 +99,31 @@ struct FullReviewSide: View {
         
     }
     
-    @AppStorage("pendingPublications") var pendingPublications: [String] = []
+    
     
     func getNewReview() {
         guard let review = review else {
             return
         }
         
-        guard let currentIndex = reviewManager.retrievedReviews.firstIndex(of: review) else {
+        guard reviewManager.retrievedReviews.firstIndex(of: review) != nil else {
             return
         }
         
-        if let review = reviewManager.retrievedReviews.filter { !pendingPublications.contains($0.id ) }.randomElement() {
+        if let review = reviewManager.retrievedReviews.filter({ !pendingPublications.contains($0.id ) }).randomElement() {
             self.review = review
         } else {
             print("No new reviews available")
         }
     }
     
-    @State var showTranslation = false
     func reviewView(review: CustomerReview) -> some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 6) {
-                    starsFor(review: review)
-                    title(for: review)
-                    metadata(for: review)
+                    ReviewRatingView(review: review)
+                    ReviewTitle(translator: translator, review: review)
+                    ReviewMetadata(review: review)
                 }
                 body(for: review)
                 
@@ -142,7 +141,7 @@ struct FullReviewSide: View {
                                 await deepLReview()
                             }
                         } label: {
-                            Text("Translate")
+                            Text("Translate Review")
                         }
                     }
                 }
@@ -160,7 +159,10 @@ struct FullReviewSide: View {
                             .textSelection(.enabled)
                     }
                     
-                    replyArea
+                    ReviewReplyArea(isReplyFocused: $isReplyFocused,
+                                    replyText: $replyText,
+                                    hoveringOnSuggestion: $hoveringOnSuggestion,
+                                    translator: translator)
                         .padding(.horizontal, -4)
                         .padding(.top, -8)
                 }
@@ -195,7 +197,7 @@ struct FullReviewSide: View {
                 
                 Divider()
                 
-                suggestionsPicker
+                ReviewSuggestionsPicker(replyText: $replyText, hoveringOnSuggestion: $hoveringOnSuggestion)
                 Spacer()
             }
             .padding()
@@ -203,16 +205,16 @@ struct FullReviewSide: View {
         .clipped()
     }
     
-    @StateObject private var translator = DeepL()
     
-    func deepLReview() async {
+    
+    private func deepLReview() async {
         translator.translate(
             title: review?.attributes?.title ?? "No title",
             body: review?.attributes?.body ?? "No body"
         )
     }
     
-    func respondToReview() async {
+    private func respondToReview() async {
         guard let review = review else { return }
         
         Task {
@@ -251,12 +253,6 @@ struct FullReviewSide: View {
         }
     }
     
-    func title(for review: CustomerReview) -> some View {
-        Text(!translator.translatedTitle.isEmpty ? translator.translatedTitle : review.attributes?.title ?? "")
-            .font(.system(.title2, design: .rounded))
-            .bold()
-            .textSelection(.enabled)
-    }
     
     func body(for review: CustomerReview) -> some View {
         Text(!translator.translatedBody.isEmpty ? translator.translatedBody : review.attributes?.body ?? "")
@@ -267,95 +263,8 @@ struct FullReviewSide: View {
     
     @State var hoveringBody = false
     
-    func starsFor(review: CustomerReview) -> some View {
-        let realRating = review.attributes?.rating ?? 1
-        
-        return HStack(spacing: 2) {
-            ForEach(0..<realRating, id: \.self) { star in
-                Image(systemName: "star.fill")
-                    .foregroundColor(.orange)
-                    .font(.title2)
-            }
-            ForEach(realRating..<5, id: \.self) { star in
-                Image(systemName: "star")
-                    .foregroundColor(.orange)
-                    .font(.title2)
-            }
-        }
-    }
-    
-    var suggestionsPicker: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text("Response Suggestions")
-                    .font(.system(.body, design: .rounded))
-                    .bold()
-                
-                Spacer()
-                
-                Button {
-                    if appsManager.selectedAppId != "Placeholder" {
-                        let suggestion = Suggestion(
-                            title: replyText.components(separatedBy: ".").first ?? "New Suggestion",
-                            text: replyText,
-                            appId: Int(appsManager.selectedAppId ?? "0") ?? 0
-                        )
-                        suggestions.append(suggestion)
-                    }
-                } label: {
-                    Text("Add Suggestion")
-                        .font(.caption)
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 6)
-                        .background(Color(.controlBackgroundColor))
-                        .foregroundColor(.primary)
-                        .cornerRadius(4)
-                }
-                .buttonStyle(.plain)
-                .opacity(replyText.isEmpty ? 0 : 1)
-            }
-            
-            ForEach(suggestions) { suggestion in
-                if onlyShowSuggestionsPerApp {
-                    if suggestion.appId == Int(appsManager.selectedAppId ?? "") ?? 0 || suggestion.appId == 0 {
-                        SuggestionView(
-                            suggestion: suggestion,
-                            replyText: $replyText,
-                            hoveringOnSuggestion: $hoveringOnSuggestion,
-                            suggestions: $suggestions
-                        )
-                    }
-                } else {
-                    SuggestionView(
-                        suggestion: suggestion,
-                        replyText: $replyText,
-                        hoveringOnSuggestion: $hoveringOnSuggestion,
-                        suggestions: $suggestions
-                    )
-                }
-            }
-            
-        }
-    }
-    
-    func metadata(for review: CustomerReview) -> some View {
-        HStack {
-            Text(review.attributes?.territory?.flag ?? "")
-            Text(review.attributes?.reviewerNickname ?? "")
-                .opacity(0.8)
-            
-            Spacer()
-            Text(review.attributes?.createdDate?.formatted(.dateTime.day().month().year()) ?? Date().formatted())
-                .opacity(0.8)
-        }
-        .font(.system(.body, design: .rounded))
-    }
     
     
-    @State var hoveringOnSuggestion: Suggestion?
-    
-    
-    @State var showTranslate = false
     
     var extraOptions: some View {
         HStack {
@@ -383,335 +292,9 @@ struct FullReviewSide: View {
     @State var translateString = "https://translate.google.com/?sl=en&tl=zh-CN&text=Thanks%20for%20reaching%20out!%20The%20widget%20sometimes%20takes%20a%20while%20to%20appear.%20Can%20you%20send%20an%20email%20to%20jordi%40goodsnooze.com%3F%20Thanks%2C%20Jordi&op=translate"
     
     
-    var replyArea: some View {
-        
-        ZStack(alignment: .topLeading) {
-            Color(.controlBackgroundColor)
-                .frame(height: 200)
-                .onTapGesture {
-                    isReplyFocused = true
-                }
-            
-            TextEditor(text: $replyText)
-                .focused($isReplyFocused)
-                .padding(8)
-            //                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
-                .frame(height: 200)
-                .overlay(
-                    TextEditor(text: .constant(hoveringOnSuggestion != nil ? hoveringOnSuggestion?.text ?? "" : "Custom Reply"))
-                        .foregroundColor(.secondary)
-                        .padding(8)
-                        .allowsHitTesting(false)
-                        .opacity(replyText.isEmpty ? 1 : 0)
-                        .frame(height: 200)
-                )
-                .overlay(
-                    HStack {
-                        Spacer()
-                        Button {
-                            translator.translateReply(text: replyText)
-                        } label: {
-                            Text("Translate")
-                        }
-
-                    }
-                )
-        }
-        .font(.system(.title3, design: .rounded))
-        .cornerRadius(8)
-    }
+   
 }
 
 
-import WebKit
 
-struct WebView: View {
-    
-    @Binding var urlString: String
-    
-    var body: some View {
-        WebViewWrapper(urlString: urlString)
-    }
-}
 
-struct WebViewWrapper: NSViewRepresentable {
-    
-    let urlString: String
-    
-    func makeNSView(context: Context) -> WKWebView {
-        return WKWebView()
-    }
-    
-    func updateNSView(_ nsView: WKWebView, context: Context) {
-        //        var newURL = urlString
-        
-        if let encoded = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-            if let url = URL(string: encoded) {
-                let request = URLRequest(url: url)
-                nsView.load(request)
-            }
-        }
-    }
-}
-
-import Combine
-
-class DeepL: ObservableObject {
-    @Published var sourceLanguages = [Language(name: "-", language: "-")]
-    @Published var targetLanguages = [Language(name: "-", language: "-")]
-    
-    @Published var sourceLanguage: Language?
-    @Published var targetLanguage: Language?
-    
-    @Published var detectedSourceLanguage: Language?
-    
-    @Published var sourceText = ""
-    @Published var targetText = ""
-    
-    @Published var translatedTitle = ""
-    @Published var translatedBody = ""
-    @Published var translatedReply = ""
-    
-    @Published var formality = FormalityType.default;
-    
-    struct Language: Codable, Identifiable, Equatable {
-        let id = UUID()
-        let name: String
-        let language: String
-    }
-    
-    enum LanguagesType: String {
-        case source
-        case target
-    }
-    
-    enum FormalityType: String {
-        case `default`
-        case more
-        case less
-    }
-    
-    private var subscriptions = Set<AnyCancellable>()
-    
-    init() {
-        print("init deepl")
-        self.getLanguages(target: LanguagesType.source, handler: { languages, error in
-            guard error == nil && languages != nil else {
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self.sourceLanguages = languages!
-                self.sourceLanguage = self.findLanguage(array: languages!, language: "EN")  // TODO: Default
-            }
-        })
-        
-        self.getLanguages(target: LanguagesType.target, handler: { languages, error in
-            guard error == nil && languages != nil else {
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self.targetLanguages = languages!
-                self.targetLanguage = self.findLanguage(array: languages!, language: "NL") // TODO: Default
-            }
-        })
-        
-//        $sourceText
-//            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-//            .sink(receiveValue: { value in
-//                self.translate(text: value)
-//            })
-//            .store(in: &subscriptions)
-    }
-    
-    private func getLanguages(target: LanguagesType, handler: @escaping ([Language]?, Error?) -> Void) {
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = "api-free.deepl.com"
-        components.path = "/v2/languages"
-        components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
-            URLQueryItem(name: "type", value: target.rawValue),
-        ]
-        
-        URLSession.shared.dataTask(with: components.url!, completionHandler: { data, _, _ in
-            guard data != nil else {
-                return
-            }
-            
-            do {
-                if let response = try JSONDecoder().decode([Language]?.self, from: data!) {
-                    handler(response, nil)
-                }
-            } catch let error {
-                handler(nil, error)
-            }
-        }).resume()
-    }
-    
-    private func findLanguage(array: [Language], language: String) -> Language? {
-        if let index = array.firstIndex(where: { $0.language == language }) {
-            return array[index]
-        }
-        return nil
-    }
-    
-    func translate(title: String, body: String) {
-        translateTitle(text: title)
-        translateBody(text: body)
-    }
-    
-    func translateTitle(text: String) {
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = "api-free.deepl.com"
-        components.path = "/v2/translate"
-        components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
-            // TODO: What is these are nil
-//            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
-            URLQueryItem(name: "target_lang", value: "EN"), // TODO: Default
-            URLQueryItem(name: "formality", value: self.formality.rawValue),
-            URLQueryItem(name: "text", value: text)
-        ]
-        
-        URLSession.shared.dataTask(with: components.url!, completionHandler: { data, _, _ in
-            guard data != nil else {
-                return
-            }
-            
-            struct Response: Codable {
-                let translations: [Translation]
-            }
-            
-            struct Translation: Codable {
-                let detectedSourceLanguage: String?
-                let text: String
-                
-                enum CodingKeys: String, CodingKey {
-                    case detectedSourceLanguage = "detected_source_language"
-                    case text
-                }
-            }
-            
-            if let response = try? JSONDecoder().decode(Response?.self, from: data!) {
-                DispatchQueue.main.async {
-                    if let language = response.translations[0].detectedSourceLanguage {
-                        
-                        if let foundLanguage = self.findLanguage(array: self.sourceLanguages, language: language) {
-                            if foundLanguage.language != self.sourceLanguage!.language {
-                                self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
-                            }
-                        }
-                    }
-                    
-                    self.translatedTitle = response.translations[0].text
-                    
-                }
-            }
-        }).resume()
-    }
-    
-    func translateBody(text: String) {
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = "api-free.deepl.com"
-        components.path = "/v2/translate"
-        components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
-            // TODO: What is these are nil
-//            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
-            URLQueryItem(name: "target_lang", value: "EN"), // TODO: Default
-            URLQueryItem(name: "formality", value: self.formality.rawValue),
-            URLQueryItem(name: "text", value: text)
-        ]
-        
-        URLSession.shared.dataTask(with: components.url!, completionHandler: { data, _, _ in
-            guard data != nil else {
-                return
-            }
-            
-            struct Response: Codable {
-                let translations: [Translation]
-            }
-            
-            struct Translation: Codable {
-                let detectedSourceLanguage: String?
-                let text: String
-                
-                enum CodingKeys: String, CodingKey {
-                    case detectedSourceLanguage = "detected_source_language"
-                    case text
-                }
-            }
-            
-            if let response = try? JSONDecoder().decode(Response?.self, from: data!) {
-                DispatchQueue.main.async {
-                    if let language = response.translations[0].detectedSourceLanguage {
-                        if let foundLanguage = self.findLanguage(array: self.sourceLanguages, language: language) {
-                            if foundLanguage.language != self.sourceLanguage!.language {
-                                self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
-                            }
-                            self.detectedSourceLanguage = foundLanguage
-                            
-                        }
-                    }
-                    
-                    self.translatedBody = response.translations[0].text
-                }
-            }
-        }).resume()
-    }
-    
-    func translateReply(text: String) {
-        var components = URLComponents()
-        components.scheme = "https"
-        components.host = "api-free.deepl.com"
-        components.path = "/v2/translate"
-        components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
-            // TODO: What is these are nil
-//            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
-            URLQueryItem(name: "target_lang", value: detectedSourceLanguage?.language ?? "EN"), // TODO: Default
-            URLQueryItem(name: "formality", value: self.formality.rawValue),
-            URLQueryItem(name: "text", value: text)
-        ]
-        
-        URLSession.shared.dataTask(with: components.url!, completionHandler: { data, _, _ in
-            guard data != nil else {
-                return
-            }
-            
-            struct Response: Codable {
-                let translations: [Translation]
-            }
-            
-            struct Translation: Codable {
-                let detectedSourceLanguage: String?
-                let text: String
-                
-                enum CodingKeys: String, CodingKey {
-                    case detectedSourceLanguage = "detected_source_language"
-                    case text
-                }
-            }
-            
-            if let response = try? JSONDecoder().decode(Response?.self, from: data!) {
-                DispatchQueue.main.async {
-                    if let language = response.translations[0].detectedSourceLanguage {
-                        if let foundLanguage = self.findLanguage(array: self.sourceLanguages, language: language) {
-                            if foundLanguage.language != self.sourceLanguage!.language {
-                                self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
-                            }
-//                            self.detectedSourceLanguage = foundLanguage
-                        }
-                    }
-                    
-                    self.translatedReply = response.translations[0].text
-                    print(response.translations[0].text)
-                }
-            }
-        }).resume()
-    }
-}

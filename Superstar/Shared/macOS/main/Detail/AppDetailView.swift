@@ -116,10 +116,7 @@ struct AppDetailView: View {
 //                }
 //                .padding(.bottom, -4)
 //            }
-            
-            ToolbarItem(placement: .primaryAction) {
-                Spacer()
-            }
+          
             
 //            ToolbarItem(placement: .primaryAction) {
 //                TextField("Search", text: $searchText)
@@ -128,33 +125,37 @@ struct AppDetailView: View {
 //            }
             
             
-            ToolbarItem(placement: .primaryAction) {
-                Picker(selection: $selectedSortOrder) {
-                    ForEach(ReviewSortOrder.allCases) { order in
-                        Text(order.title)
-                            .tag(order)
+            ToolbarItemGroup(placement: .confirmationAction) {
+                
+                    Picker(selection: $selectedSortOrder) {
+                        ForEach(ReviewSortOrder.allCases) { order in
+                            Text(order.title)
+                                .tag(order)
+                        }
+                    } label: {
+                        Text(selectedSortOrder.rawValue.capitalized)
                     }
-                } label: {
-                    Text(selectedSortOrder.rawValue.capitalized)
-                }
-                .onChange(of: selectedSortOrder) { _ in
-                    Task {
-//                        await reviewManager.getSales()
-                        await reviewManager.getReviewsFor(id: app.id, sort: selectedSortOrder)
+                    .onChange(of: selectedSortOrder) { _ in
+                        Task {
+                            //                        await reviewManager.getSales()
+                            await reviewManager.getReviewsFor(id: app.id, sort: selectedSortOrder)
+                        }
                     }
-                }
-//                Toggle(isOn: $hidePending) {
-//                    Text("Hide Pending")
-//                }
-//                .help(Text("Hide reviews that you have responded to but are still pending publication"))
+                
+                
+                    //                Toggle(isOn: $hidePending) {
+                    //                    Text("Hide Pending")
+                    //                }
+                    //                .help(Text("Hide reviews that you have responded to but are still pending publication"))
+                
+                
+                    Toggle(isOn: $hidePending) {
+                        Image(systemName: hidePending ? "eye.slash" : "eye")
+                    }
+                    .help(Text("Hide reviews that you have responded to but are still pending publication"))
+                
             }
             
-            ToolbarItem(placement: .primaryAction) {
-                Toggle(isOn: $hidePending) {
-                    Image(systemName: "clock.arrow.circlepath")
-                }
-                .help(Text("Hide reviews that you have responded to but are still pending publication"))
-            }
         }
     }
     

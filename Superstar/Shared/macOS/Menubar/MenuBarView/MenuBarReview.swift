@@ -144,7 +144,7 @@ struct MenuBarReview: View {
         VStack(alignment: .leading, spacing: 8) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    starsFor(review: review)
+                    ReviewRatingView(review: review)
                         .font(.system(showReplyField ? .body :.body, design: .rounded))
                     Spacer()
                     metadata
@@ -200,21 +200,6 @@ struct MenuBarReview: View {
 //            .padding(10)
         }
         .background(Color.gray.opacity(0.2))
-    }
-    
-    func starsFor(review: CustomerReview) -> some View {
-        let realRating = review.attributes?.rating ?? 1
-        
-        return HStack(spacing: 2) {
-            ForEach(0..<realRating, id: \.self) { star in
-                Image(systemName: "star.fill")
-                    .foregroundColor(.orange)
-            }
-            ForEach(realRating..<5, id: \.self) { star in
-                Image(systemName: "star")
-                    .foregroundColor(.orange)
-            }
-        }
     }
 }
 
