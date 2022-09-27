@@ -40,7 +40,6 @@ struct DetailReviewView: View {
                 header
                     .padding(.top, 4)
                     
-
                 Text(review.attributes?.body ?? "")
                     .font(.system(.body, design: .rounded))
                     .padding(.bottom)

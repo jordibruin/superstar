@@ -17,6 +17,7 @@ struct FullReviewSide: View {
     @EnvironmentObject var reviewManager: ReviewManager
     @EnvironmentObject var appsManager: AppsManager
     
+    @AppStorage("pendingPublications") var pendingPublications: [String] = []
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     
     @State private var isReplying = false
