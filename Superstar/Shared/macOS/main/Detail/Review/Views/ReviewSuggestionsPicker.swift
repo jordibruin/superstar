@@ -14,6 +14,14 @@ struct ReviewSuggestionsPicker: View {
     @AppStorage("onlyShowSuggestionsPerApp") var onlyShowSuggestionsPerApp: Bool = true
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     @Binding var hoveringOnSuggestion: Suggestion?
+    
+    var showedSuggestions : [Suggestion] {
+        if onlyShowSuggestionsPerApp {
+            return suggestions.filter({ $0.appId == Int(appsManager.selectedAppId ?? "") ?? 0 || $0.appId == 0 })
+        }
+        
+        return suggestions
+    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -46,24 +54,13 @@ struct ReviewSuggestionsPicker: View {
                 .opacity(replyText.isEmpty ? 0 : 1)
             }
             
-            ForEach(suggestions) { suggestion in
-                if onlyShowSuggestionsPerApp {
-                    if suggestion.appId == Int(appsManager.selectedAppId ?? "") ?? 0 || suggestion.appId == 0 {
-                        SuggestionView(
-                            suggestion: suggestion,
-                            replyText: $replyText,
-                            hoveringOnSuggestion: $hoveringOnSuggestion,
-                            suggestions: $suggestions
-                        )
-                    }
-                } else {
-                    SuggestionView(
-                        suggestion: suggestion,
-                        replyText: $replyText,
-                        hoveringOnSuggestion: $hoveringOnSuggestion,
-                        suggestions: $suggestions
-                    )
-                }
+            ForEach(Array(zip(showedSuggestions.indices, showedSuggestions)), id: \.0) { index, suggestion in
+                SuggestionView(
+                    suggestion: showedSuggestions[index],
+                    replyText: $replyText,
+                    hoveringOnSuggestion: $hoveringOnSuggestion,
+                    suggestions: $suggestions)
+                .keyboardShortcut(KeyEquivalent(Character(UnicodeScalar(index)!)), modifiers: .shift)
             }
             
         }

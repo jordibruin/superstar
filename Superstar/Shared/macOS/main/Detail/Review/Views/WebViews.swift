@@ -10,7 +10,7 @@ import WebKit
 
 struct WebView: View {
     
-    @Binding var urlString: String
+    let urlString: String
     
     var body: some View {
         WebViewWrapper(urlString: urlString)

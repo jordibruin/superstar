@@ -14,6 +14,8 @@
 		8035DDC928E30950009037C9 /* ReviewReplyArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8035DDC828E30950009037C9 /* ReviewReplyArea.swift */; };
 		8035DDCB28E30BF1009037C9 /* ReviewSuggestionsPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8035DDCA28E30BF1009037C9 /* ReviewSuggestionsPicker.swift */; };
 		8035DDCD28E30CB6009037C9 /* ReviewRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8035DDCC28E30CB6009037C9 /* ReviewRatingView.swift */; };
+		8035DDCF28E3214A009037C9 /* View+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8035DDCE28E3214A009037C9 /* View+Ext.swift */; };
+		8035DDD128E322C4009037C9 /* ReplyErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8035DDD028E322C4009037C9 /* ReplyErrorView.swift */; };
 		C23B545E2889AC0D006EB4B2 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B545D2889AC0D006EB4B2 /* MenuBarView.swift */; };
 		C23B54612889AFB2006EB4B2 /* MenuAppsSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54602889AFB2006EB4B2 /* MenuAppsSelector.swift */; };
 		C23B54632889B0E5006EB4B2 /* MenuBarHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = C23B54622889B0E5006EB4B2 /* MenuBarHeader.swift */; };
@@ -71,6 +73,8 @@
 		8035DDC828E30950009037C9 /* ReviewReplyArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewReplyArea.swift; sourceTree = "<group>"; };
 		8035DDCA28E30BF1009037C9 /* ReviewSuggestionsPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewSuggestionsPicker.swift; sourceTree = "<group>"; };
 		8035DDCC28E30CB6009037C9 /* ReviewRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewRatingView.swift; sourceTree = "<group>"; };
+		8035DDCE28E3214A009037C9 /* View+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Ext.swift"; sourceTree = "<group>"; };
+		8035DDD028E322C4009037C9 /* ReplyErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyErrorView.swift; sourceTree = "<group>"; };
 		C23B545D2889AC0D006EB4B2 /* MenuBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarView.swift; sourceTree = "<group>"; };
 		C23B54602889AFB2006EB4B2 /* MenuAppsSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuAppsSelector.swift; sourceTree = "<group>"; };
 		C23B54622889B0E5006EB4B2 /* MenuBarHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarHeader.swift; sourceTree = "<group>"; };
@@ -150,6 +154,7 @@
 				8035DDC828E30950009037C9 /* ReviewReplyArea.swift */,
 				8035DDCA28E30BF1009037C9 /* ReviewSuggestionsPicker.swift */,
 				8035DDCC28E30CB6009037C9 /* ReviewRatingView.swift */,
+				8035DDD028E322C4009037C9 /* ReplyErrorView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -210,6 +215,7 @@
 			isa = PBXGroup;
 			children = (
 				C23B5474288C77B6006EB4B2 /* CachedAsyncImage.swift */,
+				8035DDCE28E3214A009037C9 /* View+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -478,6 +484,7 @@
 			files = (
 				8035DDCB28E30BF1009037C9 /* ReviewSuggestionsPicker.swift in Sources */,
 				C245B49A2884B02100ABE387 /* SettingsSheet.swift in Sources */,
+				8035DDCF28E3214A009037C9 /* View+Ext.swift in Sources */,
 				8035DDC928E30950009037C9 /* ReviewReplyArea.swift in Sources */,
 				C23B54632889B0E5006EB4B2 /* MenuBarHeader.swift in Sources */,
 				C245B4972884AE8700ABE387 /* DetailReviewView.swift in Sources */,
@@ -509,6 +516,7 @@
 				C23B54AE288F3617006EB4B2 /* SupportLanding.swift in Sources */,
 				C245B4962884AE8700ABE387 /* SuggestionsConfigView.swift in Sources */,
 				C245B4712884ACF700ABE387 /* SuperstarApp.swift in Sources */,
+				8035DDD128E322C4009037C9 /* ReplyErrorView.swift in Sources */,
 				8035DDBE28E3020E009037C9 /* WebViews.swift in Sources */,
 				C245B4932884AE8700ABE387 /* AddCredentialsView.swift in Sources */,
 				C245B4812884AD7100ABE387 /* Menubar.swift in Sources */,

@@ -17,21 +17,26 @@ struct FullReviewSide: View {
     @EnvironmentObject var reviewManager: ReviewManager
     @EnvironmentObject var appsManager: AppsManager
     
-    @AppStorage("pendingPublications") var pendingPublications: [String] = []
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
+    @AppStorage("pendingPublications") var pendingPublications: [String] = []
     
     @State private var isReplying = false
     @State private var succesfullyReplied = false
     
-    @State private var isError = false
-    @State private var errorString = ""
-    @State private var showError = false
+    @State private var error : NSError?  = nil
+    
     @State private var replyText = ""
     @State private var hoveringOnSuggestion: Suggestion?
     @State private var showTranslate = false
     @State private var showTranslation = false
-
-    @AppStorage("pendingPublications") var pendingPublications: [String] = []
+    @State private var hoveringBody = false
+    
+    
+    var translateString : String {
+        "https://translate.google.com/?sl=auto&tl=en&text=\(review?.attributes?.title ?? "")\n\(review?.attributes?.body ?? "")&op=translate"
+    }
+    
+    
     var body: some View {
         VStack {
             ZStack {
@@ -82,8 +87,9 @@ struct FullReviewSide: View {
         //                .keyboardShortcut("s", modifiers: .command)
         //            }
         //        })
-        .onChange(of: review) { newValue in
         
+        .onChange(of: review) { newValue in
+            
             // Clean the translated strings
             translator.translatedTitle = ""
             translator.translatedBody = ""
@@ -92,10 +98,6 @@ struct FullReviewSide: View {
             succesfullyReplied = false
             replyText = ""
             isReplyFocused = true
-            
-            if showTranslate {
-                translateString = "https://translate.google.com/?sl=auto&tl=en&text=\(review?.attributes?.title ?? "")\n\(review?.attributes?.body ?? "")&op=translate"
-            }
         }
         
     }
@@ -126,7 +128,11 @@ struct FullReviewSide: View {
                     ReviewTitle(translator: translator, review: review)
                     ReviewMetadata(review: review)
                 }
-                body(for: review)
+                
+                Text(!translator.translatedBody.isEmpty ? translator.translatedBody : review.attributes?.body ?? "")
+                    .font(.system(.title3, design: .rounded))
+                    .textSelection(.enabled)
+                    .padding(.bottom)
                 
                 HStack {
                     if !translator.translatedTitle.isEmpty {
@@ -150,10 +156,24 @@ struct FullReviewSide: View {
                 if translator.detectedSourceLanguage != nil {
                     Text(translator.detectedSourceLanguage?.name ?? "No language found")
                 }
-
+                
                 VStack {
-                    extraOptions
-                    translatorView
+                    HStack {
+                        Spacer()
+                        Button {
+                            showTranslate.toggle()
+                        } label: {
+                            Label(showTranslate ? "Close" : "View Google Translate", systemImage: "globe")
+                                .font(.caption)
+                        }
+                        .padding()
+                    }
+                    
+                    if showTranslate {
+                        WebView(urlString: translateString)
+                            .frame(height: 500)
+                            .padding(.bottom)
+                    }
                     
                     if !translator.translatedReply.isEmpty {
                         Text(translator.translatedReply)
@@ -164,8 +184,8 @@ struct FullReviewSide: View {
                                     replyText: $replyText,
                                     hoveringOnSuggestion: $hoveringOnSuggestion,
                                     translator: translator)
-                        .padding(.horizontal, -4)
-                        .padding(.top, -8)
+                    .padding(.horizontal, -4)
+                    .padding(.top, -8)
                 }
                 
                 
@@ -183,17 +203,10 @@ struct FullReviewSide: View {
                     .keyboardShortcut(.return, modifiers: .command)
                 }
                 
-                if showError {
-                    VStack {
-                        Text("Could not send response. Double check that your App Store Connect credentials have the 'Admin' rights attached to it.")
-                        Text(errorString)
-                        Button {
-                            errorString = ""
-                            showError = false
-                        } label: {
-                            Text("hide error")
-                        }
-                    }
+                if error != nil{
+                    ReplyErrorView(error: $error)
+                        .scaleEffect(error != nil ? 1 : 0)
+                        .opacity(error != nil ? 1 : 0)
                 }
                 
                 Divider()
@@ -219,7 +232,9 @@ struct FullReviewSide: View {
         guard let review = review else { return }
         
         Task {
-            isReplying = true
+            withAnimation {
+                isReplying = true
+            }
             
             do {
                 let replied = try await reviewManager.replyTo(review: review, with: replyText)
@@ -238,16 +253,11 @@ struct FullReviewSide: View {
                 }
             } catch {
                 print(error.localizedDescription)
-                print(error.localizedDescription)
                 let errorCode = (error as NSError).description
-                if errorCode.contains("This request is forbidden for security reasons") {
-                    errorString = "This request is forbidden for security reasons"
-                } else {
-                    errorString = "Could not send reply. Not sure why, sorry!"
+                print(errorCode)
+                withAnimation(.spring()) {
+                    self.error = (error as NSError)
                 }
-                
-                showError = true
-                isError = true
                 isReplying = false
             }
             
@@ -255,47 +265,18 @@ struct FullReviewSide: View {
     }
     
     
-    func body(for review: CustomerReview) -> some View {
-        Text(!translator.translatedBody.isEmpty ? translator.translatedBody : review.attributes?.body ?? "")
-            .font(.system(.title3, design: .rounded))
-            .textSelection(.enabled)
-            .padding(.bottom)
-    }
     
-    @State var hoveringBody = false
-    
-    
-    
-    
-    var extraOptions: some View {
-        HStack {
-            Spacer()
-            Button {
-                if !showTranslate {
-                    translateString = "https://translate.google.com/?sl=auto&tl=en&text=\(review?.attributes?.title ?? "")\n\(review?.attributes?.body ?? "")&op=translate"
-                }
-                showTranslate.toggle()
-            } label: {
-                Label(showTranslate ? "Close" : "Translate", systemImage: "globe")
-                    .font(.caption)
-            }
-            
-        }
-    }
-    @ViewBuilder
-    var translatorView: some View {
-        if showTranslate {
-            WebView(urlString: $translateString)
-                .frame(height: 500)
-        }
-    }
-    
-    @State var translateString = "https://translate.google.com/?sl=en&tl=zh-CN&text=Thanks%20for%20reaching%20out!%20The%20widget%20sometimes%20takes%20a%20while%20to%20appear.%20Can%20you%20send%20an%20email%20to%20jordi%40goodsnooze.com%3F%20Thanks%2C%20Jordi&op=translate"
-    
-    
-   
 }
 
 
 
 
+extension NSError {
+    var errorString : String {
+        if self.description.contains("This request is forbidden for security reasons") {
+            return "This request is forbidden for security reasons"
+        } else {
+            return "Could not send reply. Not sure why, sorry!"
+        }
+    }
+}

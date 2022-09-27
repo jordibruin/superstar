@@ -30,6 +30,7 @@ struct SuggestionView: View {
             //                    } else {
             //                        showReplyField = true
             //                    }
+            
         } label: {
             HStack {
                 if let url = appsManager.imageURLfor(appId: "\(suggestion.appId)") {
@@ -41,8 +42,12 @@ struct SuggestionView: View {
                                 .aspectRatio(contentMode: .fit)
                                 .clipShape(RoundedRectangle(cornerRadius: 3))
                                 .clipped()
-                        case .failure(let _):
+                        case .failure(let error):
                             Text("E")
+                                    .onAppear {
+                                        print(error.localizedDescription)
+                                    }
+                                    .foregroundColor(.red)
                         case .empty:
                             Color.gray.opacity(0.05)
                         @unknown default:
@@ -63,13 +68,13 @@ struct SuggestionView: View {
             .foregroundColor(.primary)
             .cornerRadius(6)
         }
-        .onHover(perform: { hover in
+        .onHover { hover in
             if hover {
                 hoveringOnSuggestion = suggestion
             } else {
                 hoveringOnSuggestion = nil
             }
-        })
+        }
         .buttonStyle(.plain)
         .contextMenu {
             Button {
