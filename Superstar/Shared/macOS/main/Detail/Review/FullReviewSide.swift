@@ -17,6 +17,7 @@ struct FullReviewSide: View {
     @EnvironmentObject var reviewManager: ReviewManager
     @EnvironmentObject var appsManager: AppsManager
     
+    @AppStorage("pendingPublications") var pendingPublications: [String] = []
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     
     @State var isReplying = false
@@ -99,7 +100,7 @@ struct FullReviewSide: View {
         
     }
     
-    @AppStorage("pendingPublications") var pendingPublications: [String] = []
+    
     
     func getNewReview() {
         guard let review = review else {
