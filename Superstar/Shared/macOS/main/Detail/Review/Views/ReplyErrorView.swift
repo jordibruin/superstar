@@ -29,17 +29,20 @@ struct ReplyErrorView: View {
             }
             .padding()
             
-            Button {
-                error = nil
-            } label: {
-                Text("Ok")
-            }
+            SmallButton(action: removeError, title: "Hide Error")
             .padding(.bottom)
         }
+        .multilineTextAlignment(.center)
         .font(.system(.body, design: .rounded).weight(.medium))
         .padding()
         .background(Color.red.opacity(0.1))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .center(.horizontal)
+    }
+    
+    private func removeError() {
+        withAnimation {
+            error = nil
+        }
     }
 }

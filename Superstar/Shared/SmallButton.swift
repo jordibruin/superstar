@@ -18,7 +18,7 @@ struct SmallButton: View {
         Button {
             action()
         } label: {
-            HStack {
+            HStack(spacing: 3) {
                 if icon.isEmpty == false {
                     Image(systemName: icon)
                 }

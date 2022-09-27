@@ -32,25 +32,7 @@ struct ReviewSuggestionsPicker: View {
                 
                 Spacer()
                 
-                Button {
-                    if appsManager.selectedAppId != "Placeholder" {
-                        let suggestion = Suggestion(
-                            title: replyText.components(separatedBy: ".").first ?? "New Suggestion",
-                            text: replyText,
-                            appId: Int(appsManager.selectedAppId ?? "0") ?? 0
-                        )
-                        suggestions.append(suggestion)
-                    }
-                } label: {
-                    Text("Add Suggestion")
-                        .font(.caption)
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 6)
-                        .background(Color(.controlBackgroundColor))
-                        .foregroundColor(.primary)
-                        .cornerRadius(4)
-                }
-                .buttonStyle(.plain)
+                SmallButton(action: addSuggestion, title: "Create Suggestion", icon: "plus.circle.fill")
                 .opacity(replyText.isEmpty ? 0 : 1)
             }
             
@@ -59,10 +41,25 @@ struct ReviewSuggestionsPicker: View {
                     suggestion: showedSuggestions[index],
                     replyText: $replyText,
                     hoveringOnSuggestion: $hoveringOnSuggestion,
-                    suggestions: $suggestions, index: index)
+                    suggestions: $suggestions)
+                .keyboardShortcut(KeyEquivalent(Character(UnicodeScalar(index)!)), modifiers: .command)
+                .onAppear {
+                    print(index)
+                }
                 
             }
             
+        }
+    }
+    
+    private func addSuggestion() {
+        if appsManager.selectedAppId != "Placeholder" {
+            let suggestion = Suggestion(
+                title: replyText.components(separatedBy: ".").first ?? "New Suggestion",
+                text: replyText,
+                appId: Int(appsManager.selectedAppId ?? "0") ?? 0
+            )
+            suggestions.append(suggestion)
         }
     }
 }

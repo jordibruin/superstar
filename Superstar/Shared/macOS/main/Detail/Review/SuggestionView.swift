@@ -15,7 +15,6 @@ struct SuggestionView: View {
     @Binding var replyText: String
     @Binding var hoveringOnSuggestion: Suggestion?
     @Binding var suggestions: [Suggestion]
-    let index : Int
     
     var body: some View {
         Button {
@@ -44,7 +43,6 @@ struct SuggestionView: View {
             .foregroundColor(.primary)
             .cornerRadius(6)
         }
-        .keyboardShortcut(KeyEquivalent(Character(UnicodeScalar(index)!)), modifiers: .command)
         .onHover { hover in
             if hover {
                 hoveringOnSuggestion = suggestion
