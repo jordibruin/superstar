@@ -77,6 +77,14 @@ class DeepL: ObservableObject {
 //            .store(in: &subscriptions)
     }
     
+    func reset() {
+        DispatchQueue.main.async {
+            self.translatedBody = ""
+            self.translatedReply = ""
+            self.translatedTitle = ""
+        }
+    }
+    
     private func getLanguages(target: LanguagesType, handler: @escaping ([Language]?, Error?) -> Void) {
         var components = URLComponents()
         components.scheme = "https"

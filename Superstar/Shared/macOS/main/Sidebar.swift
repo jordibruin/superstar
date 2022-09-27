@@ -42,7 +42,7 @@ struct Sidebar: View {
         .toolbar(content: { ToolbarItem(content: {Text("")}) })
 
         .onChange(of: appsManager.foundApps, perform: { foundApps in
-            if let favoriteAppIndex = foundApps.firstIndex(where: { $0.id == favoriteAppId} ) {
+            if foundApps.firstIndex(where: { $0.id == favoriteAppId} ) != nil {
                 showFavoriteApp = true
                 appsManager.selectedAppId = favoriteAppId
             }

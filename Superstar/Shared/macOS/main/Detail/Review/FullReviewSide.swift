@@ -27,7 +27,7 @@ struct FullReviewSide: View {
     
     @State private var replyText = ""
     @State private var hoveringOnSuggestion: Suggestion?
-    @State private var showTranslate = false
+    @State private var showGoogleTranslate = false
     @State private var showTranslation = false
     @State private var hoveringBody = false
     
@@ -38,18 +38,9 @@ struct FullReviewSide: View {
     
     
     var body: some View {
-        VStack {
-            ZStack {
-                Color.gray.opacity(0.1)
-                
-                if let review = review {
-                    reviewView(review: review)
-                } else {
-                    VStack {
-                        Text("")
-                    }
-                }
-            }
+        ZStack {
+            Color.gray.opacity(0.1)
+            reviewView
         }
         .frame(minWidth: 500)
         .overlay(
@@ -91,8 +82,8 @@ struct FullReviewSide: View {
         .onChange(of: review) { newValue in
             
             // Clean the translated strings
-            translator.translatedTitle = ""
-            translator.translatedBody = ""
+            translator.reset()
+            
             //            reviewManager.replyText = ""
             isReplying = false
             succesfullyReplied = false
@@ -101,125 +92,144 @@ struct FullReviewSide: View {
         }
         
     }
-    
-    
-    
-    func getNewReview() {
-        guard let review = review else {
-            return
-        }
-        
-        guard reviewManager.retrievedReviews.firstIndex(of: review) != nil else {
-            return
-        }
-        
-        if let review = reviewManager.retrievedReviews.filter({ !pendingPublications.contains($0.id ) }).randomElement() {
-            self.review = review
-        } else {
-            print("No new reviews available")
-        }
-    }
-    
-    func reviewView(review: CustomerReview) -> some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                VStack(alignment: .leading, spacing: 6) {
-                    ReviewRatingView(review: review)
-                    ReviewTitle(translator: translator, review: review)
-                    ReviewMetadata(review: review)
-                }
-                
-                Text(!translator.translatedBody.isEmpty ? translator.translatedBody : review.attributes?.body ?? "")
-                    .font(.system(.title3, design: .rounded))
-                    .textSelection(.enabled)
-                    .padding(.bottom)
-                
-                HStack {
-                    if !translator.translatedTitle.isEmpty {
-                        Button {
-                            translator.translatedBody = ""
-                            translator.translatedTitle = ""
-                        } label: {
-                            Text("Show Original")
-                        }
-                    } else {
-                        Button {
-                            Task {
-                                await deepLReview()
+
+    @ViewBuilder
+    var reviewView : some View {
+        if let review {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        
+                        HStack {
+                            ReviewRatingView(review: review)
+                            Spacer()
+                            
+                            ReviewMetadata(review: review)
+                                .font(.system(.headline, design: .rounded).weight(.medium))
+                            Text("·")
+                            if let creationDate = review.attributes?.createdDate {
+                                Text(creationDate, style: .date)
+                                    .opacity(0.8)
+                                    .font(.system(.headline, design: .rounded).weight(.medium).smallCaps())
                             }
-                        } label: {
-                            Text("Translate Review")
+                        }
+                        .padding([.horizontal, .top])
+                        
+                        VStack(alignment: .leading) {
+                            ReviewTitle(translator: translator, review: review)
+                            Text(!translator.translatedBody.isEmpty ? translator.translatedBody : review.attributes?.body ?? "")
+                                .font(.system(.title3, design: .rounded))
+                                .textSelection(.enabled)
+                        }
+                        .padding([.horizontal, .bottom])
+                        
+                        HStack {
+                            
+                            SmallButton(action: {
+                                if !translator.translatedTitle.isEmpty {
+                                    translator.translatedBody = ""
+                                    translator.translatedTitle = ""
+                                } else {
+                                    Task {
+                                        await deepLReview()
+                                    }
+                                }
+                            }, title: translator.translatedTitle.isEmpty ? "Translate Review" : "Show Original")
+                     
+                            
+                            if translator.detectedSourceLanguage != nil {
+                                Text(translator.detectedSourceLanguage?.name ?? "No language found")
+                                    .fontWeight(.medium)
+                            }
+                            
+                            Spacer()
+                            
+                            SmallButton(action: toggleGoogleTranslate,
+                                        title: showGoogleTranslate ? "Close" : "View Google Translate",
+                                        icon: showGoogleTranslate ? "xmark" : "globe")
+                        }
+                        .buttonStyle(.plain)
+                        .font(.system(.headline, design: .rounded).weight(.semibold))
+                        .foregroundColor(.secondary)
+                        .padding(8)
+                        .background(Color.secondary.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                        
+                        
+                        if showGoogleTranslate {
+                            WebView(urlString: translateString)
+                                .frame(height: 500)
+                                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
                         }
                     }
-                }
-                
-                if translator.detectedSourceLanguage != nil {
-                    Text(translator.detectedSourceLanguage?.name ?? "No language found")
-                }
-                
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button {
-                            showTranslate.toggle()
-                        } label: {
-                            Label(showTranslate ? "Close" : "View Google Translate", systemImage: "globe")
-                                .font(.caption)
-                        }
-                        .padding()
+                    .background(Color(.controlBackgroundColor))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 3)
+                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    
+                    
+                    // Reply View
+                    ZStack(alignment:.top) {
+                        
+                        ReviewReplyArea(isReplyFocused: $isReplyFocused,
+                                        replyText: $replyText,
+                                        hoveringOnSuggestion: $hoveringOnSuggestion,
+                                        translator: translator)
                     }
                     
-                    if showTranslate {
-                        WebView(urlString: translateString)
-                            .frame(height: 500)
-                            .padding(.bottom)
-                    }
-                    
-                    if !translator.translatedReply.isEmpty {
-                        Text(translator.translatedReply)
-                            .textSelection(.enabled)
-                    }
-                    
-                    ReviewReplyArea(isReplyFocused: $isReplyFocused,
-                                    replyText: $replyText,
-                                    hoveringOnSuggestion: $hoveringOnSuggestion,
-                                    translator: translator)
-                    .padding(.horizontal, -4)
-                    .padding(.top, -8)
-                }
-                
-                
-                HStack {
-                    Spacer()
                     Button {
                         Task {
                             await respondToReview()
                         }
                     } label: {
-                        Text("Send")
+                        Text("Send Reply")
                     }
                     .disabled(replyText.isEmpty)
                     .help(Text("Send the response (⌘-Return)"))
                     .keyboardShortcut(.return, modifiers: .command)
+                    .place(.trailing)
+                    
+                    if error != nil{
+                        ReplyErrorView(error: $error)
+                            .scaleEffect(error != nil ? 1 : 0)
+                            .opacity(error != nil ? 1 : 0)
+                    }
+                    
+                    Divider()
+                    
+                    ReviewSuggestionsPicker(replyText: $replyText, hoveringOnSuggestion: $hoveringOnSuggestion)
+                    Spacer()
                 }
-                
-                if error != nil{
-                    ReplyErrorView(error: $error)
-                        .scaleEffect(error != nil ? 1 : 0)
-                        .opacity(error != nil ? 1 : 0)
-                }
-                
-                Divider()
-                
-                ReviewSuggestionsPicker(replyText: $replyText, hoveringOnSuggestion: $hoveringOnSuggestion)
-                Spacer()
+                .padding()
             }
-            .padding()
+            .clipped()
+            
         }
-        .clipped()
     }
     
+    private func toggleGoogleTranslate() {
+        withAnimation {
+            showGoogleTranslate.toggle()
+        }
+    }
     
+    private func getNewReview() {
+            guard let review = review else {
+                return
+            }
+            
+            guard reviewManager.retrievedReviews.firstIndex(of: review) != nil else {
+                return
+            }
+            
+            if let review = reviewManager.retrievedReviews.filter({ !pendingPublications.contains($0.id ) }).randomElement() {
+                self.review = review
+            } else {
+                print("No new reviews available")
+            }
+        }
     
     private func deepLReview() async {
         translator.translate(
@@ -263,8 +273,6 @@ struct FullReviewSide: View {
             
         }
     }
-    
-    
     
 }
 

@@ -59,8 +59,8 @@ struct ReviewSuggestionsPicker: View {
                     suggestion: showedSuggestions[index],
                     replyText: $replyText,
                     hoveringOnSuggestion: $hoveringOnSuggestion,
-                    suggestions: $suggestions)
-                .keyboardShortcut(KeyEquivalent(Character(UnicodeScalar(index)!)), modifiers: .shift)
+                    suggestions: $suggestions, index: index)
+                
             }
             
         }

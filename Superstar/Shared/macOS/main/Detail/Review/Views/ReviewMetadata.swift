@@ -16,10 +16,6 @@ struct ReviewMetadata : View {
             Text(review.attributes?.territory?.flag ?? "")
             Text(review.attributes?.reviewerNickname ?? "")
                 .opacity(0.8)
-            
-            Spacer()
-            Text(review.attributes?.createdDate?.formatted(.dateTime.day().month().year()) ?? Date().formatted())
-                .opacity(0.8)
         }
         .font(.system(.body, design: .rounded))
     }

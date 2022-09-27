@@ -15,39 +15,52 @@ struct ReviewReplyArea: View {
     @ObservedObject var translator : DeepL
     
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            Color(.controlBackgroundColor)
-                .frame(height: 200)
-                .onTapGesture {
-                    isReplyFocused.wrappedValue = true
-                }
+        VStack(alignment: .leading) {
             
-            TextEditor(text: $replyText)
-                .focused(isReplyFocused)
-                .padding(8)
-            //                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
-                .frame(height: 200)
-                .overlay(
-                    TextEditor(text: .constant(hoveringOnSuggestion != nil ? hoveringOnSuggestion?.text ?? "" : "Custom Reply"))
-                        .foregroundColor(.secondary)
-                        .padding(8)
-                        .allowsHitTesting(false)
-                        .opacity(replyText.isEmpty ? 1 : 0)
-                        .frame(height: 200)
-                )
-                .overlay(
-                    HStack {
-                        Spacer()
-                        Button {
-                            translator.translateReply(text: replyText)
-                        } label: {
-                            Text("Translate")
+                TextEditor(text: $replyText)
+                    .focused(isReplyFocused)
+                    .padding(12)
+                //                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
+                    .frame(height: 200)
+                    .overlay(
+                        ZStack {
+                            TextEditor(text: .constant(hoveringOnSuggestion != nil ? hoveringOnSuggestion?.text ?? "" : "Write response..."))
+                                .foregroundColor(.secondary)
+                                .padding(12)
+                                .allowsHitTesting(false)
+                                .opacity(replyText.isEmpty ? 1 : 0)
+                                .frame(height: 200)
+                            VStack {
+                                Spacer()
+                                HStack {
+                                    
+                                    if replyText.isEmpty == false {
+                                        SmallButton(action: {translator.translateReply(text: replyText)}, title: "Translate Your Reply")
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Text("\(5970 - replyText.count)")
+                                        .font(.system(.headline, design: .rounded).weight(.medium))
+                                        .opacity(0.4)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 6)
+                                }
+                                .padding(8)
+                            }
                         }
-                        
-                    }
-                )
-        }
+                    )
+                
+                if !translator.translatedReply.isEmpty {
+                    Text(translator.translatedReply)
+                        .textSelection(.enabled)
+                }
+            }
         .font(.system(.title3, design: .rounded))
-        .cornerRadius(8)
+        .frame(height: 200)
+        .onTapGesture {
+            isReplyFocused.wrappedValue = true
+        }
+        .background(RoundedRectangle(cornerRadius: 8, style: .continuous).strokeBorder(Color.primary.opacity(0.1), lineWidth: 1))
     }
 }
