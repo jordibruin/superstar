@@ -50,11 +50,7 @@ struct BigCTAButton: View {
     @State private var isHovering : Bool = false
     
     var textColor : Color {
-        if isHovering {
-            if isActive {
-                return .black
-            }
-        }
+
         
         if isActive {
             return .white

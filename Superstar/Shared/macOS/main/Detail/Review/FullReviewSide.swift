@@ -156,6 +156,18 @@ struct FullReviewSide: View {
                     
                 }
             }
+            
+            
+            ToolbarItem(placement: .automatic) {
+                if let review {
+                   SmallButton(action: {
+                       print(review.attributes as Any)
+                       print(review.links)
+                       print(review.id)
+                       // TODO: Mark review as done
+                   }, title: "Mark as Done", icon: "checkmark.circle.fill")
+                }
+            }
         }
         
     }
