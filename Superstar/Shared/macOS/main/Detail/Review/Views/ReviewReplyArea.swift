@@ -13,6 +13,7 @@ struct ReviewReplyArea: View {
     @Binding var replyText : String
     @Binding var hoveringOnSuggestion : Suggestion?
     @ObservedObject var translator : DeepL
+    @State private var didReplaceText = false
     
     var placeholderText : String {
         if let hoveringOnSuggestion {
@@ -26,7 +27,7 @@ struct ReviewReplyArea: View {
             
             // Background
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .strokeBorder(Color.primary.opacity(0.1), lineWidth: 1)
+                .strokeBorder(Color.primary.opacity(0.15), lineWidth: 1)
                 .frame(minHeight: 200)
                 .onTapGesture {
                     isReplyFocused.wrappedValue = true
@@ -60,8 +61,10 @@ struct ReviewReplyArea: View {
                             .textSelection(.enabled)
                             .padding([.top, .horizontal])
                         HStack {
-                            SmallButton(action: replaceText, title: "Replace Original", icon: "arrow.up.square")
-                            SmallButton(action: addText, title: "Add to Original", icon: "text.line.first.and.arrowtriangle.forward")
+                            if !didReplaceText {
+                                SmallButton(action: replaceText, title: "Replace Original", icon: "arrow.up.square")
+                                SmallButton(action: addText, title: "Add to Original", icon: "text.insert")
+                            }
                             SmallButton(action: copyText, title: "Copy Text", icon:"doc.on.clipboard")
                             Spacer()
                             
@@ -69,7 +72,7 @@ struct ReviewReplyArea: View {
                     }
                     .padding([.horizontal, .bottom], 8)
                     .background(Color.secondary.opacity(0.1))
-                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
                     .padding([.horizontal, .bottom], 8)
                 }
             }
@@ -81,17 +84,14 @@ struct ReviewReplyArea: View {
     var replyOptions : some View {
         HStack {
             if replyText.isEmpty == false {
-                SmallButton(action: {translator.translateReply(text: replyText)}, title: "Translate Your Reply")
+                SmallButton(action: translateText, title: "Translate Your Reply")
             }
             Spacer()
             
             
             
             if replyText.isEmpty == false {
-                SmallButton(action: {
-                    replyText = ""
-                    translator.translatedReply = ""
-                }, title: "Clear")
+                SmallButton(action: clearText, title: "Clear")
             }
             
             Text("\(5970 - replyText.count)")
@@ -100,11 +100,15 @@ struct ReviewReplyArea: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 6)
         }
-        .padding(8)
+        .padding([.horizontal, .top],8)
+        .padding(.bottom, translator.translatedReply.isEmpty ? 8 : 4)
     }
     
     private func replaceText() {
         replyText = translator.translatedReply
+        withAnimation {
+            didReplaceText = true
+        }
     }
     
     private func addText() {
@@ -115,5 +119,19 @@ struct ReviewReplyArea: View {
         let pasteboard = NSPasteboard.general
         pasteboard.declareTypes([.string], owner: nil)
         pasteboard.setString(translator.translatedReply, forType: .string)
+    }
+    
+    private func translateText() {
+        withAnimation {
+            translator.translateReply(text: replyText)
+        }
+    }
+    
+    private func clearText() {
+        withAnimation {
+            replyText = ""
+            translator.translatedReply = ""
+            didReplaceText = false
+        }
     }
 }

@@ -43,9 +43,6 @@ struct ReviewSuggestionsPicker: View {
                     hoveringOnSuggestion: $hoveringOnSuggestion,
                     suggestions: $suggestions)
                 .keyboardShortcut(KeyEquivalent(Character(UnicodeScalar(index)!)), modifiers: .command)
-                .onAppear {
-                    print(index)
-                }
                 
             }
             
