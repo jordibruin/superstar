@@ -157,6 +157,7 @@ struct FullReviewSide: View {
                     
                     if !translator.translatedReply.isEmpty {
                         Text(translator.translatedReply)
+                            .textSelection(.enabled)
                     }
                     
                     replyArea
@@ -189,7 +190,6 @@ struct FullReviewSide: View {
                         } label: {
                             Text("hide error")
                         }
-                        
                     }
                 }
                 
@@ -709,6 +709,7 @@ class DeepL: ObservableObject {
                     }
                     
                     self.translatedReply = response.translations[0].text
+                    print(response.translations[0].text)
                 }
             }
         }).resume()
