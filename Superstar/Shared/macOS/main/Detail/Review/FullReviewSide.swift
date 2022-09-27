@@ -133,6 +133,29 @@ struct FullReviewSide: View {
                     
                 }
             }
+            
+            ToolbarItem(placement: .automatic) {
+                
+                // TODO: Turn this in a "Share Review" feature
+                if let review {
+                    Button {
+                        var ratingText = ""
+                        let ratingCount = review.attributes?.rating ?? 1
+                        for _ in (0..<ratingCount) {
+                            ratingText.append("⭐️")
+                        }
+                        let reviewTitle = !translator.translatedTitle.isEmpty ? translator.translatedTitle : review.attributes?.title ?? ""
+                        let reviewText = !translator.translatedBody.isEmpty ? translator.translatedBody : review.attributes?.body ?? ""
+                        let pasteboard = NSPasteboard.general
+                        pasteboard.declareTypes([.string], owner: nil)
+                        pasteboard.setString("\(ratingText)\n\(reviewTitle)\n\(reviewText)", forType: .string)
+                        
+                    } label: {
+                        Image(systemName: "doc.on.clipboard")
+                    }
+                    
+                }
+            }
         }
         
     }
