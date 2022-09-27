@@ -20,6 +20,8 @@ struct FullReviewSide: View {
     @AppStorage("pendingPublications") var pendingPublications: [String] = []
     @AppStorage("suggestions") var suggestions: [Suggestion] = []
     
+    @StateObject var credentials = CredentialsManager.shared
+    
     @State var isReplying = false
     @State var succesfullyReplied = false
     
@@ -139,8 +141,12 @@ struct FullReviewSide: View {
                         }
                     } else {
                         Button {
-                            Task {
-                                await deepLReview()
+                            if credentials.deepLAPIKey.isEmpty {
+                                print("No translation key setup")
+                            } else {
+                                Task {
+                                    await deepLReview()
+                                }
                             }
                         } label: {
                             Text("Translate")
@@ -475,6 +481,8 @@ class DeepL: ObservableObject {
     
     @Published var formality = FormalityType.default;
     
+    let key = CredentialsManager.shared.deepLAPIKey
+    
     struct Language: Codable, Identifiable, Equatable {
         let id = UUID()
         let name: String
@@ -532,7 +540,7 @@ class DeepL: ObservableObject {
         components.host = "api-free.deepl.com"
         components.path = "/v2/languages"
         components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            URLQueryItem(name: "auth_key", value: key),
             URLQueryItem(name: "type", value: target.rawValue),
         ]
         
@@ -569,7 +577,7 @@ class DeepL: ObservableObject {
         components.host = "api-free.deepl.com"
         components.path = "/v2/translate"
         components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            URLQueryItem(name: "auth_key", value: key),
             // TODO: What is these are nil
 //            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
             URLQueryItem(name: "target_lang", value: "EN"), // TODO: Default
@@ -620,7 +628,7 @@ class DeepL: ObservableObject {
         components.host = "api-free.deepl.com"
         components.path = "/v2/translate"
         components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            URLQueryItem(name: "auth_key", value: key),
             // TODO: What is these are nil
 //            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
             URLQueryItem(name: "target_lang", value: "EN"), // TODO: Default
@@ -671,7 +679,7 @@ class DeepL: ObservableObject {
         components.host = "api-free.deepl.com"
         components.path = "/v2/translate"
         components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            URLQueryItem(name: "auth_key", value: key),
             // TODO: What is these are nil
 //            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
             URLQueryItem(name: "target_lang", value: detectedSourceLanguage?.language ?? "EN"), // TODO: Default

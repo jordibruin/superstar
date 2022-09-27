@@ -34,6 +34,8 @@ struct AppReviewsList: View {
                         return review.attributes!.body!.contains(searchText)
                     }
                 }, id: \.id) { review in
+                    
+                        
                     if hidePending {
                         if !pendingPublications.contains(review.id) {
                             Button {
@@ -42,6 +44,7 @@ struct AppReviewsList: View {
                                 DetailReviewView(review: review, selectedReview: $selectedReview)
                             }
                             .buttonStyle(.plain)
+                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                         }
                     } else {
                         Button {
@@ -49,13 +52,14 @@ struct AppReviewsList: View {
                         } label: {
                             DetailReviewView(review: review, selectedReview: $selectedReview)
                         }
-                        
                         .buttonStyle(.plain)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                     }
                 }
             }
+            
             .padding(.horizontal, -16)
-            .padding(.vertical)
+//            .padding(.vertical)
             .animation(.default,value: reviewManager.retrievedReviews)
             .id(UUID())
     }

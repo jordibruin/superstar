@@ -30,6 +30,8 @@ struct SettingsSheet: View {
             //            venturaModeView
             Spacer()
         }
+        .frame(minWidth: 700)
+        .frame(height: 600)
         .padding(12)
         .toolbar(content: {
             //            ToolbarItem(content: {

@@ -54,6 +54,7 @@
 		C290EACB289142A30001358C /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACA289142A30001358C /* SettingsPage.swift */; };
 		C290EACD289142E20001358C /* AppReviewsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACC289142E20001358C /* AppReviewsList.swift */; };
 		C290EAEC289153400001358C /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EAEB289153400001358C /* PreferencesView.swift */; };
+		C2DEAD0928E2FDD10093A906 /* TranslationPreferencesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2DEAD0828E2FDD10093A906 /* TranslationPreferencesScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,6 +103,7 @@
 		C290EACA289142A30001358C /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
 		C290EACC289142E20001358C /* AppReviewsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReviewsList.swift; sourceTree = "<group>"; };
 		C290EAEB289153400001358C /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
+		C2DEAD0828E2FDD10093A906 /* TranslationPreferencesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationPreferencesScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -309,6 +311,7 @@
 				C245B48E2884AE8700ABE387 /* AddCredentialsView.swift */,
 				C290EAEB289153400001358C /* PreferencesView.swift */,
 				C245B4992884B02100ABE387 /* SettingsSheet.swift */,
+				C2DEAD0828E2FDD10093A906 /* TranslationPreferencesScreen.swift */,
 				C245B4912884AE8700ABE387 /* SuggestionsConfigView.swift */,
 				C23B54B52890012D006EB4B2 /* Supernova.swift */,
 			);
@@ -457,6 +460,7 @@
 				C23B54B428900023006EB4B2 /* IAPManager.swift in Sources */,
 				C23B54B62890012D006EB4B2 /* Supernova.swift in Sources */,
 				C23B54B1288F3617006EB4B2 /* SupportScreen.swift in Sources */,
+				C2DEAD0928E2FDD10093A906 /* TranslationPreferencesScreen.swift in Sources */,
 				C245B49C2885513600ABE387 /* EmptyStateView.swift in Sources */,
 				C245B4942884AE8700ABE387 /* FullAppView.swift in Sources */,
 				C245B4952884AE8700ABE387 /* AppDetailView.swift in Sources */,
