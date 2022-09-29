@@ -39,20 +39,44 @@ struct AppReviewsList: View {
     }
     
     var body: some View {
-        List {
-            ForEach(reviews, id: \.id) { review in
-                Button {
-                    selectedReview = review
-                } label: {
-                    DetailReviewView(review: review, selectedReview: $selectedReview)
+
+            List {
+                ForEach(reviewManager.retrievedReviews.filter { review in
+                    if searchText == "" {
+                        return true
+                    } else {
+                        return review.attributes!.body!.contains(searchText)
+                    }
+                }, id: \.id) { review in
+                    
+                        
+                    if hidePending {
+                        if !pendingPublications.contains(review.id) {
+                            Button {
+                                selectedReview = review
+                            } label: {
+                                DetailReviewView(review: review, selectedReview: $selectedReview)
+                            }
+                            .buttonStyle(.plain)
+                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        }
+                    } else {
+                        Button {
+                            selectedReview = review
+                        } label: {
+                            DetailReviewView(review: review, selectedReview: $selectedReview)
+                        }
+                        .buttonStyle(.plain)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                    }
                 }
                 .buttonStyle(.plain)
             }
-        }
-        .padding(.horizontal, -16)
-        .padding(.vertical)
-        .animation(.default,value: reviewManager.retrievedReviews)
-        .id(UUID())
+            
+            .padding(.horizontal, -16)
+//            .padding(.vertical)
+            .animation(.default,value: reviewManager.retrievedReviews)
+            .id(UUID())
     }
     
 }

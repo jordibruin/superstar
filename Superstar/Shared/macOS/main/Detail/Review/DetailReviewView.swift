@@ -35,7 +35,7 @@ struct DetailReviewView: View {
     
     var body: some View {
         
-//        VStack(alignment: .leading, spacing: 0) {
+
             VStack(alignment: .leading) {
                 header
                     .padding(.top, 4)
@@ -47,10 +47,6 @@ struct DetailReviewView: View {
 
                 Spacer()
                 HStack {
-//                    Text(review.attributes?.createdDate?.formatted() ?? Date().formatted())
-//                        .font(.caption)
-//                        .opacity(0.8)
-
                     Spacer()
                     if succesfullyReplied {
                         HStack {
@@ -71,10 +67,9 @@ struct DetailReviewView: View {
                 Divider()
                     .padding(.horizontal, -20)
             }
-//        }
-//        .frame(height: 180)
         .frame(maxHeight: 180)
         .padding(.horizontal)
+//        .padding(.vertical, 4)
         .background(
             bgColor
                 .padding(.top, -24)

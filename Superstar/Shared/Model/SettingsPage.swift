@@ -13,6 +13,7 @@ enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
     case settings
     case suggestions
     case credentials
+    case translation
     case support
 //    case iap
     
@@ -28,6 +29,8 @@ enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
             return Label("Suggestions", systemImage: "star.bubble")
         case .support:
             return Label("Support", systemImage: "questionmark.circle.fill")
+        case .translation:
+            return Label("Translation", systemImage: "network")
 //        case .iap:
 //            return Label("Supernova", systemImage: "star.fill")
         }
@@ -44,6 +47,8 @@ enum SettingsPage: String, Hashable, Identifiable, CaseIterable {
             SuggestionsConfigView()
         case .support:
             SupportScreen()
+        case .translation:
+            TranslationPreferencesScreen()
 //        case .iap:
 //            Supernova()
         }

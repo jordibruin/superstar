@@ -24,6 +24,9 @@ class CredentialsManager: ObservableObject {
     @Published var issuerId: String = ""
     @Published var privateKey: String = ""
     
+    // DEEPL
+    @Published var deepLAPIKey: String = ""
+    
     @Published var savedInKeychain = false
     @Published var configuration = APIConfiguration(issuerID: "", privateKeyID: "", privateKey: "")
     
@@ -59,6 +62,10 @@ class CredentialsManager: ObservableObject {
         self.keyID = keychain["keyId"] ?? ""
         self.issuerId = keychain["issuerId"] ?? ""
         self.privateKey = keychain["privateKey"] ?? ""
+        
+        self.deepLAPIKey = keychain["deepLAPIKey"] ?? ""
+        
+        
         let twanKey = privateKey.replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "").replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "").replacingOccurrences(of: "\n", with: "")
         
         if !keyID.isEmpty || !issuerId.isEmpty || !privateKey.isEmpty {
@@ -76,10 +83,16 @@ class CredentialsManager: ObservableObject {
         setupPublishersFromKeychain()
     }
     
+    func saveDeepLKey() {
+        updateInKeychain(key: "deepLAPIKey", value: deepLAPIKey)
+//        setupPublishersFromKeychain()
+    }
+    
     func saveCredentials() {
         updateInKeychain(key: "keyId", value: keyID)
         updateInKeychain(key: "issuerId", value: issuerId)
         updateInKeychain(key: "privateKey", value: privateKey)
+        
         
         savedInKeychain = true
         setupPublishersFromKeychain()
@@ -115,35 +128,6 @@ class CredentialsManager: ObservableObject {
         issuerId = ""
         privateKey = ""
     }
-    
-    //    func getJWT() -> JWT? {
-    //        var formattedKey = ""
-    //
-    //        if privateKey.count == 252 {
-    //            print("add the newlines")
-    //
-    //            let removed = privateKey.replacingOccurrences(of: "-----BEGIN PRIVATE KEY-----", with: "").replacingOccurrences(of: "-----END PRIVATE KEY-----", with: "")
-    //
-    //            let begin = "-----BEGIN PRIVATE KEY-----\n"
-    //            let middle = removed.inserting(separator: "\n", every: 64)
-    //            let end = "\n-----END PRIVATE KEY-----"
-    //
-    //            formattedKey = begin + middle + end
-    //        } else {
-    //            formattedKey = privateKey
-    //        }
-    //
-    //        do {
-    //            return try JWT(
-    //                keyId: keyID,
-    //                issuerId: issuerId,
-    //                privateKey: formattedKey
-    //            )
-    //        } catch {
-    //            print(error.localizedDescription)
-    //            return nil
-    //        }
-    //    }
 }
 
 extension String {
