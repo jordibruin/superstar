@@ -32,7 +32,7 @@ struct ReviewSuggestionsPicker: View {
                 
                 Spacer()
                 
-                SmallButton(action: addSuggestion, title: "Create Suggestion", icon: "plus.circle.fill")
+                SmallButton(action: addSuggestion, title: "Create Suggestion", icon: "plus.circle.fill", helpText: "Add your current reply as a template suggestion for re-use later.")
                 .opacity(replyText.isEmpty ? 0 : 1)
             }
             

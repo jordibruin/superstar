@@ -53,7 +53,7 @@ struct AppDetailView: View {
         }
         
         .toolbar(content: { toolbarItems })
-        .searchable(text: $searchText)
+        .searchable(text: $searchText, prompt: Text("Search content of reviews"))
         
         // there is no title anymore so let's fake it.
         .onTapGesture {

@@ -11,6 +11,7 @@ struct SmallButton: View {
     var action : () -> ()
     let title: LocalizedStringKey
     var icon = ""
+    let helpText: LocalizedStringKey
     
     @State private var isHovering : Bool = false
     
@@ -32,6 +33,7 @@ struct SmallButton: View {
         .padding(.vertical, 6)
         .background(isHovering ? Color.secondary.opacity(0.1) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+        .help(helpText)
         .onHover { hover in
             withAnimation(.easeIn(duration: 0.25)) {
                 isHovering = hover

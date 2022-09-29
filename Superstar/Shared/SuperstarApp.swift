@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct SuperstarApp: App {
     
-    @NSApplicationDelegateAdaptor(StatusBarDelegate.self) var appDelegate
+//    @NSApplicationDelegateAdaptor(StatusBarDelegate.self) var appDelegate
     
     @StateObject var iapManager = IAPManager.shared
     @StateObject var appsManager = AppsManager()

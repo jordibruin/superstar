@@ -62,10 +62,10 @@ struct ReviewReplyArea: View {
                             .padding([.top, .horizontal])
                         HStack {
                             if !didReplaceText {
-                                SmallButton(action: replaceText, title: "Replace Original", icon: "arrow.up.square")
-                                SmallButton(action: addText, title: "Add to Original", icon: "text.insert")
+                                SmallButton(action: replaceText, title: "Replace Original", icon: "arrow.up.square", helpText: "Replace your original reply with the translated version")
+                                SmallButton(action: addText, title: "Add to Original", icon: "text.insert", helpText: "Add the translation to the original reply so you can send both.")
                             }
-                            SmallButton(action: copyText, title: "Copy Text", icon:"doc.on.clipboard")
+                            SmallButton(action: copyText, title: "Copy Text", icon:"doc.on.clipboard", helpText: "Copy the translation to your clipboard")
                             Spacer()
                             
                         }
@@ -84,14 +84,14 @@ struct ReviewReplyArea: View {
     var replyOptions : some View {
         HStack {
             if replyText.isEmpty == false {
-                SmallButton(action: translateText, title: "Translate Your Reply")
+                SmallButton(action: translateText, title: "Translate Your Reply", helpText: "Translate your reply using your setup DeepL API key.")
             }
             Spacer()
             
             
             
             if replyText.isEmpty == false {
-                SmallButton(action: clearText, title: "Clear")
+                SmallButton(action: clearText, title: "Clear", helpText: "Clear the textfield for your reply")
             }
             
             Text("\(5970 - replyText.count)")

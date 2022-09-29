@@ -29,7 +29,7 @@ struct ReplyErrorView: View {
             }
             .padding()
             
-            SmallButton(action: removeError, title: "Hide Error")
+            SmallButton(action: removeError, title: "Hide Error", helpText: "Remove the error alert")
             .padding(.bottom)
         }
         .multilineTextAlignment(.center)

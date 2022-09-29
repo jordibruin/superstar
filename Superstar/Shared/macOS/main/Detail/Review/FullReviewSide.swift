@@ -130,7 +130,7 @@ struct FullReviewSide: View {
                     } label: {
                         Image(systemName: "mail.and.text.magnifyingglass")
                     }
-                    
+                    .help("Copy the review to your clipboard for sharing.")
                 }
             }
             
@@ -153,7 +153,7 @@ struct FullReviewSide: View {
                     } label: {
                         Image(systemName: "doc.on.clipboard")
                     }
-                    
+                    .help("Copy the review to your clipboard for sharing.")
                 }
             }
             
@@ -165,7 +165,7 @@ struct FullReviewSide: View {
                        print(review.links)
                        print(review.id)
                        // TODO: Mark review as done
-                   }, title: "Mark as Done", icon: "checkmark.circle.fill")
+                   }, title: "Mark as Done", icon: "checkmark.circle.fill", helpText: "Mark the review as done. Right now this does not do anything.")
                 }
             }
         }
@@ -211,7 +211,7 @@ struct FullReviewSide: View {
                                 await deepLReview()
                             }
                         }
-                    }, title: translator.translatedTitle.isEmpty ? "Translate Review" : "Show Original")
+                    }, title: translator.translatedTitle.isEmpty ? "Translate Review" : "Show Original", helpText: translator.translatedTitle.isEmpty ? "Translate the review into English" : "Show the review in its original language")
                     
                     
                     if translator.detectedSourceLanguage != nil {
@@ -223,7 +223,8 @@ struct FullReviewSide: View {
                     
                     SmallButton(action: toggleGoogleTranslate,
                                 title: showGoogleTranslate ? "Close" : "View Google Translate",
-                                icon: showGoogleTranslate ? "xmark" : "globe")
+                                icon: showGoogleTranslate ? "xmark" : "globe",
+                                helpText: showGoogleTranslate ? "Close the Google Translate Window" : "Translate review with Google Translate")
                 }
                 .buttonStyle(.plain)
                 .font(.system(.headline, design: .rounded).weight(.semibold))
