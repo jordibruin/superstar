@@ -80,7 +80,8 @@ struct Sidebar: View {
         Section {
             if credentials.allCredentialsAvailable() {
                 if appsManager.foundApps.isEmpty {
-                    loadingApps
+//                    loadingApps
+                    fakeAppsList
                 } else {
                     appsList
                 }
@@ -154,10 +155,30 @@ struct Sidebar: View {
                     } label: {
                         Text("Hide")
                     }
+                    Button {
+                        favoriteAppId = app.id
+                    } label: {
+                        Text("Open on Launch")
+                    }
                 }
             }
         }
     }
+    
+    var fakeAppsList: some View {
+        ForEach(1...10, id: \.self) { index in
+            HStack {
+                RoundedRectangle(cornerRadius: 7)
+                    .foregroundColor(.orange)
+                    .frame(width: 32, height: 32)
+                
+                Text("App Name Goes Here Always")
+                    .redacted(reason: .placeholder)
+            }
+        }
+    }
+    
+    
     
     var hiddenApps: some View {
         Section {

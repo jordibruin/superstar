@@ -39,7 +39,7 @@ struct ReviewReplyArea: View {
                     .focused(isReplyFocused)
                     .padding(12)
                 //                .frame(height: replyText.count < 30 ? 44 : replyText.count < 110 ? 70 : 110)
-                    .frame(minHeight: 200)
+                    .frame(minHeight: 160)
                     .overlay(
                         VStack {
                             // Fale TextEditor
@@ -89,20 +89,22 @@ struct ReviewReplyArea: View {
             Spacer()
             
             
-            
             if replyText.isEmpty == false {
                 SmallButton(action: clearText, title: "Clear", helpText: "Clear the textfield for your reply")
             }
             
-            Text("\(5970 - replyText.count)")
+            Text("\(replyCharacterLimit - replyText.count)")
                 .font(.system(.headline, design: .rounded).weight(.medium))
-                .opacity(0.4)
+                .opacity(replyCharacterLimit - replyText.count < 0 ? 0.8 : 0.4)
+                .foregroundColor(replyCharacterLimit - replyText.count < 0 ? .red : .primary)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 6)
         }
         .padding([.horizontal, .top],8)
         .padding(.bottom, translator.translatedReply.isEmpty ? 8 : 4)
     }
+    
+    let replyCharacterLimit = 5970
     
     private func replaceText() {
         replyText = translator.translatedReply

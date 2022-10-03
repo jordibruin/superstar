@@ -64,6 +64,7 @@
 		C290EACB289142A30001358C /* SettingsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACA289142A30001358C /* SettingsPage.swift */; };
 		C290EACD289142E20001358C /* AppReviewsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EACC289142E20001358C /* AppReviewsList.swift */; };
 		C290EAEC289153400001358C /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C290EAEB289153400001358C /* PreferencesView.swift */; };
+		C2DD6EA628E5DBA300F07843 /* ShareReviewModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2DD6EA528E5DBA300F07843 /* ShareReviewModal.swift */; };
 		C2DEAD0928E2FDD10093A906 /* TranslationPreferencesScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2DEAD0828E2FDD10093A906 /* TranslationPreferencesScreen.swift */; };
 /* End PBXBuildFile section */
 
@@ -123,6 +124,7 @@
 		C290EACA289142A30001358C /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
 		C290EACC289142E20001358C /* AppReviewsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppReviewsList.swift; sourceTree = "<group>"; };
 		C290EAEB289153400001358C /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
+		C2DD6EA528E5DBA300F07843 /* ShareReviewModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareReviewModal.swift; sourceTree = "<group>"; };
 		C2DEAD0828E2FDD10093A906 /* TranslationPreferencesScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationPreferencesScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -188,6 +190,7 @@
 				8035DDBC28E301FC009037C9 /* Views */,
 				C245B4922884AE8700ABE387 /* DetailReviewView.swift */,
 				C23B54662889FBDF006EB4B2 /* FullReviewSide.swift */,
+				C2DD6EA528E5DBA300F07843 /* ShareReviewModal.swift */,
 				C279A0AA2894297D00B62A87 /* SuggestionView.swift */,
 			);
 			path = Review;
@@ -501,6 +504,7 @@
 				C245B4732884ACF700ABE387 /* ContentView.swift in Sources */,
 				C23B5475288C77B6006EB4B2 /* CachedAsyncImage.swift in Sources */,
 				C23B54652889B601006EB4B2 /* MenuBarReview.swift in Sources */,
+				C2DD6EA628E5DBA300F07843 /* ShareReviewModal.swift in Sources */,
 				C23B54AC288F3617006EB4B2 /* SupportItemable.swift in Sources */,
 				C279A0AB2894297D00B62A87 /* SuggestionView.swift in Sources */,
 				C23B54612889AFB2006EB4B2 /* MenuAppsSelector.swift in Sources */,

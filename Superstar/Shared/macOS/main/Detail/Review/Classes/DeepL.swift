@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 
+
 class DeepL: ObservableObject {
     @Published var sourceLanguages = [Language(name: "-", language: "-")]
     @Published var targetLanguages = [Language(name: "-", language: "-")]
@@ -47,8 +48,14 @@ class DeepL: ObservableObject {
     
     init() {
         print("init deepl")
+        
         self.getLanguages(target: LanguagesType.source, handler: { languages, error in
-            guard error == nil && languages != nil else {
+            
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            guard languages != nil else {
                 return
             }
             
@@ -60,6 +67,7 @@ class DeepL: ObservableObject {
         
         self.getLanguages(target: LanguagesType.target, handler: { languages, error in
             guard error == nil && languages != nil else {
+                print(error?.localizedDescription)
                 return
             }
             
@@ -68,13 +76,6 @@ class DeepL: ObservableObject {
                 self.targetLanguage = self.findLanguage(array: languages!, language: "NL") // TODO: Default
             }
         })
-        
-//        $sourceText
-//            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-//            .sink(receiveValue: { value in
-//                self.translate(text: value)
-//            })
-//            .store(in: &subscriptions)
     }
     
     func reset() {
@@ -91,7 +92,7 @@ class DeepL: ObservableObject {
         components.host = "api-free.deepl.com"
         components.path = "/v2/languages"
         components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            URLQueryItem(name: "auth_key", value: CredentialsManager.shared.deepLAPIKey),
             URLQueryItem(name: "type", value: target.rawValue),
         ]
         
@@ -128,7 +129,7 @@ class DeepL: ObservableObject {
         components.host = "api-free.deepl.com"
         components.path = "/v2/translate"
         components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            URLQueryItem(name: "auth_key", value: CredentialsManager.shared.deepLAPIKey),
             // TODO: What is these are nil
 //            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
             URLQueryItem(name: "target_lang", value: "EN"), // TODO: Default
@@ -179,7 +180,7 @@ class DeepL: ObservableObject {
         components.host = "api-free.deepl.com"
         components.path = "/v2/translate"
         components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            URLQueryItem(name: "auth_key", value: CredentialsManager.shared.deepLAPIKey),
             // TODO: What is these are nil
 //            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
             URLQueryItem(name: "target_lang", value: "EN"), // TODO: Default
@@ -230,7 +231,7 @@ class DeepL: ObservableObject {
         components.host = "api-free.deepl.com"
         components.path = "/v2/translate"
         components.queryItems = [
-            URLQueryItem(name: "auth_key", value: "cd8101dc-b9d7-acd9-f310-1cf89e8186de:fx"),
+            URLQueryItem(name: "auth_key", value: CredentialsManager.shared.deepLAPIKey),
             // TODO: What is these are nil
 //            URLQueryItem(name: "source_lang", value: "NL"), // TODO: Default
             URLQueryItem(name: "target_lang", value: detectedSourceLanguage?.language ?? "EN"), // TODO: Default
@@ -260,14 +261,22 @@ class DeepL: ObservableObject {
             if let response = try? JSONDecoder().decode(Response?.self, from: data!) {
                 DispatchQueue.main.async {
                     if let language = response.translations[0].detectedSourceLanguage {
+                        
+                        print(language)
+                        
                         if let foundLanguage = self.findLanguage(array: self.sourceLanguages, language: language) {
+                            
+                            print(foundLanguage)
+                            
                             if foundLanguage.language != self.sourceLanguage!.language {
+                                print(self.findLanguage(array: self.sourceLanguages, language: language))
                                 self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
                             }
 //                            self.detectedSourceLanguage = foundLanguage
                         }
                     }
                     
+                    print("TRANSLATED")
                     self.translatedReply = response.translations[0].text
                     print(response.translations[0].text)
                 }
@@ -275,4 +284,3 @@ class DeepL: ObservableObject {
         }).resume()
     }
 }
-

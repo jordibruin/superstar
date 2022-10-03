@@ -44,6 +44,8 @@ struct FullReviewSide: View {
         review != nil
     }
     
+    @State var showShareModal = false
+    
     var body: some View {
         ZStack(alignment: .top) {
             Color.gray.opacity(0.1)
@@ -85,6 +87,9 @@ struct FullReviewSide: View {
                 }
             }
             .clipped()
+        }
+        .sheet(isPresented: $showShareModal) {
+            ShareReviewModal(review: review!, title: !translator.translatedTitle.isEmpty ? translator.translatedTitle : review!.attributes?.title ?? "", bodyText: "")
         }
         .frame(minWidth: 500)
         .overlay(
@@ -198,9 +203,24 @@ struct FullReviewSide: View {
                     }, title: "Mark as Done", icon: "checkmark.circle.fill", helpText: "Mark the review as done. Right now this does not do anything.")
                 }
             }
+            
+            ToolbarItem(placement: .automatic) {
+                if let review {
+                    Button {
+                        showShareModal.toggle()
+                    } label: {
+                        Text("Show share")
+                    }
+                    
+                }
+            }
+            
         }
         
     }
+    
+    
+    
     
     @ViewBuilder
     var selectedReviewView : some View {
@@ -277,6 +297,8 @@ struct FullReviewSide: View {
             .padding()
         }
     }
+    
+    
     
     private func toggleGoogleTranslate() {
         withAnimation {
@@ -644,3 +666,239 @@ extension NSError {
 ////>>>>>>> main
 //    }
 //}
+
+//extension View {
+//    func snapshot() -> NSImage {
+//        let controller = NSHostingController(rootView: self)
+//        let view = controller.view
+//
+//        let targetSize = controller.view.intrinsicContentSize
+//        view.bounds = CGRect(origin: .zero, size: targetSize)
+//        view.layer?.backgroundColor = NSColor.clear.cgColor
+//
+//        let renderer = Graphicsimagerender NSGraphicsImageRenderer(size: targetSize)
+//
+//        return renderer.image { _ in
+//            view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+//        }
+//    }
+//}
+
+extension NSImage {
+    var pngData: Data? {
+        guard let tiffRepresentation = tiffRepresentation, let bitmapImage = NSBitmapImageRep(data: tiffRepresentation) else { return nil }
+        return bitmapImage.representation(using: .png, properties: [:])
+    }
+    func pngWrite(to url: URL, options: Data.WritingOptions = .atomic) -> Bool {
+        do {
+            try pngData?.write(to: url, options: options)
+            return true
+        } catch {
+            print(error)
+            return false
+        }
+    }
+}
+
+
+
+
+//
+//  Color+Extensions.swift
+//  Bakery
+//
+//  Created by Jordi Bruin on 08/07/2021.
+//
+
+import Foundation
+import SwiftUI
+
+
+
+
+
+
+#if os(macOS)
+import AppKit
+
+extension Color {
+
+    #if canImport(UIKit)
+    var asNative: UIColor { UIColor(self) }
+    #elseif canImport(AppKit)
+    var asNative: NSColor { NSColor(self) }
+    #endif
+
+    var rgba: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+        let color = asNative.usingColorSpace(.deviceRGB)!
+        var t = (CGFloat(), CGFloat(), CGFloat(), CGFloat())
+        color.getRed(&t.0, green: &t.1, blue: &t.2, alpha: &t.3)
+        return t
+    }
+
+    var hsva: (hue: CGFloat, saturation: CGFloat, value: CGFloat, alpha: CGFloat) {
+        let color = asNative.usingColorSpace(.deviceRGB)!
+        var t = (CGFloat(), CGFloat(), CGFloat(), CGFloat())
+        color.getHue(&t.0, saturation: &t.1, brightness: &t.2, alpha: &t.3)
+        return t
+    }
+//
+//    // swiftlint:disable large_tuple
+//    var components: (red: CGFloat, green: CGFloat, blue: CGFloat, opacity: CGFloat) {
+//        #if canImport(UIKit)
+//        typealias NativeColor = UIColor
+//        #elseif canImport(AppKit)
+//        typealias NativeColor = NSColor
+//        #endif
+//
+//        var r: CGFloat = 0
+//        var g: CGFloat = 0
+//        var b: CGFloat = 0
+//        var o: CGFloat = 0
+//
+//        let colorComponents = NativeColor(self).getRed(&r, green: &g, blue: &b, alpha: &o)
+////        guard NativeColor(self).getRed(&r, green: &g, blue: &b, alpha: &o) else {
+////            return (0, 0, 0, 0)
+////        }
+//
+//        return (r, g, b, o)
+//    }
+//
+//    func lighter(by percentage: CGFloat = 30.0) -> Color {
+//        return self.adjust(by: abs(percentage) )
+//    }
+//
+//    func darker(by percentage: CGFloat = 30.0) -> Color {
+//
+//        return self.adjust(by: -1 * abs(percentage) )
+//    }
+//
+//    func adjust(by percentage: CGFloat = 30.0) -> Color {
+//        return Color(red: min(Double(self.components.red + percentage/100), 1.0),
+//                     green: min(Double(self.components.green + percentage/100), 1.0),
+//                     blue: min(Double(self.components.blue + percentage/100), 1.0),
+//                     opacity: Double(self.components.opacity))
+//    }
+//
+
+    func lighter() -> Color {
+        let components = self.rgba
+
+        return Color(red: min(Double(components.red + 30/100), 1.0),
+                     green: min(Double(components.green + 30/100), 1.0),
+                     blue: min(Double(components.blue + 30/100), 1.0),
+                     opacity: Double(components.alpha))
+    }
+
+    func darker() -> Color {
+        let components = self.rgba
+
+        return Color(red: min(Double(components.red - 30/100), 1.0),
+                     green: min(Double(components.green - 30/100), 1.0),
+                     blue: min(Double(components.blue - 30/100), 1.0),
+                     opacity: Double(components.alpha))
+    }
+
+    static var random: Color {
+        return Color(
+            red: .random(in: 0...1),
+            green: .random(in: 0...1),
+            blue: .random(in: 0...1)
+        )
+    }
+}
+
+extension NSColor {
+    
+    convenience init(rgba: String) {
+        var red: CGFloat = 0.0
+        var green: CGFloat = 0.0
+        var blue: CGFloat = 0.0
+        var alpha: CGFloat = 1.0
+
+        let scanner = Scanner(string: rgba)
+        var hexValue: CUnsignedLongLong = 0
+        if scanner.scanHexInt64(&hexValue) {
+            if rgba.count == 6 {
+                red   = CGFloat((hexValue & 0xFF0000) >> 16) / 255.0
+                green = CGFloat((hexValue & 0x00FF00) >> 8)  / 255.0
+                blue  = CGFloat(hexValue & 0x0000FF) / 255.0
+            } else if rgba.count == 8 {
+                alpha   = CGFloat((hexValue & 0xFF000000) >> 24) / 255.0
+                red = CGFloat((hexValue & 0x00FF0000) >> 16) / 255.0
+                green  = CGFloat((hexValue & 0x0000FF00) >> 8)  / 255.0
+                blue = CGFloat(hexValue & 0x000000FF)         / 255.0
+            } else {
+                print("invalid rgb string, length should be 6 or 8", terminator: "")
+            }
+        } else {
+            print("Scan hex error")
+        }
+
+        self.init(red: red, green: green, blue: blue, alpha: alpha)
+    }
+}
+
+public extension Color {
+    var hex: String { NSColor(self).hex }
+    var hexWithAlpha: String {NSColor(self).hexWithAlpha }
+
+    func hexDescription(_ includeAlpha: Bool = false) -> String {
+        NSColor(self).hexDescription(includeAlpha)
+    }
+}
+
+extension NSColor {
+
+    var hex: String { hexDescription(false) }
+    var hexWithAlpha: String { hexDescription(true) }
+
+    /**
+         Returns a hex equivalent of this `UIColor`.
+
+         - Parameter includeAlpha:   Optional parameter to include the alpha hex, defaults to `false`.
+
+         `color.hexDescription() -> "ff0000"`
+
+         `color.hexDescription(true) -> "ff0000aa"`
+
+         - Returns: A new string with `String` with the color's hexidecimal value.
+         */
+        func hexDescription(_ includeAlpha: Bool = false) -> String {
+            guard self.cgColor.numberOfComponents == 4 else {
+                return "Color not RGB."
+            }
+            let a = self.cgColor.components!.map { Int($0 * CGFloat(255)) }
+            let color = String.init(format: "%02x%02x%02x", a[0], a[1], a[2])
+            if includeAlpha {
+                let alpha = String.init(format: "%02x", a[3])
+                return "\(color)\(alpha)"
+            }
+            return color
+        }
+}
+
+extension NSColor {
+
+    // Check if the color is light or dark, as defined by the injected lightness threshold.
+    // Some people report that 0.7 is best. I suggest to find out for yourself.
+    // A nil value is returned if the lightness couldn't be determined.
+    func isLight(threshold: Float = 0.5) -> Bool {
+        let originalCGColor = self.cgColor
+
+        // Now we need to convert it to the RGB colorspace. UIColor.white / UIColor.black are greyscale and not RGB.
+        // If you don't do this then you will crash when accessing components index 2 below when evaluating greyscale colors.
+        let RGBCGColor = originalCGColor.converted(to: CGColorSpaceCreateDeviceRGB(), intent: .defaultIntent, options: nil)
+        guard let components = RGBCGColor?.components else {
+            return false
+        }
+        guard components.count >= 3 else {
+            return false
+        }
+
+        let brightness = Float(((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000)
+        return (brightness > threshold)
+    }
+}
+
+#endif
