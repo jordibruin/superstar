@@ -13,8 +13,8 @@ struct TranslationPreferencesScreen: View {
     
     var body: some View {
         VStack {
-            Text("Deep L")
-            Text("Add your (free) DeepL API key to enable automatic translation in Superstar.")
+            Text("You can translate your reviews inline (without using the Google Translate option) by adding your (free) DeepL API key. Go to https://www.deepl.com/pro-api and sign up for a free account that allows for 500.000 free character translations. Then paste your API code below and click save.")
+                .padding(50)
             
             deepLKeyTextField
             

@@ -25,12 +25,14 @@ struct SmallButton: View {
                 }
                 Text(title)
             }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .font(.system(.headline, design: .rounded).weight(.semibold))
         .foregroundColor(isHovering ? .primary : .secondary)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
+        
         .background(isHovering ? Color.secondary.opacity(0.1) : Color.clear)
         .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
         .help(helpText)

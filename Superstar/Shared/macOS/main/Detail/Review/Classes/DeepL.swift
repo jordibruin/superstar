@@ -28,7 +28,7 @@ class DeepL: ObservableObject {
     @Published var formality = FormalityType.default;
     
     struct Language: Codable, Identifiable, Equatable {
-        var id = UUID()
+        let id = UUID()
         let name: String
         let language: String
     }
@@ -55,13 +55,12 @@ class DeepL: ObservableObject {
                 print(error.localizedDescription)
                 return
             }
-            guard languages != nil else {
-                return
-            }
+            
+            guard let languages = languages else { return }
             
             DispatchQueue.main.async {
-                self.sourceLanguages = languages!
-                self.sourceLanguage = self.findLanguage(array: languages!, language: "EN")  // TODO: Default
+                self.sourceLanguages = languages
+//                self.sourceLanguage = self.findLanguage(array: languages, language: "EN")  // TODO: Default
             }
         })
         
@@ -161,7 +160,10 @@ class DeepL: ObservableObject {
                     if let language = response.translations[0].detectedSourceLanguage {
                         
                         if let foundLanguage = self.findLanguage(array: self.sourceLanguages, language: language) {
-                            if foundLanguage.language != self.sourceLanguage!.language {
+                            
+                            if self.sourceLanguage == nil {
+                                self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
+                            } else if foundLanguage.language != self.sourceLanguage!.language {
                                 self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
                             }
                         }
@@ -211,11 +213,15 @@ class DeepL: ObservableObject {
                 DispatchQueue.main.async {
                     if let language = response.translations[0].detectedSourceLanguage {
                         if let foundLanguage = self.findLanguage(array: self.sourceLanguages, language: language) {
-                            if foundLanguage.language != self.sourceLanguage!.language {
+                            
+                            if self.sourceLanguage == nil {
+                                self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
+                            } else if foundLanguage.language != self.sourceLanguage!.language {
                                 self.sourceLanguage = self.findLanguage(array: self.sourceLanguages, language: language) // TODO: Default
                             }
-                            self.detectedSourceLanguage = foundLanguage
                             
+                            print(foundLanguage)
+                            self.detectedSourceLanguage = foundLanguage
                         }
                     }
                     
@@ -226,6 +232,12 @@ class DeepL: ObservableObject {
     }
     
     func translateReply(text: String) {
+        
+        if sourceLanguage == nil {
+            print("Don't have the source language yet")
+            return
+        }
+        
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api-free.deepl.com"

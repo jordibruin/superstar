@@ -28,7 +28,7 @@ struct ReviewReplyArea: View {
             // Background
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .strokeBorder(Color.primary.opacity(0.15), lineWidth: 1)
-                .frame(minHeight: 200)
+                .frame(minHeight: 170)
                 .onTapGesture {
                     isReplyFocused.wrappedValue = true
                 }
@@ -53,6 +53,7 @@ struct ReviewReplyArea: View {
                             Spacer()
                         }
                     )
+                
                 replyOptions
                 
                 if !translator.translatedReply.isEmpty {
@@ -67,6 +68,7 @@ struct ReviewReplyArea: View {
                             }
                             SmallButton(action: copyText, title: "Copy Text", icon:"doc.on.clipboard", helpText: "Copy the translation to your clipboard")
                             Spacer()
+                            SmallButton(action: hideTranslationOptions, title: "Hide", icon:"", helpText: "Hide translated reply and options")
                             
                         }
                     }
@@ -87,7 +89,6 @@ struct ReviewReplyArea: View {
                 SmallButton(action: translateText, title: "Translate Your Reply", helpText: "Translate your reply using your setup DeepL API key.")
             }
             Spacer()
-            
             
             if replyText.isEmpty == false {
                 SmallButton(action: clearText, title: "Clear", helpText: "Clear the textfield for your reply")
@@ -110,6 +111,7 @@ struct ReviewReplyArea: View {
         replyText = translator.translatedReply
         withAnimation {
             didReplaceText = true
+            translator.translatedReply = ""
         }
     }
     
@@ -121,6 +123,12 @@ struct ReviewReplyArea: View {
         let pasteboard = NSPasteboard.general
         pasteboard.declareTypes([.string], owner: nil)
         pasteboard.setString(translator.translatedReply, forType: .string)
+    }
+    
+    private func hideTranslationOptions() {
+        withAnimation {
+            translator.translatedReply = ""
+        }
     }
     
     private func translateText() {

@@ -155,6 +155,10 @@ struct SettingsSheet: View {
     
     var favoriteAppPicker: some View {
         VStack(alignment: .leading) {
+            Text("Favorite app")
+                .font(.system(.title3, design: .rounded))
+                .bold()
+            
             Picker(selection: $favoriteAppId) {
                 Text("None")
                     .tag("")

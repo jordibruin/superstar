@@ -17,8 +17,7 @@ struct EmptyStateView: View {
     var body: some View {
         if credentials.allCredentialsAvailable() {
             Text("Select an app to see reviews")
-                .font(.system(.largeTitle, design: .rounded))
-                .bold()
+                .font(.system(.title2, design: .rounded))
                 .frame(minWidth: 350, maxWidth: 350)
         } else {
             ScrollView {
